@@ -28,8 +28,7 @@ interface IOrder {
 })
 export default class OrdersComponent {
 
-  isLoading: boolean;
-
+  isLoading = false as boolean;
   rawInfo: any;
   orders: IOrder[];
 
@@ -47,9 +46,7 @@ export default class OrdersComponent {
 
   async getOrders() {
     this.isLoading = true;
-
     this.orders = [];
-
     const orders = await this.weaveDBService.getAllData<any>({
       type: 'order',
     });
@@ -76,7 +73,6 @@ export default class OrdersComponent {
           nftIdLinked: additionalInfo?.nftId || null,
         }
       }
-
       return order;
 
     }).filter((order) => {
