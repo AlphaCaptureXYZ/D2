@@ -8,22 +8,19 @@
         <div class="flex flex-col mt-8">
             <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
                 <p class="p-3">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi maiores officia
-                    vero velit doloribus exercitationem numquam nesciunt veritatis? Ea quae eveniet
-                    cumque nulla sapiente voluptatibus saepe exercitationem expedita provident
-                    tempore.
+                    The following orders have been automatically copied into your brokerage account.
                 </p>
 
             </div>
         </div>
 
-        <div class="relative mt-8">
+        <div class="p-4 cursor-pointer" (click)="getOrders()">
+            <i class='bx bx-refresh'></i> <span class="ml-1 text-xs hover:underline">Refresh</span>
+        </div>
 
-            <span class="cursor-pointer" (click)="getOrders()">
-                <i class='bx bx-refresh'></i>
-            </span>
-
-            <table class="text-sm text-left text-gray-500 dark:text-gray-400">
+        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+        
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead
                     class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
@@ -36,13 +33,38 @@
                         <th scope="col" class="px-6 py-3">Created At</th>
                         <th scope="col" class="px-6 py-3">Env</th>
                         <th scope="col" class="px-1 py-1 pl-5">Idea Linked</th>
-                        <th scope="col" class="px-6 py-3">Details</th>
                     </tr>
                 </thead>
-                <tbody>
+
+                <tbody *ngIf="isLoading">
                     <tr
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full"
-                        *ngFor="let order of orders">
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                      <th
+                        scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        colspan="4">
+                        <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
+                      </th>
+                    </tr>
+                </tbody>        
+                
+                <tbody *ngIf="!isLoading && orders.length === 0">
+                    <tr
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                      <th
+                        scope="row"
+                        class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        colspan="4">
+                        No orders have been placed
+                      </th>
+                    </tr>
+                  </tbody>
+        
+                  <tbody *ngIf="!isLoading && orders.length > 0">
+                    <tr
+                      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-600"
+                        *ngFor="let order of orders"
+                        (click)="setRawInfo(order)">
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
                             {{( order.provider | titlecase) || "-" }}
                         </td>
@@ -63,11 +85,11 @@
                         </td>
 
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
-                            {{ (order.price | currency: "USD") || "-" }}
+                            {{ (order.price) || "-" }}
                         </td>
 
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22">
-                            {{ (order.createdAt | date : "full") }}
+                            {{ (order.createdAt | date : "medium") }}
                         </td>
 
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
@@ -80,22 +102,9 @@
                                     class='bx bx-detail'></i> ({{order.nftIdLinked}})</span>
                         </td>
 
-                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
-                            <span class="cursor-pointer" (click)="setRawInfo(order)"> <i
-                                    class='bx bx-search'></i></span>
-                        </td>
-
                     </tr>
                 </tbody>
             </table>
-            <p class="mt-4 ml-1 text-sm" *ngIf="orders.length <= 0">Not exists orders created
-                yet</p>
-
-            <!-- <div style="width: 50%;">
-                <div class="mt-4 ml-1 text-sm" *ngIf="rawInfo">
-                    <pre><code [highlight]="rawInfo"></code></pre>
-                </div>
-            </div> -->
 
         </div>
     </div>
