@@ -3,7 +3,7 @@ import { OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { RouterOutlet, RouterLink } from '@angular/router';
 import NavbarAuthComponent from './components/navbar-auth/navbar-auth.component';
 import LeftMenuComponent from './components/left-menu/left-menu.component';
 import SplashComponent from './pages/splash/splash.component';
@@ -18,6 +18,7 @@ import { getDefaultAccount, litSigAuthExpirationCheck } from './shared/shared';
   imports: [
     CommonModule,
     RouterOutlet,
+    RouterLink,
     NavbarAuthComponent,
     LeftMenuComponent,
     SplashComponent,

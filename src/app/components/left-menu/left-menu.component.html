@@ -181,10 +181,24 @@
           </span>
 
           <span
+            (click)="goToPage('guides')"
+            class="cursor-pointer flex items-center p-2 text-sm text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+            <span><i class="bx bx-help-circle text-2xl icon-color"></i></span>
+            <span class="ml-3" sidebar-toggle-item>Guides</span>
+          </span>
+
+          <span
             (click)="goToPage('support')"
             class="cursor-pointer flex items-center p-2 text-sm text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
             <span><i class="bx bx-world text-2xl icon-color"></i></span>
             <span class="ml-3" sidebar-toggle-item>Support</span>
+          </span>
+
+          <span
+            class="flex flex-nowrap items-center p-2 text-xs text-gray-900 transition duration-75 rounded-lg hover:bg-gray-100 group dark:text-gray-200 dark:hover:bg-gray-700">
+            <div class="ml-3">
+              <a href="https://ixily.io"><img src="/assets/img/ixily-activ.png" alt="IXily.io" class="logo-ixily" /> IXily.io</a>
+            </div>
           </span>
 
           <span

@@ -14,13 +14,24 @@
 
         <p class="p-3">
           The primary purpose of an Event Trigger is to copy an Investment Idea into your own
-          trading account, according to your
-          own requirements and risk settings. Please note that this is at your discretion and the
+          trading account, according to your own requirements and risk settings.
+        </p>
+
+        <p class="p-3">
+          The Event Trigger relies on the Event Listener, an open source project that you may wish to implement yourself.
+        </p>
+
+        <p class="p-3">
+          Please note that copy trading is at your discretion and the
           idea creator will not be informed or have any awareness that you have placed a trade based
           on their Investment Idea, nor is any information about your account, data or usage ever
           communicated to anyone.
         </p>
 
+        <p class="p-3">
+          Additional triggers will be added in time such as notifications (Slack, email etc)
+        </p>
+         
       </div>
     </div>
 
@@ -32,7 +43,6 @@
             <th scope="col" class="px-6 py-3">Credential UUID</th>
             <th scope="col" class="px-6 py-3">Strategy</th>
             <th scope="col" class="px-6 py-3">Action </th>
-            <th scope="col" class="px-6 py-3">Settings</th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
@@ -51,7 +61,6 @@
               </th>
               <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
               <td class="px-6 py-4">{{ data.action }}</td>
-              <td class="px-6 py-4">{{ data.settings | json}}</td>
               <td class="px-6 py-4">
                 <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
               </td>

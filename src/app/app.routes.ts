@@ -70,8 +70,16 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.component'),
   },
   {
+    path: 'guides',
+    loadComponent: () => import('./pages/guides/list/list.component'),
+  },
+  {
     path: 'guides/proxy-service',
     loadComponent: () => import('./pages/guides/proxy-service/proxy-service.component'),
+  },
+  {
+    path: 'guides/event-listener',
+    loadComponent: () => import('./pages/guides/event-listener/event-listener.component'),
   },
   {
     path: 'support',

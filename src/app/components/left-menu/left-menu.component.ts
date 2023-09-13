@@ -78,6 +78,10 @@ export default class LeftMenuComponent implements OnInit {
     }
 
     // Additional
+    if (option === 'guides') {
+      this.router.navigateByUrl('/guides');
+    }
+
     if (option === 'settings') {
       this.router.navigateByUrl('/settings');
     }
