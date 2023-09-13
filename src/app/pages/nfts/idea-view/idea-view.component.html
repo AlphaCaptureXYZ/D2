@@ -1,0 +1,167 @@
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+  <div class="container mx-auto px-6 py-8">
+    <p
+      class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl mb-6"
+    >
+      Investment Idea View
+    </p>
+
+    <div class="relative overflow-x-auto" *ngIf="idea.nftId">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <tbody>
+          <tr
+            class="bg-white border-b border-t dark:bg-gray-800 dark:border-gray-700"
+          >
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              nftId
+            </th>
+            <td class="px-6 py-4">{{ idea.nftId }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              Title
+            </th>
+            <td class="px-6 py-4">{{ ideaCore.title }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              Description
+            </th>
+            <td class="px-6 py-4">{{ ideaCore.notes.commentary }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Status
+            </th>
+            <td class="px-6 py-4">
+              {{ ideaCore.kind | titlecase }} |
+              {{ ideaCore.priceInfo?.price?.timestamp | date : "fullDate" }}
+            </td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              Creator
+            </th>
+            <td class="px-6 py-4">{{ idea.creator.name }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              Company
+            </th>
+            <td class="px-6 py-4">{{ idea.creator.company }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+            >
+              Website
+            </th>
+            <td class="px-6 py-4">{{ idea.creator.url }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Princing Provider
+            </th>
+            <td class="px-6 py-4">{{ idea.pricing.provider }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Asset
+            </th>
+            <td class="px-6 py-4">{{ ideaCore.asset.ticker }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Strategy
+            </th>
+            <td class="px-6 py-4">{{ idea.strategy.name }}</td>
+          </tr>
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Strategy Reference
+            </th>
+            <td class="px-6 py-4">{{ idea.strategy.reference }}</td>
+          </tr>
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+            *ngIf="wallets.length > 0"
+          >
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Access
+            </th>
+            <td class="px-6 py-4">
+              <div *ngFor="let wallet of wallets; let i = index">
+                {{ i + 1 }}. {{ wallet }}
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6">
+        Open Idea NFT
+      </p>
+
+      <app-nft-section [idea]="idea" [open]="open"></app-nft-section>
+
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6" *ngIf="ideaCore.kind === 'adjust' || ideaCore.kind === 'close'">
+        Adjustment Idea NFTs
+      </p>
+
+      <div *ngFor="let adj of adjustments let i = index">
+        <app-nft-section [idea]="idea" [adjustment]="adj"></app-nft-section>
+      </div>
+
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6" *ngIf="ideaCore.kind === 'close'">
+        Close Idea NFT
+      </p>
+
+      <app-nft-section [idea]="idea" [close]="close" *ngIf="ideaCore.kind === 'close'"></app-nft-section>
+
+      <button
+        type="button"
+        (click)="back()"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mt-8"
+      >
+        <svg
+          class="w-4 h-4"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 14 10"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M13 5H1m0 0 4 4M1 5l4-4"
+          />
+        </svg>
+        <span class="sr-only">Icon description</span>
+      </button>
+    </div>
+  </div>
+</main>

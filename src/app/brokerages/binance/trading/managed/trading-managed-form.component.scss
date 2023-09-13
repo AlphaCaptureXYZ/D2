@@ -1,0 +1,13 @@
+p {
+  line-height: 120%;
+  margin-bottom: 15px;
+}
+
+.w50 {
+  width: 50%;
+}
+
+.button-submit:disabled {
+  background-color: lightgray;
+  color: gray;
+}

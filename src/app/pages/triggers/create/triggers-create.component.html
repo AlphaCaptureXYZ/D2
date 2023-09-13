@@ -1,0 +1,381 @@
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+  <div class="container mx-auto px-6 py-8">
+    <p
+      class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl mb-6">
+      NFT Event Trigger: Create
+    </p>
+
+    <div class="flex flex-col mt-8 mb-8">
+      <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+        <p class="p-3">
+          Define what you want to happen when an Investment Idea NFT is dropped
+          into your wallet by a creator (including any ideas you create
+          yourself).
+        </p>
+
+        <p class="p-3">
+          The primary purpose is to copy an Idea into your own trading account,
+          according to your own requirements and risk settings. Please note that
+          this is at your discretion and the idea creator will not be informed
+          or have any awareness that you have placed a trade based on their
+          Idea.
+        </p>
+      </div>
+    </div>
+
+    <!-- <ol
+      class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+
+      <li
+        class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span
+          class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+
+          <span *ngIf="stage === 1" class="option-selected">Action </span>
+          <span *ngIf="stage !== 1" class="cursor-pointer" (click)="goToSection(1)">
+            Action
+          </span>
+
+        </span>
+      </li>
+
+      <li
+        class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span
+          class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+
+          <span *ngIf="stage === 2" class="option-selected">Strategy </span>
+          <span *ngIf="stage !== 2" class="cursor-pointer" (click)="goToSection(2)">
+            Strategy
+          </span>
+
+        </span>
+      </li>
+
+      <li
+        class="flex md:w-full items-center after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 after:hidden sm:after:inline-block after:mx-6 xl:after:mx-10 dark:after:border-gray-700">
+        <span
+          class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+
+          <span *ngIf="stage === 3" class="option-selected">Account/Wallet </span>
+          <span *ngIf="stage !== 3" class="cursor-pointer" (click)="goToSection(3)">
+            Account/Wallet
+          </span>
+
+        </span>
+      </li>
+
+      <li class="flex items-center">
+
+        <span *ngIf="stage === 4" class="option-selected">Settings </span>
+        <span *ngIf="stage !== 4" class="cursor-pointer" (click)="goToSection(4)">
+          Settings
+        </span>
+
+      </li>
+
+    </ol> -->
+
+    <form [formGroup]="form" (ngSubmit)="submitForm()">
+      <!-- Step One -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 1">
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="action"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Action:</label>
+              <select
+                formControlName="action"
+                id="action"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                <option *ngFor="let action of actions" [value]="action.option">{{action.label}}
+                </option>
+              </select>
+
+              <p class="p-3">
+                A trade will be applied to your selected account or wallet
+                whenever an Investment Idea NFT is received.
+              </p>
+
+              <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                (click)="setAction()">
+                Next
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Two -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 2">
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="strategy"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Strategy:</label>
+
+              <div class="text-left load mt-8 ml-4" *ngIf="isLoading">
+                <div role="status">
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-4 h-4 mr-3 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
+                  </svg>
+                  <span class>Loading strategies...</span>
+                </div>
+              </div>
+
+              <div *ngIf="strategies.length === 0 && !isLoading" class="flex p-3">
+
+                <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+
+                <span class="ml-3">
+                  Please ensure that you have access to at least one investment strategy.
+                </span>
+
+              </div>
+
+              <div class="text-left load" *ngIf="strategies.length > 0 && !isLoading">
+
+                <p class="p-3">
+                  All investment ideas within this strategy will be applied to your account.
+                </p>
+
+                <select
+                  formControlName="strategy"
+                  id="strategy"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option
+                    *ngFor="let strategy of strategies"
+                    [value]="strategy.reference">
+                    {{ strategy.name }}
+                  </option>
+                </select>
+
+                <div class="mt-3">
+                  <button
+                    type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                    (click)="setStrategy()">
+                    Next
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Three -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 3">
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+
+              <label
+                for="account"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Brokerage
+                Account:</label>
+
+              <div class="text-left load mt-8 ml-4" *ngIf="isLoading">
+                <div role="status">
+                  <svg
+                    aria-hidden="true"
+                    class="inline w-4 h-4 mr-3 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    viewBox="0 0 100 101"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                      fill="currentColor" />
+                    <path
+                      d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                      fill="currentFill" />
+                  </svg>
+                  <span class>Loading accounts...</span>
+                </div>
+              </div>
+
+              <div *ngIf="allAccounts.length === 0 && !isLoading" class="flex p-3">
+
+                <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                    stroke-width="2" d="m13 7-6 6m0-6 6 6m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                </svg>
+
+                <span class="ml-3">
+                  Please ensure that you have setup at least one brokerage account.
+                </span>
+
+              </div>
+
+              <div class="text-left load" *ngIf="allAccounts.length > 0 && !isLoading">
+
+                <p class="p-3">
+                  Trades will be placed into the selected trading account or wallet.
+                </p>
+
+                <select
+                  formControlName="account"
+                  id="account"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option *ngFor="let account of allAccounts" [value]="account.uuid">
+                    {{account.accountName}} | {{account.provider}} | {{account.environment}}
+                  </option>
+                </select>
+
+                <div class="mt-3">
+                  <button
+                    type="submit"
+                    class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                    (click)="setAccount()">
+                    Next
+                  </button>
+                </div>
+
+              </div>
+
+            </div>
+
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Four -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 4">
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="balance"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum
+                Leverage</label>
+              <input
+                formControlName="maximumLeverage"
+                type="number"
+                id="balance"
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="defaultOrderSize"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Default Order
+                Size (%)</label>
+              <div class="flex w-6/12">
+                <input
+                  formControlName="defaultOrderSize"
+                  type="number"
+                  id="defaultOrderSize"
+                  class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                <span
+                  class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                  <svg
+                    class="w-6 h-6 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="maxSizePortofolio"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum
+                position
+                size in portfolio (%)</label>
+              <div class="flex w-6/12">
+                <input
+                  formControlName="maxSizePortofolio"
+                  type="number"
+                  id="maxSizePortofolio"
+                  class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                <span
+                  class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                  <svg
+                    class="w-6 h-6 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+                  </svg>
+                </span>
+              </div>
+
+              <p class="p-3">
+                The settings determine the size (value) of the trade to be placed.
+              </p>
+
+              <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                (click)="setSettings()">
+                Complete
+              </button>
+
+            </div>
+
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Finish -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 5">
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <p>Your trigger has now been setup. <span class="cursor-pointer underline"
+                  (click)="goToSection(1)">Back</span></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</main>

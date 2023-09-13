@@ -1,0 +1,56 @@
+.pr-text {
+  font-family: "roboto", sans-serif;
+  font-size: 1em;
+}
+.line-sm {
+  display: flex;
+  column-gap: 30px;
+  margin: 15px 0;
+  width: 95%;
+}
+
+.title {
+  font-family: "roboto", sans-serif;
+  font-weight: 400;
+  font-size: 1em;
+  line-height: 1em;
+  color: rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.value {
+  font-family: "roboto", sans-serif;
+  font-size: 1em;
+  line-height: 1.25em;
+  max-width: 90%;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  & .span {
+    font-family: "roboto", sans-serif;
+    font-weight: 500;
+    font-size: 1em;
+    line-height: 1em;
+  }
+}
+
+.value-link {
+  font-family: "roboto", sans-serif;
+  font-size: 1em;
+  line-height: 1em;
+  color: black;
+}
+.value-link:hover {
+  text-decoration: underline;
+}
+
+.indentprice {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+@media (max-width: 428px) {
+  .line-sm {
+    column-gap: 5px;
+  }
+}

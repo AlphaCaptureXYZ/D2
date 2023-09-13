@@ -1,0 +1,33 @@
+.body {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  background-color: #fff;
+  font-size: 20px;
+}
+
+.move-left {
+  transform: translate(-100vw);
+  transition: all 0.5s;
+}
+
+.title {
+  font-family: "roboto", sans-serif;
+  font-size: 6em;
+  line-height: 130%;
+  font-weight: 900;
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  font-family: "roboto", sans-serif;
+  font-size: 2em;
+  line-height: 130%;
+}

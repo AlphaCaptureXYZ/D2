@@ -1,0 +1,254 @@
+<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+  <tbody>
+    <tr
+      class="bg-white border-b border-t dark:bg-gray-800 dark:border-gray-700"
+    >
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Token ID
+      </th>
+      <td class="px-6 py-4">{{ idea.nftId }}</td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        Created At
+      </th>
+      <td class="px-6 py-4">
+        {{ data.priceInfo?.price?.timestamp | date : "full" }}
+      </td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        Stage
+      </th>
+      <td class="px-6 py-4">{{ data.kind | titlecase }}</td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Metadata
+      </th>
+      <td class="px-6 py-4">
+        <!-- {{ data.url }} -->
+      </td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        Chain
+      </th>
+      <td class="px-6 py-4">
+        <!-- {{ settings?.chain }} -->
+      </td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        Token Standard
+      </th>
+      <td class="px-6 py-4">
+        <!-- {{ tokenStandard }} -->
+      </td>
+    </tr>
+
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+      >
+        Encrypted
+      </th>
+      <td class="px-6 py-4">
+        <!-- {{ idea.access.encryption.encrypt ? "True" : "False" }} -->
+      </td>
+    </tr>
+
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Hash
+      </th>
+      <td class="px-6 py-4">
+        <!-- {{ dataSha512Hash }} -->
+      </td>
+    </tr>
+
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Asset
+      </th>
+      <td class="px-6 py-4">{{ data.asset.description }}</td>
+    </tr>
+
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Tradable Ticker
+      </th>
+      <td class="px-6 py-4">{{ data.asset.ticker }}</td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Direction
+      </th>
+      <td class="px-6 py-4">{{ data.trade?.direction }}</td>
+    </tr>
+    <tr
+      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+    >
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Conviction
+      </th>
+      <td class="px-6 py-4">
+        {{ data.trade?.conviction }}%
+      </td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Price
+      </th>
+      <td class="px-6 py-4">
+        <div
+          class="value"
+          *ngIf="
+            data?.trade?.direction === 'long' ||
+            data?.adjustment?.kind === 'increase'
+          "
+        >
+          {{ data.priceInfo?.price?.ask }}
+
+          <span
+            *ngIf="
+              data.priceInfo?.price?.ask !==
+              data.priceInfo?.price?.bid
+            "
+            class="valuec"
+          >
+            ( Bid: {{ data.priceInfo?.price?.bid }} / Ask:
+            {{ data.priceInfo?.price?.ask }})
+          </span>
+        </div>
+        <div
+          class="value"
+          *ngIf="
+            data.trade?.direction === 'short' ||
+            data.adjustment?.kind === 'decrease'
+          "
+        >
+          {{ data.priceInfo?.price?.bid }}
+
+          <span
+            *ngIf="
+              data.priceInfo?.price?.ask !==
+              data.priceInfo?.price?.bid
+            "
+            class="valuec"
+          >
+            ( Bid: {{ data.priceInfo?.price?.bid }} / Ask:
+            {{ data.priceInfo?.price?.ask }})
+          </span>
+        </div>
+      </td>
+    </tr>
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Pricing Provider
+      </th>
+      <td class="pl-6 py-4">
+        <!-- <app-pricing-standard
+          [pricing]="data.priceInfo?.price"
+          [signature]="data.priceInfo?.signature"
+        ></app-pricing-standard> -->
+
+        <span class="indentprice">
+          <p class="pr-text">
+            The following data reflects the market pricing at the time of NFT creation.
+          </p>
+        
+          <div class="line-sm" *ngIf="data.priceInfo?.price?.timestamp">
+            <div class="title">Timestamp</div>
+            <div class="value">{{ data.priceInfo?.price?.timestamp }}</div>
+          </div>
+          <div class="line-sm" *ngIf="data.priceInfo?.price?.bid">
+            <div class="title">Bid</div>
+            <div class="value">{{ data.priceInfo?.price?.bid }}</div>
+          </div>
+          <div class="line-sm" *ngIf="data.priceInfo?.price?.ask">
+            <div class="title">Ask</div>
+            <div class="value">{{ data.priceInfo?.price?.ask }}</div>
+          </div>
+        
+          <div class="line-sm" *ngIf="data.priceInfo?.price?.symbol">
+            <div class="title" *ngIf="data.priceInfo?.price?.provider === 'IG Group'">Epic</div>
+            <div class="title" *ngIf="data.priceInfo?.price?.provider !== 'IG Group'">Symbol</div>
+            <div class="value">{{ data.priceInfo?.price?.symbol }}</div>
+          </div>
+          <!-- Signature -->
+        
+          <div class="line-sm" *ngIf="data.priceInfo?.signature?.signature">
+            <div class="title">Signature</div>
+            <div class="value">{{ data.priceInfo?.signature?.signature }}</div>
+          </div>
+        
+          <div class="line-sm" *ngIf="data.priceInfo?.signature?.dataSigned">
+            <div class="title">Data</div>
+            <div class="value">{{ data.priceInfo?.signature?.dataSigned }}</div>
+          </div>
+        
+          <div class="line-sm" *ngIf="data.priceInfo?.signature?.publicKey">
+            <div class="title">Public Key</div>
+            <div class="value">{{ data.priceInfo?.signature?.publicKey }}</div>
+          </div>
+        </span>
+        
+      </td>
+    </tr>
+    <tr
+      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+    >
+      <th
+        class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+      >
+        Place Order
+      </th>
+      <td class="px-6 py-4">
+        <button
+          type="submit"
+          (click)="goBasic()"
+          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+        >
+          Basic
+        </button>
+
+        <button
+          type="submit"
+          (click)="goManaged()"
+          class="ml-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+        >
+          Managed
+        </button>
+        
+      </td>
+    </tr>
+
+  </tbody>
+</table>

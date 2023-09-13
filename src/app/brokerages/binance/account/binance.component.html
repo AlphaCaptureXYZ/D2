@@ -1,0 +1,159 @@
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+  <div class="container mx-auto px-6 py-8">
+    <p
+      class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
+      Binance
+    </p>
+
+    <div class="flex flex-col mt-8">
+      <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+        <p>In adding your Binance account, you are creating an encrypted NFT which will reside in
+          your connected wallet. </p>
+
+        <p>Only you can access and decrypt the NFT.</p>
+
+      </div>
+    </div>
+
+    <div class="flex flex-col mt-8">
+      <div
+        class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8 w50">
+        <form [formGroup]="form" (ngSubmit)="submitForm()">
+          <div class="mb-6">
+            <label
+              for="publicApi"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name (*)</label>
+            <input
+              type="text"
+              id="name"
+              formControlName="name"
+              placeholder="Account nickname"
+              [ngClass]="
+                submitted && f['name'].errors
+                  ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              " />
+            <div *ngIf="submitted && f['name'].errors">
+              <p
+                class="mt-2 text-sm text-red-600 dark:text-red-500"
+                *ngIf="f['name'].errors['required']">
+                Name is required
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label
+              for="environment"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Environment (*)</label>
+            <select
+              id="environment"
+              [ngClass]="
+                submitted && f['environment'].errors
+                  ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              "
+              formControlName="environment">
+              <option value selected hidden>Choose an option</option>
+              <option value="prod">Prod</option>
+              <option value="demo">Demo</option>
+            </select>
+            <div *ngIf="submitted && f['environment'].errors">
+              <p
+                class="mt-2 text-sm text-red-600 dark:text-red-500"
+                *ngIf="f['environment'].errors['required']">
+                Environment is required
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label
+              for="publicApi"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Public API Key
+              (*)</label>
+            <input
+              type="text"
+              id="publicApi"
+              [ngClass]="
+                submitted && f['publicApi'].errors
+                  ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              "
+              placeholder="Your public API"
+              formControlName="publicApi" />
+            <div *ngIf="submitted && f['publicApi'].errors">
+              <p
+                class="mt-2 text-sm text-red-600 dark:text-red-500"
+                *ngIf="f['publicApi'].errors['required']">
+                Your public API is required
+              </p>
+            </div>
+          </div>
+          <div class="mb-6">
+            <label
+              for="secretApi"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secret API Key
+              (*)</label>
+            <input
+              type="text"
+              id="secretApi"
+              [ngClass]="
+                submitted && f['secretApi'].errors
+                  ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
+                  : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+              "
+              placeholder="Your secret API"
+              formControlName="secretApi" />
+            <div *ngIf="submitted && f['secretApi'].errors">
+              <p
+                class="mt-2 text-sm text-red-600 dark:text-red-500"
+                *ngIf="f['secretApi'].errors['required']">
+                Your secret API is required
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <label
+              for="secretApi"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">IP Address</label>
+            <p class="p-3">
+              Binance recommends that access for API keys that you create is
+              restricted to trusted IPs only. While an excellent recommendation,
+              D2 Triggers use Lit Protocol's distributed node network to make
+              requests. While using a distributed network has many advantages,
+              it does make it impossible to use Binance's IP restriction as there is no single IP
+              address used.
+            </p>
+
+            <p class="p-3" *ngIf="ipAddress.length > 0">
+              For verification purposes, an API call is made locally to Binance.
+            </p>
+
+            <p class="p-3">NOTE: Add this ip address in your trusted IPs list: 34.147.212.171 and mark/enable the option "Enable Spot & Margin Trading"</p>
+          </div>
+
+          <div class="mb-6 text-right" *ngIf="!isLoading">
+            <button
+              (click)="verifyForm()"
+              type="button"
+              class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
+              VERIFY KEYS
+            </button>
+          </div>
+
+          <div class="mb-6 text-right" *ngIf="isLoading">
+            <button
+              type="button"
+              class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
+              LOADING...
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+</main>

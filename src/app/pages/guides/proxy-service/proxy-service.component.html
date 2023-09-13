@@ -1,0 +1,60 @@
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+    <div class="container mx-auto px-6 py-8">
+        <p
+            class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
+            How to add and adapt your own proxy service?
+        </p>
+
+        <div class="flex flex-col mt-8 w50">
+            <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+                <p>In this point we will show the same/exact service used here: <a
+                        href="https://api.ixily.io/v1/proxy" target="_blank" class="link">https://api.ixily.io/v1/proxy</a></p>
+
+                <div class="mt-5">
+                    <img src="assets/img/proxy-service-guide.png" alt>
+                </div>
+
+                <p class="mt-5">The provider/exchange will use this instead of your local machine or
+                    another with the advantage to have one secure service.</p>
+
+                <p class="mt-5">1. Create your server using nodejs + express and add this route:</p>
+
+                <div class="mt-4 ml-1 text-sm" style="width: 50%">
+                    <div class="mb-2 pull-right">
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                            (click)="copyCode(proxyRouteCode, $event)">Copy</span>
+                    </div>
+
+                    <pre><code [highlight]="proxyRouteCode"></code></pre>
+                </div>
+
+                <p class="mt-5">2. Create your controller and link with the route:</p>
+
+                <div class="mt-4 ml-1 text-sm" style="width: 50%">
+                    <div class="mb-2 pull-right">
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                            (click)="copyCode(proxyControllerCode, $event)">Copy</span>
+                    </div>
+
+                    <pre><code [highlight]="proxyControllerCode"></code></pre>
+                </div>
+
+                <p class="mt-5">3. Implementation of this function: proxyToCallExternalProcess</p>
+
+                <div class="mt-4 ml-1 text-sm" style="width: 50%">
+                    <div class="mb-2 pull-right">
+                        <span
+                            class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                            (click)="copyCode(proxyToCallExternalProcessFnCode, $event)">Copy</span>
+                    </div>
+
+                    <pre><code [highlight]="proxyToCallExternalProcessFnCode"></code></pre>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>

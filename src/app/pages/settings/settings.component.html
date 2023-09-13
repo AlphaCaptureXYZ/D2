@@ -1,0 +1,120 @@
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+  <div class="container mx-auto px-6 py-8">
+    <p
+      class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
+      Settings
+    </p>
+
+    <div class="flex flex-col mt-8 w50">
+      <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+        <div *ngIf="isLoading">
+          <div class="mb-6">
+            <p>Decrypting settings...</p>
+          </div>
+        </div>
+
+        <div *ngIf="!isLoading">
+
+          <div class="mb-6">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Proxy service:</label>
+
+            <p class="p-3">
+              A proxy service is used for when a fixed IP address is required. Binance for example,
+              requires that all trading related requests originate from a known IP address. You'll
+              need to ensure the IP is address at Binance.
+            </p>
+            <p class="p-3">
+              While you may use IXily's proxy, you should consider using your own to ensure security
+              <span class="underline cursor-pointer" (click)="goToPage('proxy-guide')">(guide to
+                add/adapt)</span>.
+            </p>
+
+            <input
+              type="string"
+              id="proxy"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              [(ngModel)]="form.proxy_url"
+              (ngModelChange)="requiredControl()" />
+
+            <p class="p-3" *ngIf="form.proxy_url === defaultProxy.url">
+              IP Address: {{defaultProxy.ip}}
+            </p>
+            <p class="p-3 hover:underline cursor-pointer"
+              *ngIf="form.proxy_url !== defaultProxy.url" (click)="restoreDefaultProxy()">
+              Restore default
+            </p>
+
+          </div>
+
+          <div class="mb-6" *ngIf="false">
+            <label
+              for="quantity"
+              class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Croupier service:</label>
+
+            <p class="p-3">
+              A croupier service is used to ensure that when using a distributed network i.e.
+              multiple nodes, only a single action is taken i.e. placing an order.
+            </p>
+            <p class="p-3">
+              The IXily croupier service is open source to provide transparency and so you can run
+              your own service if you prefer.
+            </p>
+
+            <input
+              type="string"
+              id="croupier"
+              class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              [(ngModel)]="form.croupier_url"
+              (ngModelChange)="requiredControl()" />
+
+            <p class="p-3 hover:underline cursor-pointer"
+              *ngIf="form.croupier_url !== defaultCroupier.url" (click)="restoreDefaultCroupier()">
+              Restore default
+            </p>
+
+          </div>
+
+          <button
+            type="submit"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+            (click)="submit()"
+            [disabled]="!submitEnabled" *ngIf="!isLoading && !formIsLoading">
+            Update
+          </button>
+
+          <button
+            type="submit"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+            *ngIf="formIsLoading">
+            Loading...
+          </button>
+        </div>
+
+        <div class="flex flex-col mt-8">
+          <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+            <p
+              class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-2xl">
+              Access Control
+            </p>
+
+            <div class="mb-4">
+              <p class="text-sm pt-3 pb-3">Reset the Lit Action authentication if there are problems
+                related to the access control conditions.</p>
+
+              <button type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                <div class="mt-1" (click)="resetLitAuth()">Reset</div>
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>

@@ -1,0 +1,170 @@
+{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "newProjectRoot": "projects",
+  "projects": {
+    "client": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-builders/custom-webpack:browser",
+          "options": {
+            "customWebpackConfig": {
+              "path": "./webpack.config.js",
+              "mergeStrategies": {
+                "module.rules": "append"
+              },
+              "replaceDuplicatePlugins": true
+            },
+            "allowedCommonJsDependencies": [
+              "@metamask/detect-provider",
+              "weavedb-sdk",
+              "crypto-js",
+              "lit-js-sdk",
+              "@ixily/activ-web",
+              "query-string",
+              "bn.js",
+              "any-signal",
+              "ipfs-utils/src/http.js",
+              "aes-js",
+              "scrypt-js",
+              "js-sha3",
+              "bech32",
+              "stream-to-it/source.js",
+              "aes-js",
+              "scrypt-js",
+              "js-sha3",
+              "bech32",
+              "hash.js",
+              "pvtsutils",
+              "ipaddr.js",
+              "@walletconnect/window-getters",
+              "@walletconnect/window-metadata",
+              "@walletconnect/socket-transport",
+              "cross-fetch",
+              "@walletconnect/environment",
+              "@stablelib/ed25519",
+              "qrcode",
+              "eccrypto",
+              "ethereumjs-util",
+              "secp256k1",
+              "@ethereumjs/tx",
+              "it-peekable",
+              "blob-to-it",
+              "it-all",
+              "it-map",
+              "it-first",
+              "stream-to-it/source.js",
+              "@lit-protocol/lit-node-client",
+              "typedarray-to-buffer",
+              "is-typedarray"
+            ],
+            "outputPath": "dist",
+            "index": "src/index.html",
+            "main": "src/main.ts",
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-builders/custom-webpack:dev-server",
+          "configurations": {
+            "production": {
+              "browserTarget": "client:build:production"
+            },
+            "development": {
+              "browserTarget": "client:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "client:build"
+          }
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "polyfills": "src/polyfills.ts",
+            "tsConfig": "tsconfig.spec.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              "src/favicon.ico",
+              "src/assets"
+            ],
+            "styles": [
+              "src/styles.scss"
+            ],
+            "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ],
+    "analytics": "97e96c82-b607-4492-9371-27c05ca72004"
+  }
+}

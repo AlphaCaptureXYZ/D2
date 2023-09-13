@@ -1,0 +1,21 @@
+.metamask {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    width: 20vw;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 100px;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.logo-metamask {
+    width: 50px;
+}
