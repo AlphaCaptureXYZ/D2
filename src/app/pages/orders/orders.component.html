@@ -41,8 +41,8 @@
                 </thead>
                 <tbody>
                     <tr
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full cursor-pointer"
-                        *ngFor="let order of orders" (click)="setRawInfo(order)">
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full"
+                        *ngFor="let order of orders">
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
                             {{( order.provider | titlecase) || "-" }}
                         </td>
