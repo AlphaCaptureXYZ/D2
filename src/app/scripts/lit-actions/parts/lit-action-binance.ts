@@ -8,7 +8,7 @@ const binanceUrlSelector = {
 // for any reason this is not working
 // const proxyUrl = 'https://croupier.ixily.io/proxy';
 
-const proxyUrl = 'https://api.ixily.io/v1/proxy';
+const proxyUrl = 'https://ixily.io/api/proxy';
 
 /* <helpers> */
 const objectToQueryString = `

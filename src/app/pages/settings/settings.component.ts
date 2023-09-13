@@ -40,8 +40,8 @@ export default class SettingsComponent implements OnInit {
     submitEnabled = false;
 
     defaultProxy = {
-        url: 'https://api.ixily.io/v1/proxy',
-        ip: '00.000.000.000',
+        url: 'https://ixily.io/api/proxy',
+        ip: '35.189.88.222',
     }
 
     defaultCroupier = {

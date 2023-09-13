@@ -47,12 +47,12 @@ export default class ProxyServiceGuideComponent implements OnInit {
     fillCode() {
         this.proxyRouteCode = prettyCode(`
             app
-             .get('/v1/proxy', proxyCtrl.proxy)
-             .post('/v1/proxy', proxyCtrl.proxy)
+             .get('/v1/proxy', proxyCtrl)
+             .post('/v1/proxy', proxyCtrl)
         `);
 
         this.proxyControllerCode = prettyCode(`
-            export const proxy = async (req, res) => {
+            export const proxyCtrl = async (req, res) => {
 
                 const request = {
                     ...req.body,
