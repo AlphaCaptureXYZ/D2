@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
+import { pkpKey } from 'src/app/constants/constants';
+
 interface FormType {
     proxy_url: string;
     croupier_url: string;
@@ -117,6 +119,7 @@ export default class SettingsComponent implements OnInit {
                 userWallet,
                 docId: this.settingsDocId,
                 isCompressed: false,
+                pkpKey,
             });
 
             this.formIsLoading = false;
