@@ -2,8 +2,6 @@
     overflow-y: auto;
 }
 
-
-
 .app-right-container::-webkit-scrollbar {
     width: 12px;
     background: #fff;
@@ -13,4 +11,8 @@
     background: #5657ec;
     border-radius: 5px;
     border: 3px solid #fff;
+}
+
+.link {
+    color: #007bff;
 }

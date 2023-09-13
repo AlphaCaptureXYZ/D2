@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HighlightModule } from 'ngx-highlightjs';
+import { RouterModule } from '@angular/router';
 
 import {
     copyValue,
@@ -14,6 +15,7 @@ import {
     imports: [
         CommonModule,
         HighlightModule,
+        RouterModule,
     ],
     templateUrl: './proxy-service.component.html',
     styleUrls: ['./proxy-service.component.scss']

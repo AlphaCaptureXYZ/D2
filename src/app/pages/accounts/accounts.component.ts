@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -19,10 +19,11 @@ const chain = 'mumbai';
   templateUrl: './accounts.component.html',
   styleUrls: ['./accounts.component.scss'],
 })
-export default class AccountsComponent {
+export default class AccountsComponent implements OnInit {
 
+  isLoading = false;
   currentOption: string;
-  allAccounts: any[];
+  accounts: any[];
 
   broker: string;
   apiKey: string;
@@ -40,7 +41,7 @@ export default class AccountsComponent {
   constructor(
     private nftCredentialService: NFTCredentialService,
   ) {
-    this.allAccounts = [];
+    this.accounts = [];
     this.broker = 'Binance';
     this.currentOption = 'accounts';
 
@@ -55,7 +56,17 @@ export default class AccountsComponent {
   }
 
   async ngOnInit() {
-    this.allAccounts = await this.nftCredentialService.getMyCredentials();
+    this.getAccounts();
+  }
+
+  async getAccounts() {
+    this.isLoading = true;
+    try {
+      this.accounts = await this.nftCredentialService.getMyCredentials();
+    } catch(err) {
+      // console.log(err.message);
+    }
+    this.isLoading = false;
   }
 
   async decrypt(uuid: string) {
@@ -99,7 +110,7 @@ export default class AccountsComponent {
       console.log('decrypt (error)', err?.message);
       alert(`You don't have access to this credential`);
     }
-  };
+  }
 
   async clearAll() {
     this.valueToEncryptOrDecrypt = null as any;

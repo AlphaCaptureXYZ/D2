@@ -11,23 +11,24 @@
           The following brokerage accounts are encrypted NFTS that reside in your connected wallet.
           Only you can access and decrypt these NFTs. Note that the process of encrypting data and
           creating an NFT leverages the Lit Protocol (<a href="https://litprotocol.com/"
-            class="hover:underline cursor-pointer">https://litprotocol.com/</a>).
+            class="link hover:underline">https://litprotocol.com/</a>).
         </p>
 
         <p class="p-3">
           Accounts may be setup for the following brokerages:
         </p>
 
-        <ul class="indent-8 list-inside list-disc">
-          <li class="mt-4 hover:underline cursor-pointer">
-            <a routerLink="/accounts/binance">Binance</a>
+        <ul class="indent-8 list-inside list-disc mb-8">
+          <li class="mt-4">
+            <a routerLink="/accounts/binance" class="link hover:underline">Binance</a>
           </li>
         </ul>
 
       </div>
     </div>
 
-    <div class="relative mt-8">
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
       <table class="text-sm text-left text-gray-500 dark:text-gray-400">
         <thead
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -40,10 +41,35 @@
             <!-- <th scope="col" class="px-6 py-3">Actions</th> -->
           </tr>
         </thead>
-        <tbody>
+
+        <tbody *ngIf="isLoading">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              colspan="4">
+              <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
+            </th>
+          </tr>
+        </tbody>     
+
+        <tbody *ngIf="!isLoading && accounts.length === 0">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              colspan="4">
+              No accounts have been configured yet
+            </th>
+          </tr>
+        </tbody>        
+
+        <tbody *ngIf="!isLoading && accounts.length > 0">
           <tr
             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full"
-            *ngFor="let account of allAccounts">
+            *ngFor="let account of accounts">
             <th
               scope="row"
               class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
@@ -74,7 +100,6 @@
           </tr>
         </tbody>
       </table>
-      <p class="mt-4 ml-1 text-sm" *ngIf="allAccounts.length <= 0">Not exists accounts created yet</p>
 
       <div style="width: 50%;">
         <div class="mt-4 ml-1 text-sm" *ngIf="decryptedValueResult">
