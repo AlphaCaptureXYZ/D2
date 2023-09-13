@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HighlightModule } from 'ngx-highlightjs';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
+import { copyValue, wait } from 'src/app/helpers/helpers';
 
 interface IOrder {
   id: string;
@@ -32,7 +33,10 @@ export default class OrdersComponent {
 
   orderReference: string
   orderDetails: any;
-  rawInfo: any;
+
+  rawRequest: any;
+  rawResponse: any;
+  rawAdditionalInfo: any;
 
   constructor(
     private weaveDBService: WeaveDBService,
@@ -55,9 +59,21 @@ export default class OrdersComponent {
     const order = await this.weaveDBService.getDataByDocID<any>(docID);
 
     this.orderDetails = order;
-    this.rawInfo = JSON.stringify(this.orderDetails, null, 2);
+
+    this.rawRequest = JSON.stringify(this.orderDetails?.result?.request, null, 2);
+    this.rawResponse = JSON.stringify(this.orderDetails?.result?.response, null, 2);
+    this.rawAdditionalInfo = JSON.stringify(this.orderDetails?.result?.additionalInfo, null, 2);
 
     this.isLoading = false;
   }
 
+  copyCode(code: string, event: any) {
+    event.target.innerText = 'Copied!';
+
+    wait(1000).then(() => {
+      event.target.innerText = 'Copy';
+    });
+
+    copyValue(code);
+  }
 }
