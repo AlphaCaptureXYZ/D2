@@ -33,6 +33,7 @@
                         <th scope="col" class="px-6 py-3">Created At</th>
                         <th scope="col" class="px-6 py-3">Env</th>
                         <th scope="col" class="px-1 py-1 pl-5">Idea Linked</th>
+                        <th scope="col" class="px-1 py-1 pl-5"></th>
                     </tr>
                 </thead>
 
@@ -76,7 +77,8 @@
                         </th>
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
                             (click)="setRawInfo(order)">
-                            {{( order.ticker) || "-" }}
+                            {{( order.ticker || order?.raw?.result?.additionalInfo?.asset)
+                            || "-" }}
                         </td>
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
                             (click)="setRawInfo(order)">
@@ -107,6 +109,16 @@
                             <span *ngIf="order.nftIdLinked" class="cursor-pointer"
                                 (click)="goToIdeaPage(order)"> <i
                                     class='bx bx-detail'></i> ({{order.nftIdLinked}})</span>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
+                            (click)="setRawInfo(order)">
+                            <span>
+                                <i class='bx bxs-check-circle text-2xl success'
+                                    *ngIf="!order?.raw?.result?.response?.error"></i>
+                                <i class='bx bxs-error-circle text-2xl error'
+                                    *ngIf="order?.raw?.result?.response?.error"></i>
+                            </span>
                         </td>
 
                     </tr>
