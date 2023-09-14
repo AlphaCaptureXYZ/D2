@@ -10,7 +10,7 @@ import SplashComponent from './pages/splash/splash.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { EventService, EventType } from './services/event.service';
 // import { environment } from 'src/environments/environment';
-import { getDefaultAccount, litSigAuthExpirationCheck } from './shared/shared';
+import { getDefaultAccount, getEthereum, litSigAuthExpirationCheck } from './shared/shared';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +33,9 @@ export class AppComponent implements OnInit {
   currentOption = 'dashboard';
   starting = true;
 
-  constructor(private eventService: EventService) {}
+  ethereum: any;
+
+  constructor(private eventService: EventService) { }
 
   async ngOnInit() {
     initFlowbite();
@@ -47,6 +49,11 @@ export class AppComponent implements OnInit {
     if (account) {
       this.eventService.emit('METAMASK_WALLET_DETECTED', { wallet: account });
       this.starting = false;
+
+      this.ethereum = await getEthereum();
+      this.ethereum.on('accountsChanged', (accounts: any[]) => {
+        this.eventService.emit('METAMASK_WALLET_CHANGED', { wallet: accounts[0] });
+      });
     }
   }
 
@@ -60,7 +67,6 @@ export class AppComponent implements OnInit {
           if (data?.wallet) {
             this.starting = false;
           }
-
           break;
       }
     });
