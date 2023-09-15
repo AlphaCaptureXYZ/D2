@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { getDefaultAccount } from 'src/app/shared/shared';
 import { EventService } from 'src/app/services/event.service';
