@@ -41,6 +41,9 @@ export default class NavbarAuthComponent implements OnInit {
           this.walletAddress = data?.wallet || null;
           this.getNetwork();
           break;
+        case 'METAMASK_WALLET_CHANGED':
+          window.location.reload();
+          break;
       }
     });
   }

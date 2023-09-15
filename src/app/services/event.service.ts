@@ -34,5 +34,6 @@ export class EventService {
 /* list of linked events */
 export type EventType =
   | 'METAMASK_WALLET_DETECTED'
+  | 'METAMASK_WALLET_CHANGED'
   | 'TO_BASIC'
   | 'TO_MANAGED';
