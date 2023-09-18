@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
-import { pkpKey } from 'src/app/constants/constants';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { copyValue, wait } from 'src/app/helpers/helpers';
 
