@@ -200,6 +200,7 @@ export class PKPGeneratorService {
             tokenId: null as any,
             pkpPublicKey: null as any,
             pkpWalletAddress: null as any,
+            wallets: [] as string[],
         };
 
         try {
@@ -226,6 +227,11 @@ export class PKPGeneratorService {
             response.pkpPublicKey = pubKey;
             response.pkpWalletAddress = ethers.utils.computeAddress(pubKey);
 
+            response.wallets = await this.getWalletsWithAccess(
+                tokenIdFromEvent,
+                contract,
+            );
+
             await getDefaultNetwork();
 
         } catch (err: any) {
@@ -240,7 +246,7 @@ export class PKPGeneratorService {
         walletAddress: string,
         contract: any = null
     ) {
-        let addresses = [];
+        let addresses: any[] = [];
 
         try {
 
@@ -269,7 +275,7 @@ export class PKPGeneratorService {
     async getWalletsWithAccess(
         tokenId: any,
         contract: any = null
-    ) {
+    ): Promise<string[]> {
         let addresses = [];
 
         try {

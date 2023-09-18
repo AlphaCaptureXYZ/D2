@@ -43,14 +43,14 @@ export default class SettingsComponent implements OnInit {
     walletAddressToAddAccess: string;
     walletsWithAccess: any[] = [];
 
-    pkpLoading: boolean;
+    pkpLoading: boolean = false;
+    pkpMintLoading: boolean = false;
 
     constructor(
         private router: Router,
         private weaveDBService: WeaveDBService,
         private pKPGeneratorService: PKPGeneratorService,
     ) {
-        this.pkpLoading = false;
         this.walletAddressToAddAccess = null as any;
         this.pkpInfo = null as any;
         this.pkpInfoDocId = undefined as any;
@@ -85,7 +85,6 @@ export default class SettingsComponent implements OnInit {
 
     async getPkpInfo() {
 
-
         const data = await this.weaveDBService.getAllData<any>({
             type: 'pkp-info'
         });
@@ -96,8 +95,10 @@ export default class SettingsComponent implements OnInit {
             this.pkpInfo.url = `${litPkpUrl}/${this.pkpInfo.tokenId}`;
 
             this.pkpLoading = true;
+
             const wallets =
                 await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
+
             this.pkpLoading = false;
 
             this.walletsWithAccess = wallets;
@@ -106,29 +107,34 @@ export default class SettingsComponent implements OnInit {
     }
 
     async generatePkp() {
-        this.pkpLoading = true;
+        if (!this.pkpMintLoading) {
+            this.pkpMintLoading = true;
 
-        try {
-            const mint = await this.pKPGeneratorService.mint();
+            try {
+                const mint = await this.pKPGeneratorService.mint();
 
-            const userWallet = await getDefaultAccount();
+                const userWallet = await getDefaultAccount();
 
-            await this.weaveDBService.upsertData({
-                type: 'pkp-info',
-                jsonData: mint,
-                userWallet,
-                isCompressed: false,
-                pkpKey: mint.pkpPublicKey,
-            });
+                await this.weaveDBService.upsertData({
+                    type: 'pkp-info',
+                    jsonData: mint,
+                    userWallet,
+                    isCompressed: false,
+                    pkpKey: mint.pkpPublicKey,
+                });
 
-            this.pkpInfo = mint;
+                this.pkpInfo = mint;
 
-            this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
-        } catch (err: any) {
-            console.log('generatePkp', err.message);
+                this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
+
+                this.walletsWithAccess = mint.wallets;
+
+            } catch (err: any) {
+                this.pkpMintLoading = false;
+            }
+
+            this.pkpMintLoading = false;
         }
-
-        this.pkpLoading = false;
     }
 
     async addWalletAccess() {

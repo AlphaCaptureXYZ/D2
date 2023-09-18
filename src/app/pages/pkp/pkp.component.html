@@ -23,7 +23,11 @@
               </button>
             </div>
 
-            <div *ngIf="pkpInfo?.pkpPublicKey">
+            <div *ngIf="pkpMintLoading">
+              <p>Generating...</p>
+            </div>
+
+            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading">
 
               <p class="mt-5">
                 <b>Token Id:</b> {{pkpInfo?.tokenId}}
