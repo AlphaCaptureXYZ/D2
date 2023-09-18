@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
-import { EventService, EventType } from 'src/app/services/event.service';
+import { EventService } from 'src/app/services/event.service';
 import NavbarAuthComponent from 'src/app/components/navbar-auth/navbar-auth.component';
 import LeftMenuComponent from 'src/app/components/left-menu/left-menu.component';
 
@@ -11,6 +11,8 @@ import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
 import { pkpKey } from 'src/app/constants/constants';
+
+import { environment } from '../../../environments/environment';
 
 interface FormType {
     proxy_url: string;
@@ -38,17 +40,10 @@ export default class SettingsComponent implements OnInit {
     isLoading = false;
     formIsLoading = false;
     submitEnabled = false;
-
-    defaultProxy = {
-        url: 'https://ixily.io/api/proxy',
-        ip: '35.189.88.222',
-    }
-
-    defaultCroupier = {
-        url: 'https://croupier.ixily.io',
-    }
-
     settingsDocId: string;
+    defaultProxyUrl = environment.defaultProxyUrl;
+    defaultProxyIp = environment.defaultProxyIp;
+    defaultCroupierUrl = environment.defaultCroupierUrl;
 
     constructor(
         private router: Router,
@@ -58,9 +53,10 @@ export default class SettingsComponent implements OnInit {
     ) {
         this.settingsDocId = undefined as any;
         this.currentOption = 'settings';
+
         this.form = {
-            proxy_url: this.defaultProxy.url,
-            croupier_url: this.defaultCroupier.url,
+            proxy_url: environment.defaultProxyUrl,
+            croupier_url: environment.defaultCroupierUrl,
         };
         this.requiredControl();
     }
@@ -81,13 +77,13 @@ export default class SettingsComponent implements OnInit {
     };
 
     async restoreDefaultProxy() {
-        this.form.proxy_url = this.defaultProxy.url;
+        this.form.proxy_url = environment.defaultProxyUrl;
         this.requiredControl();
         this.cRef.detectChanges();
     }
 
     async restoreDefaultCroupier() {
-        this.form.croupier_url = this.defaultCroupier.url;
+        this.form.croupier_url = environment.defaultCroupierUrl;
         this.requiredControl();
         this.cRef.detectChanges();
     }

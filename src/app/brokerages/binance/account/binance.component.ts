@@ -7,6 +7,8 @@ import { EventService } from 'src/app/services/event.service';
 
 import { publicIp } from 'public-ip';
 
+import { environment } from '../../../../environments/environment';
+
 // @ts-ignore
 import { blobToBase64String } from 'lit-js-sdk';
 
@@ -36,6 +38,7 @@ import { pkpKey } from 'src/app/constants/constants';
 export default class AccountsBinanceComponent implements OnInit {
   currentOption = 'accounts-binance';
   ipAddress = '';
+  defaultProxyIp = environment.defaultProxyIp;
   verified = false;
   submitted = false;
 

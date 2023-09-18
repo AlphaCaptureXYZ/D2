@@ -74,20 +74,20 @@
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Public API Key
               (*)</label>
             <input
-              type="text"
+              type="password"
               id="publicApi"
               [ngClass]="
                 submitted && f['publicApi'].errors
                   ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
                   : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               "
-              placeholder="Your public API"
+              placeholder="Your public API key"
               formControlName="publicApi" />
             <div *ngIf="submitted && f['publicApi'].errors">
               <p
                 class="mt-2 text-sm text-red-600 dark:text-red-500"
                 *ngIf="f['publicApi'].errors['required']">
-                Your public API is required
+                Your public API key is required
               </p>
             </div>
           </div>
@@ -97,20 +97,20 @@
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Secret API Key
               (*)</label>
             <input
-              type="text"
+              type="password"
               id="secretApi"
               [ngClass]="
                 submitted && f['secretApi'].errors
                   ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
                   : 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
               "
-              placeholder="Your secret API"
+              placeholder="Your secret API key"
               formControlName="secretApi" />
             <div *ngIf="submitted && f['secretApi'].errors">
               <p
                 class="mt-2 text-sm text-red-600 dark:text-red-500"
                 *ngIf="f['secretApi'].errors['required']">
-                Your secret API is required
+                Your secret API key is required
               </p>
             </div>
           </div>
@@ -120,19 +120,29 @@
               for="secretApi"
               class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">IP Address</label>
             <p class="p-3">
-              Binance recommends that access for API keys that you create is
+              Binance recommends that access to API keys that you create is
               restricted to trusted IPs only. While an excellent recommendation,
-              D2 Triggers use Lit Protocol's distributed node network to make
+              D2 Triggers use <a href="https://litprotocol.com/" target="_new" class="link hover:underline cursor-pointer">Lit Protocol's</a> distributed node network to make
               requests. While using a distributed network has many advantages,
               it does make it impossible to use Binance's IP restriction as there is no single IP
-              address used.
+              address used.  
+            </p>
+
+            <p class="p-3">
+              For this reason a proxy server is used where appropriate.  You may wish to configure which proxy server to use (see <a routerLink="/settings" class="link hover:underline cursor-pointer">Settings</a>) or setup your own proxy server to ensure maximum transparency (see <a routerLink="/guides/proxy-service" class="link hover:underline cursor-pointer">Guides</a>).
             </p>
 
             <p class="p-3" *ngIf="ipAddress.length > 0">
-              For verification purposes, an API call is made locally to Binance.
+              For verification of account credentials before creating an NFT, an API call is made locally to Binance.
             </p>
 
-            <p class="p-3">NOTE: Add this ip address in your trusted IPs list: 34.147.212.171 and mark/enable the option "Enable Spot & Margin Trading"</p>
+            <p class="p-3">NOTE: Please add the following IP addresses in your trusted IPs list in Binance and mark/enable the option "Enable Spot & Margin Trading":</p>
+
+            <ul class="indent-8 list-inside list-disc mb-8">
+              <li class="mt-4">Current IP Address: {{ipAddress}}</li>
+              <li class="mt-4">Default Proxy Server: {{defaultProxyIp}}</li>
+            </ul>
+    
           </div>
 
           <div class="mb-6 text-right" *ngIf="!isLoading">
@@ -148,8 +158,10 @@
             <button
               type="button"
               class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
-              LOADING...
+              MINTING...
             </button>
+            <br/>
+            <p class="text-xs">An NFT of your credentials is being minted and will be added to your wallet shortly.</p>
           </div>
 
         </form>

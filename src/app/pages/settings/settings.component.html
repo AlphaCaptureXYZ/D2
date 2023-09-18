@@ -39,11 +39,11 @@
               [(ngModel)]="form.proxy_url"
               (ngModelChange)="requiredControl()" />
 
-            <p class="p-3" *ngIf="form.proxy_url === defaultProxy.url">
-              IP Address: {{defaultProxy.ip}}
+            <p class="p-3" *ngIf="form.proxy_url === defaultProxyUrl">
+              IP Address: {{defaultProxyIp}}
             </p>
             <p class="p-3 hover:underline cursor-pointer"
-              *ngIf="form.proxy_url !== defaultProxy.url" (click)="restoreDefaultProxy()">
+              *ngIf="form.proxy_url !== defaultProxyUrl" (click)="restoreDefaultProxy()">
               Restore default
             </p>
 
@@ -71,7 +71,7 @@
               (ngModelChange)="requiredControl()" />
 
             <p class="p-3 hover:underline cursor-pointer"
-              *ngIf="form.croupier_url !== defaultCroupier.url" (click)="restoreDefaultCroupier()">
+              *ngIf="form.croupier_url !== defaultCroupierUrl" (click)="restoreDefaultCroupier()">
               Restore default
             </p>
 
