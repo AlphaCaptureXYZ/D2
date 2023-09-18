@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 
@@ -27,7 +27,7 @@ interface IOrder {
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss'],
 })
-export default class OrdersComponent {
+export default class OrdersComponent implements OnInit {
 
   isLoading: boolean;
 

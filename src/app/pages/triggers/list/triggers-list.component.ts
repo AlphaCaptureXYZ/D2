@@ -8,13 +8,13 @@ import { WeaveDBService } from 'src/app/services/weavedb.service';
 // import { v4 } from '@ixily/activ-web';
 
 @Component({
-  selector: 'app-triggers-view',
+  selector: 'app-triggers-list',
   standalone: true,
   imports: [CommonModule, RouterModule],
-  templateUrl: './triggers-view.component.html',
-  styleUrls: ['./triggers-view.component.scss'],
+  templateUrl: './triggers-list.component.html',
+  styleUrls: ['./triggers-list.component.scss'],
 })
-export default class TriggersViewComponent implements OnInit {
+export default class TriggersListComponent implements OnInit {
 
   currentOption = 'triggers-view';
   triggers: any[];

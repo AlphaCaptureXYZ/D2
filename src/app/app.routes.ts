@@ -59,7 +59,11 @@ export const routes: Routes = [
   },
   {
     path: 'triggers',
-    loadComponent: () => import('./pages/triggers/view/triggers-view.component'),
+    loadComponent: () => import('./pages/triggers/list/triggers-list.component'),
+  },
+  {
+    path: 'triggers/:id',
+    loadComponent: () => import('./pages/triggers/view/trigger-view.component'),
   },
   {
     path: 'triggers/create',
