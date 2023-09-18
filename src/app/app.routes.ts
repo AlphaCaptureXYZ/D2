@@ -70,6 +70,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.component'),
   },
   {
+    path: 'pkp',
+    loadComponent: () => import('./pages/pkp/pkp.component'),
+  },
+  {
     path: 'guides',
     loadComponent: () => import('./pages/guides/list/list.component'),
   },

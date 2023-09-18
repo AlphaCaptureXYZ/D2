@@ -8,7 +8,31 @@ import { v4 } from '@ixily/activ-web';
 import { CryptoIdeasModule } from '@ixily/activ-web/dist/src/modules/activ-v4';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 
+import { ethers } from "ethers";
+
 let ethereum: any;
+
+const valueToHexadecimal = (value: any) => {
+  const data = ethers.utils.hexlify(value);
+  const response = data.replace('0x', '0x-');
+  return response;
+};
+
+const defaultChainInfo = {
+  chainId: "0x13881",
+  chainName: "Mumbai",
+  nativeCurrency: {
+    name: "MATIC",
+    symbol: "MATIC",
+    decimals: 18,
+  },
+  rpcUrls: [
+    "https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78"
+  ],
+  blockExplorerUrls: [
+    "https://mumbai.polygonscan.com"
+  ],
+};
 
 export const getEthereum = async () => {
   try {
@@ -47,13 +71,26 @@ export const getDefaultNetwork = async () => {
   };
 
   try {
-    const ethereum = await getEthereum();
-    if (ethereum) {
-      const networkId = ethereum?.networkVersion;
-      const networkName = WALLET_NETWORK_CHAIN_NAME(networkId) || 'unknown';
-      network.id = networkId;
-      network.name = networkName;
+
+    const provider: any = new ethers.providers.Web3Provider((window as any).ethereum);
+
+    try {
+      await provider.send("wallet_switchEthereumChain", [
+        { chainId: defaultChainInfo.chainId },
+      ]);
+    } catch (e) {
+      const ethereum = await getEthereum();
+      await ethereum.request({
+        method: "wallet_addEthereumChain",
+        params: [defaultChainInfo],
+      });
     }
+
+    const data = WALLET_NETWORK_CHAIN_NAME(80001);
+
+    network.id = defaultChainInfo.chainId;
+    network.name = data;
+
   } catch (err: any) {
     console.log('getDefaultNetwork error', err.message);
   }

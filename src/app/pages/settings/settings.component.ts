@@ -12,6 +12,9 @@ import { getDefaultAccount } from 'src/app/shared/shared';
 
 import { pkpKey } from 'src/app/constants/constants';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { copyValue, wait } from 'src/app/helpers/helpers';
+
+const litPkpUrl = 'https://explorer.litprotocol.com/pkps';
 
 interface FormType {
     proxy_url: string;
@@ -50,28 +53,36 @@ export default class SettingsComponent implements OnInit {
     }
 
     settingsDocId: string;
+    pkpInfoDocId: string;
 
     pkpInfo: any;
 
+    walletAddressToAddAccess: string;
+    walletsWithAccess: any[];
+
+    pkpLoading: boolean;
+
     constructor(
         private router: Router,
-        private eventService: EventService,
         private weaveDBService: WeaveDBService,
         private cRef: ChangeDetectorRef,
-        private pKPGeneratorService: PKPGeneratorService,
     ) {
+        this.pkpLoading = false;
+        this.walletAddressToAddAccess = null as any;
         this.pkpInfo = null as any;
         this.settingsDocId = undefined as any;
+        this.pkpInfoDocId = undefined as any;
         this.currentOption = 'settings';
         this.form = {
             proxy_url: this.defaultProxy.url,
             croupier_url: this.defaultCroupier.url,
         };
+        this.walletsWithAccess = [];
         this.requiredControl();
     }
 
     async ngOnInit() {
-        this.getSettings();
+        await this.getSettings();
     }
 
     requiredControl = (): void => {
@@ -144,24 +155,6 @@ export default class SettingsComponent implements OnInit {
         if (option === 'proxy-guide') {
             this.router.navigateByUrl('guides/proxy-service');
         }
-    }
-
-    async generatePkp() {
-        const mint = await this.pKPGeneratorService.mint();
-
-        const userWallet = await getDefaultAccount();
-
-        await this.weaveDBService.upsertData({
-            type: 'pkp-info',
-            jsonData: mint,
-            userWallet,
-            isCompressed: false,
-            pkpKey: mint.pkpPublicKey,
-        });
-
-        this.pkpInfo = mint;
-
-        this.pkpInfo.url = `https://explorer.litprotocol.com/pkps/${mint.tokenId}`;
     }
 
 }

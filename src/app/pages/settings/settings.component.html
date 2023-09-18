@@ -114,45 +114,6 @@
           </div>
         </div>
 
-        <div class="flex flex-col mt-8">
-          <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
-
-            <p
-              class="text-2xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-2xl">
-              PKP Generation
-            </p>
-
-            <div class="mb-4">
-              <p class="text-sm pt-3 pb-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-                Vitae rerum omnis possimus adipisci enim itaque perspiciatis veritatis assumenda
-                doloribus voluptate, sapiente dolores repudiandae incidunt alias fuga impedit
-                soluta, deserunt dolorem.</p>
-
-              <button type="button"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                <div class="mt-1" (click)="generatePkp()">Generate</div>
-              </button>
-            </div>
-
-            <div *ngIf="pkpInfo?.pkpPublicKey">
-
-              <p class="mt-5">
-                <a [href]="pkpInfo?.url" target="_blank" class="link">{{pkpInfo?.url}}</a>
-              </p>
-
-              <p class="mt-5">
-                PKP Public Key: {{pkpInfo?.pkpPublicKey}}
-              </p>
-
-              <p class="mt-5">
-                ETH Address: {{pkpInfo?.pkpWalletAddress}}
-              </p>
-
-            </div>
-
-          </div>
-        </div>
-
       </div>
     </div>
   </div>

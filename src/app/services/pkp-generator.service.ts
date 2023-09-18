@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BigNumber, ethers } from "ethers";
-import { getEthereum } from '../shared/shared';
+import { getDefaultNetwork, getEthereum } from '../shared/shared';
 
 const ECDSA_KEY = 2;
 
@@ -170,8 +170,17 @@ export class PKPGeneratorService {
         return contract;
     };
 
-    private async mintCost(): Promise<MultiETHFormat> {
-        const contract: any = await this.getContract(pkpNftContractAddress, pkpNftAbi);
+    private async mintCost(
+        contract: any = null
+    ): Promise<MultiETHFormat> {
+
+        if (!contract) {
+            contract = await this.getContract(
+                pkpNftContractAddress,
+                pkpNftAbi
+            );
+        };
+
         const v = await contract.mintCost();
 
         let cost: MultiETHFormat = {
@@ -183,7 +192,9 @@ export class PKPGeneratorService {
         return cost;
     }
 
-    async mint() {
+    async mint(
+        contract: any = null
+    ) {
         const response = {
             tx: null as any,
             tokenId: null as any,
@@ -192,10 +203,12 @@ export class PKPGeneratorService {
         };
 
         try {
-            const contract: any = await this.getContract(
-                pkpNftContractAddress,
-                pkpNftAbi
-            );
+            if (!contract) {
+                contract = await this.getContract(
+                    pkpNftContractAddress,
+                    pkpNftAbi
+                );
+            };
 
             const mintCost = await this.mintCost();
 
@@ -213,6 +226,8 @@ export class PKPGeneratorService {
             response.pkpPublicKey = pubKey;
             response.pkpWalletAddress = ethers.utils.computeAddress(pubKey);
 
+            await getDefaultNetwork();
+
         } catch (err: any) {
             console.log('mint ERROR', err.message);
         }
@@ -221,14 +236,20 @@ export class PKPGeneratorService {
     }
 
     async addAccess(
-        pkpId: number,
-        walletAddress: string
+        pkpId: any,
+        walletAddress: string,
+        contract: any = null
     ) {
+        let addresses = [];
+
         try {
-            const contract: any = await this.getContract(
-                pkpPermissionsContractAddress,
-                pkpPermissionsAbi
-            );
+
+            if (!contract) {
+                contract = await this.getContract(
+                    pkpPermissionsContractAddress,
+                    pkpPermissionsAbi
+                );
+            };
 
             await contract.addPermittedAddress(
                 pkpId,
@@ -236,21 +257,29 @@ export class PKPGeneratorService {
                 []
             );
 
+            addresses = await this.getWalletsWithAccess(pkpId, contract);
+
         } catch (err: any) {
             console.log('mint ERROR', err.message);
         }
+
+        return addresses;
     }
 
     async getWalletsWithAccess(
-        tokenId: number
+        tokenId: any,
+        contract: any = null
     ) {
-        let addresses;
+        let addresses = [];
 
         try {
-            const contract: any = await this.getContract(
-                pkpPermissionsContractAddress,
-                pkpPermissionsAbi
-            );
+
+            if (!contract) {
+                contract = await this.getContract(
+                    pkpPermissionsContractAddress,
+                    pkpPermissionsAbi
+                );
+            };
 
             const maxTries = 5;
             let tries = 0;
@@ -273,6 +302,8 @@ export class PKPGeneratorService {
         } catch (err: any) {
             console.log('getWalletsWithAccess ERROR', err.message);
         }
+
+        await getDefaultNetwork();
 
         return addresses;
     }
