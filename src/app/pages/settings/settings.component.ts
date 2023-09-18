@@ -11,6 +11,7 @@ import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
 import { pkpKey } from 'src/app/constants/constants';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 interface FormType {
     proxy_url: string;
@@ -50,12 +51,16 @@ export default class SettingsComponent implements OnInit {
 
     settingsDocId: string;
 
+    pkpInfo: any;
+
     constructor(
         private router: Router,
         private eventService: EventService,
         private weaveDBService: WeaveDBService,
         private cRef: ChangeDetectorRef,
+        private pKPGeneratorService: PKPGeneratorService,
     ) {
+        this.pkpInfo = null as any;
         this.settingsDocId = undefined as any;
         this.currentOption = 'settings';
         this.form = {
@@ -139,6 +144,11 @@ export default class SettingsComponent implements OnInit {
         if (option === 'proxy-guide') {
             this.router.navigateByUrl('guides/proxy-service');
         }
+    }
+
+    async generatePkp() {
+        const mint = await this.pKPGeneratorService.mint();
+        this.pkpInfo = mint;
     }
 
 }

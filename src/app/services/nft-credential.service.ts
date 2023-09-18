@@ -91,7 +91,7 @@ export class NFTCredentialService {
         return abi;
     };
 
-    mintCredential = async (
+    async mintCredential(
         provider: string,
         accountName: string,
         environment: string,
@@ -100,7 +100,7 @@ export class NFTCredentialService {
     ): Promise<{
         tokenId: number,
         uuid: string
-    }> => {
+    }> {
         return new Promise(async (resolve, reject) => {
             try {
 
