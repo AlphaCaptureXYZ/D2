@@ -4,11 +4,10 @@ import { RouterModule } from '@angular/router';
 
 import litClient from "src/app/scripts/Lit";
 
-import { isNullOrUndefined } from 'src/app/shared/shared';
-
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import { FormsModule } from '@angular/forms';
 import { HighlightModule } from 'ngx-highlightjs';
+import { isNullOrUndefined } from 'src/app/helpers/helpers';
 
 const chain = 'mumbai';
 

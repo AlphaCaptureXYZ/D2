@@ -5,9 +5,9 @@ import { getEthereum } from '../shared/shared';
 
 const ECDSA_KEY = 2;
 
-const contractAddress = '0x8F75a53F65e31DD0D2e40d0827becAaE2299D111';
+const pkpNftContractAddress = '0x8F75a53F65e31DD0D2e40d0827becAaE2299D111';
 
-const abi = [
+const pkpNftAbi = [
     'constructor()',
     'event Approval(address indexed,address indexed,uint256 indexed)',
     'event ApprovalForAll(address indexed,address indexed,bool)',
@@ -69,6 +69,48 @@ const abi = [
     'function withdraw()',
 ];
 
+const pkpPermissionsContractAddress = '0x4Aed2F242E806c58758677059340e29E6B5b7619';
+
+const pkpPermissionsAbi = [
+    "constructor(address)",
+    "event OwnershipTransferred(address indexed,address indexed)",
+    "event PermittedAuthMethodAdded(uint256 indexed,uint256,bytes,bytes)",
+    "event PermittedAuthMethodRemoved(uint256 indexed,uint256,bytes)",
+    "event PermittedAuthMethodScopeAdded(uint256 indexed,uint256,bytes,uint256)",
+    "event PermittedAuthMethodScopeRemoved(uint256 indexed,uint256,bytes,uint256)",
+    "event RootHashUpdated(uint256 indexed,uint256 indexed,bytes32)",
+    "function addPermittedAction(uint256,bytes,uint256[])",
+    "function addPermittedAddress(uint256,address,uint256[])",
+    "function addPermittedAuthMethod(uint256,tuple(uint256,bytes,bytes),uint256[])",
+    "function addPermittedAuthMethodScope(uint256,uint256,bytes,uint256)",
+    "function authMethods(uint256) view returns (uint256, bytes, bytes)",
+    "function getAuthMethodId(uint256,bytes) pure returns (uint256)",
+    "function getEthAddress(uint256) view returns (address)",
+    "function getPermittedActions(uint256) view returns (bytes[])",
+    "function getPermittedAddresses(uint256) view returns (address[])",
+    "function getPermittedAuthMethodScopes(uint256,uint256,bytes,uint256) view returns (bool[])",
+    "function getPermittedAuthMethods(uint256) view returns (tuple(uint256,bytes,bytes)[])",
+    "function getPubkey(uint256) view returns (bytes)",
+    "function getTokenIdsForAuthMethod(uint256,bytes) view returns (uint256[])",
+    "function getUserPubkeyForAuthMethod(uint256,bytes) view returns (bytes)",
+    "function isPermittedAction(uint256,bytes) view returns (bool)",
+    "function isPermittedAddress(uint256,address) view returns (bool)",
+    "function isPermittedAuthMethod(uint256,uint256,bytes) view returns (bool)",
+    "function isPermittedAuthMethodScopePresent(uint256,uint256,bytes,uint256) view returns (bool)",
+    "function owner() view returns (address)",
+    "function pkpNFT() view returns (address)",
+    "function removePermittedAction(uint256,bytes)",
+    "function removePermittedAddress(uint256,address)",
+    "function removePermittedAuthMethod(uint256,uint256,bytes)",
+    "function removePermittedAuthMethodScope(uint256,uint256,bytes,uint256)",
+    "function renounceOwnership()",
+    "function setPkpNftAddress(address)",
+    "function setRootHash(uint256,uint256,bytes32)",
+    "function transferOwnership(address)",
+    "function verifyState(uint256,uint256,bytes32[],bytes32) view returns (bool)",
+    "function verifyStates(uint256,uint256,bytes32[],bool[],bytes32[]) view returns (bool)"
+];
+
 const LitChainInfo = {
     chainId: "0x2AC49",
     chainName: "Chronicle - Lit Protocol Testnet",
@@ -119,14 +161,17 @@ export class PKPGeneratorService {
         return signer;
     }
 
-    private async getContract() {
+    private async getContract(
+        contractAddress: string,
+        abi: any
+    ) {
         const signer = await this.getSigner();
         const contract = new ethers.Contract(contractAddress, abi, signer);
         return contract;
     };
 
     private async mintCost(): Promise<MultiETHFormat> {
-        const contract: any = await this.getContract();
+        const contract: any = await this.getContract(pkpNftContractAddress, pkpNftAbi);
         const v = await contract.mintCost();
 
         let cost: MultiETHFormat = {
@@ -144,11 +189,13 @@ export class PKPGeneratorService {
             tokenId: null as any,
             pkpPublicKey: null as any,
             pkpWalletAddress: null as any,
-            url: null as any,
         };
 
         try {
-            const contract: any = await this.getContract();
+            const contract: any = await this.getContract(
+                pkpNftContractAddress,
+                pkpNftAbi
+            );
 
             const mintCost = await this.mintCost();
 
@@ -165,7 +212,6 @@ export class PKPGeneratorService {
 
             response.pkpPublicKey = pubKey;
             response.pkpWalletAddress = ethers.utils.computeAddress(pubKey);
-            response.url = `https://explorer.litprotocol.com/pkps/${tokenIdFromEvent}`;
 
         } catch (err: any) {
             console.log('mint ERROR', err.message);
@@ -174,6 +220,61 @@ export class PKPGeneratorService {
         return response;
     }
 
+    async addAccess(
+        pkpId: number,
+        walletAddress: string
+    ) {
+        try {
+            const contract: any = await this.getContract(
+                pkpPermissionsContractAddress,
+                pkpPermissionsAbi
+            );
 
+            await contract.addPermittedAddress(
+                pkpId,
+                walletAddress,
+                []
+            );
+
+        } catch (err: any) {
+            console.log('mint ERROR', err.message);
+        }
+    }
+
+    async getWalletsWithAccess(
+        tokenId: number
+    ) {
+        let addresses;
+
+        try {
+            const contract: any = await this.getContract(
+                pkpPermissionsContractAddress,
+                pkpPermissionsAbi
+            );
+
+            const maxTries = 5;
+            let tries = 0;
+
+            while (tries < maxTries) {
+                try {
+                    addresses = await contract.getPermittedAddresses(tokenId);
+                    if (addresses.length <= 0) {
+                        await new Promise((resolve) => setTimeout(resolve, 1000));
+                        tries++;
+                        continue;
+                    } else {
+                        break;
+                    }
+                } catch (e: any) {
+                    tries++;
+                }
+            }
+
+        } catch (err: any) {
+            console.log('getWalletsWithAccess ERROR', err.message);
+        }
+
+        return addresses;
+    }
 
 }

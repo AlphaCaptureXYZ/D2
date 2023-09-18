@@ -20,7 +20,8 @@ const contractTxId = 'uItgIC0zhIGUM3uK0DPb__1TVb-2F5Q1awI2mVMICbk';
 type CollectionType =
     | 'setting'
     | 'trigger'
-    | 'order';
+    | 'order'
+    | 'pkp-info';
 
 const chain = 'mumbai';
 

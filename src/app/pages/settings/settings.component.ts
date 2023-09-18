@@ -148,7 +148,20 @@ export default class SettingsComponent implements OnInit {
 
     async generatePkp() {
         const mint = await this.pKPGeneratorService.mint();
+
+        const userWallet = await getDefaultAccount();
+
+        await this.weaveDBService.upsertData({
+            type: 'pkp-info',
+            jsonData: mint,
+            userWallet,
+            isCompressed: false,
+            pkpKey: mint.pkpPublicKey,
+        });
+
         this.pkpInfo = mint;
+
+        this.pkpInfo.url = `https://explorer.litprotocol.com/pkps/${mint.tokenId}`;
     }
 
 }
