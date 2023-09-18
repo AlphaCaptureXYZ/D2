@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BigNumber, ethers } from "ethers";
+import { getEthereum } from '../shared/shared';
 
 const ECDSA_KEY = 2;
 
@@ -68,6 +69,18 @@ const abi = [
     'function withdraw()',
 ];
 
+const LitChainInfo = {
+    chainId: "0x2AC49",
+    chainName: "Chronicle - Lit Protocol Testnet",
+    nativeCurrency: {
+        name: "LIT",
+        symbol: "LIT",
+        decimals: 18,
+    },
+    rpcUrls: ["https://chain-rpc.litprotocol.com/http"],
+    blockExplorerUrls: ["https://chain.litprotocol.com"],
+};
+
 interface MultiETHFormat {
     wei: number;
     eth: number | string;
@@ -81,20 +94,39 @@ export class PKPGeneratorService {
 
     constructor() { }
 
-    private getSigner() {
-        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        const signer = provider.getSigner();
+    private getProvider() {
+        const provider: any = new ethers.providers.Web3Provider((window as any).ethereum);
+        return provider;
+    }
+
+    private async getSigner() {
+        let provider: any = this.getProvider();
+
+        try {
+            await provider.send("wallet_switchEthereumChain", [
+                { chainId: LitChainInfo.chainId },
+            ]);
+        } catch (e) {
+            const ethereum = await getEthereum();
+            await ethereum.request({
+                method: "wallet_addEthereumChain",
+                params: [LitChainInfo],
+            });
+        }
+
+        provider = this.getProvider();
+        const signer = await provider.getSigner();
         return signer;
     }
 
-    private getContract() {
-        const signer = this.getSigner();
+    private async getContract() {
+        const signer = await this.getSigner();
         const contract = new ethers.Contract(contractAddress, abi, signer);
         return contract;
     };
 
     private async mintCost(): Promise<MultiETHFormat> {
-        const contract: any = this.getContract();
+        const contract: any = await this.getContract();
         const v = await contract.mintCost();
 
         let cost: MultiETHFormat = {
@@ -104,11 +136,6 @@ export class PKPGeneratorService {
         };
 
         return cost;
-    }
-
-    private hexToDecimal(hex: string): number {
-        const decimal = ethers.BigNumber.from(hex).toNumber();
-        return decimal;
     }
 
     async mint() {
@@ -121,7 +148,7 @@ export class PKPGeneratorService {
         };
 
         try {
-            const contract: any = this.getContract();
+            const contract: any = await this.getContract();
 
             const mintCost = await this.mintCost();
 
