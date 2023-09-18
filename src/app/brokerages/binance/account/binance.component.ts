@@ -7,7 +7,9 @@ import { EventService } from 'src/app/services/event.service';
 
 import { publicIp } from 'public-ip';
 
-import { environment } from '../../../../environments/environment';
+import { environment } from 'src/environments/environment';
+
+import { copyValue } from 'src/app/helpers/helpers';
 
 // @ts-ignore
 import { blobToBase64String } from 'lit-js-sdk';
@@ -39,6 +41,7 @@ export default class AccountsBinanceComponent implements OnInit {
   currentOption = 'accounts-binance';
   ipAddress = '';
   defaultProxyIp = environment.defaultProxyIp;
+  defaultProxyUrl = environment.defaultProxyUrl;
   verified = false;
   submitted = false;
 
@@ -229,4 +232,12 @@ export default class AccountsBinanceComponent implements OnInit {
       this.isLoading = false;
     }
   }
+
+  copyProxyIp() {
+    copyValue(this.defaultProxyIp);
+  }
+  copyMyIp() {
+    copyValue(this.ipAddress);
+  }
+
 }

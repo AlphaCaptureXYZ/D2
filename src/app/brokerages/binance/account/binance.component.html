@@ -139,8 +139,8 @@
             <p class="p-3">NOTE: Please add the following IP addresses in your trusted IPs list in Binance and mark/enable the option "Enable Spot & Margin Trading":</p>
 
             <ul class="indent-8 list-inside list-disc mb-8">
-              <li class="mt-4">Current IP Address: {{ipAddress}}</li>
-              <li class="mt-4">Default Proxy Server: {{defaultProxyIp}}</li>
+              <li class="mt-4">Current IP Address: {{ipAddress}} <i (click)="copyMyIp()" class='bx bx-copy cursor-pointer'></i></li>
+              <li class="mt-4">Default Proxy Server: {{defaultProxyIp}} ({{defaultProxyUrl}}) <i (click)="copyProxyIp()" class='bx bx-copy cursor-pointer'></i></li>
             </ul>
     
           </div>

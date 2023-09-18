@@ -70,7 +70,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.component'),
   },
   {
-    path: 'pkp',
+    path: 'wallets/mpc',
     loadComponent: () => import('./pages/pkp/pkp.component'),
   },
   {

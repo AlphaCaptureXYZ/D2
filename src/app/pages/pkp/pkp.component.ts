@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 
-import { EventService, EventType } from 'src/app/services/event.service';
+// import { EventService, EventType } from 'src/axpp/services/event.service';
 import NavbarAuthComponent from 'src/app/components/navbar-auth/navbar-auth.component';
 import LeftMenuComponent from 'src/app/components/left-menu/left-menu.component';
 
@@ -14,11 +14,6 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { copyValue, wait } from 'src/app/helpers/helpers';
 
 const litPkpUrl = 'https://explorer.litprotocol.com/pkps';
-
-interface FormType {
-    proxy_url: string;
-    croupier_url: string;
-}
 
 @Component({
     selector: 'app-pkp',
@@ -43,8 +38,8 @@ export default class SettingsComponent implements OnInit {
     walletAddressToAddAccess: string;
     walletsWithAccess: any[] = [];
 
-    pkpLoading: boolean = false;
-    pkpMintLoading: boolean = false;
+    pkpLoading = false;
+    pkpMintLoading = false;
 
     constructor(
         private router: Router,
