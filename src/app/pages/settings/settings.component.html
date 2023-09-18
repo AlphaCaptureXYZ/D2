@@ -27,9 +27,8 @@
               need to ensure the IP is address at Binance.
             </p>
             <p class="p-3">
-              While you may use IXily's proxy, you should consider using your own to ensure security
-              <span class="underline cursor-pointer" (click)="goToPage('proxy-guide')">(guide to
-                add/adapt)</span>.
+              While you may use IXily's proxy, you should consider using your own for transparency
+              (see <a routerLink="/guides/proxy-service" class="link hover:underline cursor-pointer">Guide</a>).
             </p>
 
             <input
@@ -40,7 +39,7 @@
               (ngModelChange)="requiredControl()" />
 
             <p class="p-3" *ngIf="form.proxy_url === defaultProxyUrl">
-              IP Address: {{defaultProxyIp}}
+              Proxy Server IP Address: {{defaultProxyIp}}
             </p>
             <p class="p-3 hover:underline cursor-pointer"
               *ngIf="form.proxy_url !== defaultProxyUrl" (click)="restoreDefaultProxy()">

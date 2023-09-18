@@ -147,10 +147,4 @@ export default class SettingsComponent implements OnInit {
         window.location.reload();
     }
 
-    goToPage = (option: string): void => {
-        if (option === 'proxy-guide') {
-            this.router.navigateByUrl('guides/proxy-service');
-        }
-    }
-
 }

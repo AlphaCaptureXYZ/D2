@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { getEthereum } from 'src/app/shared/shared';
+import { RouterModule } from '@angular/router';
+// import { getEthereum } from 'src/app/shared/shared';
 import { EventService, EventType } from 'src/app/services/event.service';
 import { ShortenContractAddress } from 'src/app/pipes/shorten-contract-address.pipe';
 import { ActivService } from 'src/app/services/activ.service';
 
-import { BigNumber, ethers } from "ethers";
-import { WALLET_NETWORK_CHAIN_IDS } from 'src/app/shared/web3-helpers';
+// import { BigNumber, ethers } from "ethers";
+// import { WALLET_NETWORK_CHAIN_IDS } from 'src/app/shared/web3-helpers';
 
 @Component({
   selector: 'app-navbar-auth',
   standalone: true,
-  imports: [CommonModule, ShortenContractAddress],
+  imports: [CommonModule, ShortenContractAddress, RouterModule],
   templateUrl: './navbar-auth.component.html',
   styleUrls: ['./navbar-auth.component.scss'],
 })
