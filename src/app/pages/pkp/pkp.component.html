@@ -1,0 +1,102 @@
+<main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
+  <div class="container mx-auto px-6 py-8">
+    <p
+      class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
+      Pkp
+    </p>
+
+    <div class="flex flex-col w50">
+      <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+        <div class="flex flex-col mt-8">
+          <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+            <div class="mb-4">
+              <p class="text-sm pt-3 pb-3">Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+                Vitae rerum omnis possimus adipisci enim itaque perspiciatis veritatis assumenda
+                doloribus voluptate, sapiente dolores repudiandae incidunt alias fuga impedit
+                soluta, deserunt dolorem.</p>
+
+              <button type="button"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                <div class="mt-1" (click)="generatePkp()">Generate</div>
+              </button>
+            </div>
+
+            <div *ngIf="pkpMintLoading">
+              <p>Generating...</p>
+            </div>
+
+            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading">
+
+              <p class="mt-5">
+                <b>Token Id:</b> {{pkpInfo?.tokenId}}
+
+                <span
+                  class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                  (click)="copyCode(pkpInfo?.tokenId, $event)">Copy</span>
+              </p>
+
+              <p class="mt-5">
+                <b>PKP Public Key:</b> {{pkpInfo?.pkpPublicKey}}
+
+                <span
+                  class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                  (click)="copyCode(pkpInfo?.pkpPublicKey, $event)">Copy</span>
+              </p>
+
+              <p class="mt-5">
+                <b>ETH Address:</b> {{pkpInfo?.pkpWalletAddress}}
+                <span
+                  class="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300 cursor-pointer"
+                  (click)="copyCode(pkpInfo?.pkpWalletAddress, $event)">Copy</span>
+              </p>
+
+              <p class="mt-5 mb-2">Add Permitted Address:</p>
+
+              <label for="search"
+                class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+              <div class="relative" style="width: 50%">
+                <div
+                  class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M11.905 1.316 15.633 6M18 10h-5a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h5m0-5a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1m0-5V7a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h15a1 1 0 0 0 1-1v-3m-6.367-9L7.905 1.316 2.352 6h9.281Z" />
+                  </svg>
+
+                </div>
+                <input type="search" id="search"
+                  class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="Permitted Address (eg. 0x3B5...99A1)" required
+                  [(ngModel)]="walletAddressToAddAccess">
+                <button type="button"
+                  class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  (click)="addWalletAccess()">Add
+                  wallet</button>
+              </div>
+
+              <p class="mt-5" *ngIf="walletsWithAccess.length > 0">
+                Authorised PKP Controllers:
+              </p>
+
+              <div class="mt-2">
+                <p class="mb-1" *ngFor="let wallet of walletsWithAccess">
+                  {{wallet}}
+                </p>
+              </div>
+
+              <div class="mt-5" *ngIf="pkpLoading">
+                <p>Loading authorised pkp controllers...</p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</main>

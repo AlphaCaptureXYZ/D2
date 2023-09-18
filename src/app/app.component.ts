@@ -51,6 +51,7 @@ export class AppComponent implements OnInit {
       this.starting = false;
 
       this.ethereum = await getEthereum();
+
       this.ethereum.on('accountsChanged', (accounts: any[]) => {
         this.eventService.emit('METAMASK_WALLET_CHANGED', { wallet: accounts[0] });
       });

@@ -7,7 +7,7 @@ import NavbarAuthComponent from 'src/app/components/navbar-auth/navbar-auth.comp
 import LeftMenuComponent from 'src/app/components/left-menu/left-menu.component';
 import { v4 } from '@ixily/activ-web';
 import { ActivService } from 'src/app/services/activ.service';
-import { displayImage } from 'src/app/shared/utils';
+import { displayImage } from 'src/app/shared/shared';
 
 @Component({
   selector: 'app-strategy-view',

@@ -1,8 +1,6 @@
 //@ts-ignore
 import * as LitJsSdk from "lit-js-sdk";
 
-import LitPKP from './LitPKP';
-
 import * as LitNodeClient from '@lit-protocol/lit-node-client';
 
 import { BigNumber, ethers } from "ethers";

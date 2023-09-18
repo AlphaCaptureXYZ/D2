@@ -4,10 +4,11 @@ import IXilyACTIV from '@ixily/activ-web';
 
 import { Router } from '@angular/router';
 
-import { getEthereum, isNullOrUndefined, wait } from '../shared/shared';
+import { getEthereum } from '../shared/shared';
 import { WALLET_NETWORK_CHAIN_NAME } from '../shared/web3-helpers';
 
 import { v4 } from '@ixily/activ-web';
+import { isNullOrUndefined, wait } from '../helpers/helpers';
 
 declare let Jimp: any;
 

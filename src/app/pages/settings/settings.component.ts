@@ -11,6 +11,10 @@ import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
 import { pkpKey } from 'src/app/constants/constants';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { copyValue, wait } from 'src/app/helpers/helpers';
+
+const litPkpUrl = 'https://explorer.litprotocol.com/pkps';
 
 import { environment } from '../../../environments/environment';
 
@@ -44,25 +48,37 @@ export default class SettingsComponent implements OnInit {
     defaultProxyUrl = environment.defaultProxyUrl;
     defaultProxyIp = environment.defaultProxyIp;
     defaultCroupierUrl = environment.defaultCroupierUrl;
+    pkpInfoDocId: string;
+
+    pkpInfo: any;
+
+    walletAddressToAddAccess: string;
+    walletsWithAccess: any[];
+
+    pkpLoading: boolean;
 
     constructor(
         private router: Router,
-        private eventService: EventService,
         private weaveDBService: WeaveDBService,
         private cRef: ChangeDetectorRef,
     ) {
+        this.pkpLoading = false;
+        this.walletAddressToAddAccess = null as any;
+        this.pkpInfo = null as any;
         this.settingsDocId = undefined as any;
+        this.pkpInfoDocId = undefined as any;
         this.currentOption = 'settings';
 
         this.form = {
             proxy_url: environment.defaultProxyUrl,
             croupier_url: environment.defaultCroupierUrl,
         };
+        this.walletsWithAccess = [];
         this.requiredControl();
     }
 
     async ngOnInit() {
-        this.getSettings();
+        await this.getSettings();
     }
 
     requiredControl = (): void => {

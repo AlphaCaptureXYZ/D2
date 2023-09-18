@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { EventService } from 'src/app/services/event.service';
 import { ActivService } from 'src/app/services/activ.service';
 import { v4 } from '@ixily/activ-web';
-import { displayImage } from 'src/app/shared/utils';
+import { displayImage } from 'src/app/shared/shared';
 
 @Component({
   selector: 'app-nfts-ideas',

@@ -86,6 +86,10 @@ export default class LeftMenuComponent implements OnInit {
       this.router.navigateByUrl('/settings');
     }
 
+    if (option === 'pkp') {
+      this.router.navigateByUrl('/pkp');
+    }
+
     if (option === 'support') {
       this.router.navigateByUrl('/support');
     }
