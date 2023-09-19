@@ -97,7 +97,7 @@
 
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22"
                             (click)="setRawInfo(order)">
-                            {{ (order.createdAt | date : "medium") }}
+                            {{ (order.createdAt | date : "medium") || "-" }}
                         </td>
 
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
