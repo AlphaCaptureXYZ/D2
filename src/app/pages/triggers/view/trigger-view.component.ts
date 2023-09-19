@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 
 // import { EventService } from 'src/app/services/event.service';
@@ -20,13 +20,18 @@ export default class TriggerViewComponent implements OnInit {
   trigger: any;
   isLoading = false;
 
+  triggerId: string;
+
   constructor(
+    private route: ActivatedRoute,
     private weaveDBService: WeaveDBService,
   ) {
     this.trigger = {};
+    this.triggerId = null as any;
   }
 
   async ngOnInit() {
+    this.triggerId = this.route.snapshot.params['id'];
     await this.getTriggerSingle();
   }
 
@@ -34,9 +39,8 @@ export default class TriggerViewComponent implements OnInit {
     this.isLoading = true;
 
     try {
-      console.log('call trigger');
-      const docID = '0x0d111f8a500685d685a93b9320d7818e';
-      this.trigger = await this.weaveDBService.getDataByDocID<any>(docID);
+      console.log('triggerId', this.triggerId);
+      this.trigger = await this.weaveDBService.getDataByDocID<any>(this.triggerId);
       console.log('trigger', this.trigger);
     } catch (err) {
       console.log('get trigger error', err);

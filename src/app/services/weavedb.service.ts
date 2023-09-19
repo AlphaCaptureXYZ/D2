@@ -60,7 +60,7 @@ export class WeaveDBService {
                 ],
                 returnValueTest: {
                     comparator: '=',
-                    value: userWallet.toLowerCase(),
+                    value: userWallet?.toLowerCase(),
                 },
             },
         ];
@@ -115,7 +115,7 @@ export class WeaveDBService {
                 pkpKey,
             } = payload;
 
-            userWallet = userWallet.toLowerCase();
+            userWallet = userWallet?.toLowerCase();
 
             let pkpWalletAddress: any = null;
 

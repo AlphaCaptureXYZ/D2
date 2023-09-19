@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { BigNumber, ethers } from "ethers";
 import { getDefaultNetwork, getEthereum } from '../shared/shared';
+import { WeaveDBService } from './weavedb.service';
 
 const ECDSA_KEY = 2;
 
@@ -129,12 +130,22 @@ interface MultiETHFormat {
     arg: BigNumber;
 }
 
+export interface IPkpInfo {
+    tx?: any;
+    tokenId: string;
+    pkpPublicKey: string;
+    pkpWalletAddress: string;
+    wallets?: string[];
+}
+
 @Injectable({
     providedIn: 'root',
 })
 export class PKPGeneratorService {
 
-    constructor() { }
+    constructor(
+        private weaveDBService: WeaveDBService,
+    ) { }
 
     private getProvider() {
         const provider: any = new ethers.providers.Web3Provider((window as any).ethereum);
@@ -314,4 +325,21 @@ export class PKPGeneratorService {
         return addresses;
     }
 
+    async getPKPInfo(): Promise<IPkpInfo> {
+        const data = await this.weaveDBService.getAllData<any>({
+            type: 'pkp-info'
+        });
+
+        return data?.find(res => res) || null;
+    }
+
+    async getOrGenerateAutoPKPInfo(): Promise<IPkpInfo> {
+        let pkpInfo = await this.getPKPInfo();
+
+        if (!pkpInfo?.pkpPublicKey) {
+            pkpInfo = await this.mint();
+        }
+
+        return pkpInfo;
+    }
 }

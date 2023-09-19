@@ -1,3 +1,1 @@
 export const appName = 'DII';
-
-export const pkpKey = '0x046fe8c89594c1c65ac27acf8da579e706e8b52cf7adb15549675170700a1c6d4d5408b689258eabb4a0e927549f783575bea08c840364b8cd0058262df9fa7b0f';

@@ -62,12 +62,12 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/triggers/list/triggers-list.component'),
   },
   {
-    path: 'triggers/:id',
-    loadComponent: () => import('./pages/triggers/view/trigger-view.component'),
-  },
-  {
     path: 'triggers/create',
     loadComponent: () => import('./pages/triggers/create/triggers-create.component'),
+  },
+  {
+    path: 'triggers/:id',
+    loadComponent: () => import('./pages/triggers/view/trigger-view.component'),
   },
   {
     path: 'settings',
