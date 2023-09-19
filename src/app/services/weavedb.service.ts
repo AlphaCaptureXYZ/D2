@@ -311,6 +311,7 @@ export class WeaveDBService {
 
             const nftStorageResult = await this.nftStorageService.retrieve({
                 cid,
+                proxy: true,
             });
 
             info.data = nftStorageResult;

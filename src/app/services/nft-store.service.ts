@@ -52,9 +52,7 @@ export class NFTStorageService {
 
         let url = proxy ? proxyUrl(cid) : ipftUrl(cid);
 
-        const requestUrl = url + cid;
-
-        result = await fetch(requestUrl);
+        result = await fetch(url);
 
         if (result?.status === 200) {
             const jsonContent = await result.text();
