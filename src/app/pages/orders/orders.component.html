@@ -115,9 +115,9 @@
                             (click)="setRawInfo(order)">
                             <span>
                                 <i class='bx bxs-check-circle text-2xl success'
-                                    *ngIf="!order?.raw?.result?.response?.error"></i>
+                                    *ngIf="order?.raw?.result?.response && !order?.raw?.result?.response?.error"></i>
                                 <i class='bx bxs-error-circle text-2xl error'
-                                    *ngIf="order?.raw?.result?.response?.error"></i>
+                                    *ngIf="!order?.raw?.result?.response || order?.raw?.result?.response?.error"></i>
                             </span>
                         </td>
 
