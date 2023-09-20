@@ -6,9 +6,10 @@ import { ActivService } from 'src/app/services/activ.service';
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
-import { pkpKey } from 'src/app/constants/constants';
+
 import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 // import { EventService } from 'src/app/services/event.service';
 // import { ActivService } from 'src/app/services/activ.service';
@@ -56,6 +57,7 @@ export default class TriggersCreateComponent implements OnInit {
     private weaveDBService: WeaveDBService,
     private activService: ActivService,
     private nftCredentialService: NFTCredentialService,
+    private pKPGeneratorService: PKPGeneratorService,
     private formBuilder: FormBuilder,
   ) {
     this.allAccounts = [];
@@ -108,6 +110,11 @@ export default class TriggersCreateComponent implements OnInit {
         a.uuid === this.form.value.account);
 
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(account)) {
+
+        const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+        const pkpKey = pkpInfo?.pkpPublicKey;
+
         await this.weaveDBService.upsertData({
           pkpKey,
           type: 'trigger',

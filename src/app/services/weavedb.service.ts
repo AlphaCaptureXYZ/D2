@@ -12,6 +12,7 @@ import {
 import { isNullOrUndefined } from '../helpers/helpers';
 import { blobToBase64String } from '@lit-protocol/lit-node-client';
 import { getDefaultAccount } from '../shared/shared';
+import { NFTStorageService } from './nft-store.service';
 
 const COLLECTION_NAME = 'D2-data';
 
@@ -32,7 +33,9 @@ export class WeaveDBService {
 
     private db: any;
 
-    constructor() { }
+    constructor(
+        private nftStorageService: NFTStorageService
+    ) { }
 
     private async setupWeaveDB() {
         if (isNullOrUndefined(this.db)) {
@@ -60,7 +63,7 @@ export class WeaveDBService {
                 ],
                 returnValueTest: {
                     comparator: '=',
-                    value: userWallet.toLowerCase(),
+                    value: userWallet?.toLowerCase(),
                 },
             },
         ];
@@ -115,7 +118,7 @@ export class WeaveDBService {
                 pkpKey,
             } = payload;
 
-            userWallet = userWallet.toLowerCase();
+            userWallet = userWallet?.toLowerCase();
 
             let pkpWalletAddress: any = null;
 
@@ -148,6 +151,13 @@ export class WeaveDBService {
 
             if (payload?.isCompressed) {
                 data = await Compressor.compressData(data);
+            }
+
+            if ([
+                'order',
+            ].includes(type)) {
+                const { cid } = await this.nftStorageService.add(data);
+                data = cid;
             }
 
             const obj = {
@@ -194,6 +204,11 @@ export class WeaveDBService {
         let data = [];
 
         try {
+
+            const {
+                type,
+            } = payload;
+
             await this.setupWeaveDB();
 
             const wallet = await getDefaultAccount();
@@ -201,7 +216,7 @@ export class WeaveDBService {
             let docs: any[] = await this.db.cget(
                 COLLECTION_NAME,
                 ['type'],
-                ['type', '==', payload.type]
+                ['type', '==', type]
             );
 
             docs = docs?.filter((doc) => {
@@ -217,6 +232,18 @@ export class WeaveDBService {
 
                     const docId = res?.id;
                     const info: any = res?.data;
+
+                    if ([
+                        'order',
+                    ].includes(type)) {
+                        const cid = info?.data;
+
+                        const nftStorageResult = await this.nftStorageService.retrieve({
+                            cid,
+                        });
+
+                        info.data = nftStorageResult;
+                    }
 
                     const userWallet = info?.userAddress;
                     const pkpWalletAddress = info?.pkpWalletAddress || null;
@@ -274,6 +301,21 @@ export class WeaveDBService {
         await this.setupWeaveDB();
 
         const info = await this.db.get(COLLECTION_NAME, docId);
+
+        const type = info?.type;
+
+        if ([
+            'order',
+        ].includes(type)) {
+            const cid = info?.data;
+
+            const nftStorageResult = await this.nftStorageService.retrieve({
+                cid,
+                proxy: true,
+            });
+
+            info.data = nftStorageResult;
+        }
 
         const userWallet = info?.userAddress;
         const pkpWalletAddress = info?.pkpWalletAddress || null;

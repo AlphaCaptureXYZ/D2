@@ -28,7 +28,7 @@ import { CommonModule } from '@angular/common';
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 
 import * as litActions from 'src/app/scripts/lit-actions';
-import { pkpKey } from 'src/app/constants/constants';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 @Component({
   selector: 'app-accounts-binance',
@@ -58,6 +58,7 @@ export default class AccountsBinanceComponent implements OnInit {
 
   constructor(
     private nftCredentialService: NFTCredentialService,
+    private pKPGeneratorService: PKPGeneratorService,
     private eventService: EventService,
     private router: Router,
     private formBuilder: FormBuilder
@@ -148,6 +149,10 @@ export default class AccountsBinanceComponent implements OnInit {
         const encryptedFileB64 = await blobToBase64String(encryptedFile);
 
         const credentialEncrypted = `${encryptedFileB64}||${encryptedSymmetricKeyString}`;
+
+        const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+        const pkpKey = pkpInfo?.pkpPublicKey;
 
         const pkpWalletAddress = litClient.getPkpWalletAddress(pkpKey);
 

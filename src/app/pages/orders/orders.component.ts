@@ -59,12 +59,17 @@ export default class OrdersComponent implements OnInit {
       const additionalInfo = data?.result?.additionalInfo;
       const response = data?.result?.response;
 
+      const orderDirectionObj: any = {
+        BUY: 'buy',
+        SELL: 'sell',
+      };
+
       if (provider === 'Binance') {
         order = {
           provider,
           id: response?.orderId?.toString(),
           ticker: response?.symbol,
-          direction: response?.side === 'BUY' ? 'buy' : 'sell',
+          direction: orderDirectionObj[response?.side] || null,
           quantity: Number(response?.executedQty),
           price: Number(response?.fills?.find((res: any) => res)?.price || 0),
           createdAt: response?.transactTime,

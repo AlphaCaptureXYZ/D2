@@ -10,7 +10,6 @@ import { FormsModule } from '@angular/forms';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
-import { pkpKey } from 'src/app/constants/constants';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { copyValue, wait } from 'src/app/helpers/helpers';
 
@@ -60,6 +59,7 @@ export default class SettingsComponent implements OnInit {
     constructor(
         private router: Router,
         private weaveDBService: WeaveDBService,
+        private pKPGeneratorService: PKPGeneratorService,
         private cRef: ChangeDetectorRef,
     ) {
         this.pkpLoading = false;
@@ -124,6 +124,10 @@ export default class SettingsComponent implements OnInit {
         this.formIsLoading = true;
         try {
             const userWallet = await getDefaultAccount();
+
+            const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+            const pkpKey = pkpInfo?.pkpPublicKey;
 
             await this.weaveDBService.upsertData({
                 type: 'setting',
