@@ -5,4 +5,5 @@ export const environment = {
   defaultProxyIp: '35.189.88.222',
   defaultCroupierUrl: 'https://croupier.ixily.io',
   supportedNetworks: 'mumbai',
+  defaultEventListenerUrl: 'https://d2-event-listener.ixily.io',
 };

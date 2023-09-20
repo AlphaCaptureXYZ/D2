@@ -11,6 +11,8 @@ import {
 import { WSService } from 'src/app/services/web-socket.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 import { copyValue, isNullOrUndefined, wait } from 'src/app/helpers/helpers';
+import { WeaveDBService } from 'src/app/services/weavedb.service';
+import { environment } from 'src/environments/environment';
 
 const animationsSettings = [
     trigger('EnterLeave', [
@@ -48,6 +50,7 @@ export default class WSLoggerComponent implements OnInit {
 
     constructor(
         private wsService: WSService,
+        private weaveDBService: WeaveDBService,
     ) {
 
     }
@@ -55,10 +58,15 @@ export default class WSLoggerComponent implements OnInit {
     async ngOnInit() {
         const walletAddress = await getDefaultAccount();
 
-        // NOTE: this will be the url of the D2 event listener user service
-        // we can store this url and use dinamically
-        // and add the auth via signed message (user directly sign a message with his wallet)
-        const wsUrl = 'wss://d2-event-listener.ixily.io/?walletAddress=' + walletAddress;
+        const data = await this.weaveDBService.getAllData<any>({
+            type: 'setting',
+        });
+
+        const eventListenerUrl: string =
+            data[0]?.event_listener_url || environment.defaultEventListenerUrl;
+
+        const wsUrl =
+            eventListenerUrl.replace('http://', 'ws://').replace('https://', 'wss://') + '?walletAddress=' + walletAddress;
 
         this.wsService.connect(
             'ws-logger', wsUrl,
