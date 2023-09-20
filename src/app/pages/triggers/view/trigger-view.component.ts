@@ -35,7 +35,7 @@ export default class TriggerViewComponent implements OnInit {
 
     try {
       console.log('call trigger');
-      const docID = '0x0d111f8a500685d685a93b9320d7818e';
+      const docID = '8938ec07f7f1d42b909f8b656c54c35b';
       this.trigger = await this.weaveDBService.getDataByDocID<any>(docID);
       console.log('trigger', this.trigger);
     } catch (err) {
