@@ -20,6 +20,7 @@ import { environment } from '../../../environments/environment';
 interface FormType {
     proxy_url: string;
     croupier_url: string;
+    event_listener_url: string;
 }
 
 @Component({
@@ -47,6 +48,7 @@ export default class SettingsComponent implements OnInit {
     defaultProxyUrl = environment.defaultProxyUrl;
     defaultProxyIp = environment.defaultProxyIp;
     defaultCroupierUrl = environment.defaultCroupierUrl;
+    defaultEventListenerUrl = environment.defaultEventListenerUrl;
     pkpInfoDocId: string;
 
     pkpInfo: any;
@@ -72,6 +74,7 @@ export default class SettingsComponent implements OnInit {
         this.form = {
             proxy_url: environment.defaultProxyUrl,
             croupier_url: environment.defaultCroupierUrl,
+            event_listener_url: environment.defaultEventListenerUrl,
         };
         this.walletsWithAccess = [];
         this.requiredControl();
@@ -104,6 +107,12 @@ export default class SettingsComponent implements OnInit {
         this.cRef.detectChanges();
     }
 
+    async restoreDefaultEventListener() {
+        this.form.event_listener_url = environment.defaultEventListenerUrl;
+        this.requiredControl();
+        this.cRef.detectChanges();
+    }
+
     async getSettings() {
         this.isLoading = true;
 
@@ -112,9 +121,17 @@ export default class SettingsComponent implements OnInit {
         });
 
         if (data?.length > 0) {
-            this.form.croupier_url = data[0]?.croupier_url;
-            this.form.proxy_url = data[0]?.proxy_url;
-            this.settingsDocId = data[0]?.docId;
+            this.settingsDocId =
+                data[0]?.docId;
+                
+            this.form.croupier_url =
+                data[0]?.croupier_url || environment.defaultCroupierUrl;
+
+            this.form.proxy_url =
+                data[0]?.proxy_url || environment.defaultProxyUrl;
+
+            this.form.event_listener_url =
+                data[0]?.event_listener_url || environment.defaultEventListenerUrl;
         }
 
         this.isLoading = false;
@@ -137,6 +154,8 @@ export default class SettingsComponent implements OnInit {
                 isCompressed: false,
                 pkpKey,
             });
+
+            window.location.reload();
 
             this.formIsLoading = false;
         } catch (err) {

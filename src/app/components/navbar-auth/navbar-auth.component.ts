@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { EventService, EventType } from 'src/app/services/event.service';
 import { ShortenContractAddress } from 'src/app/pipes/shorten-contract-address.pipe';
 import { ActivService } from 'src/app/services/activ.service';
+import WSLoggerComponent from '../ws-logger/ws-logger.component';
 
 // import { BigNumber, ethers } from "ethers";
 // import { WALLET_NETWORK_CHAIN_IDS } from 'src/app/shared/web3-helpers';
@@ -12,7 +13,7 @@ import { ActivService } from 'src/app/services/activ.service';
 @Component({
   selector: 'app-navbar-auth',
   standalone: true,
-  imports: [CommonModule, ShortenContractAddress, RouterModule],
+  imports: [CommonModule, ShortenContractAddress, RouterModule, WSLoggerComponent],
   templateUrl: './navbar-auth.component.html',
   styleUrls: ['./navbar-auth.component.scss'],
 })

@@ -1,0 +1,61 @@
+<div class="fixed-accounts">
+    <div
+        *ngIf="checkConsole"
+        [@EnterLeave]="'flyIn'"
+        (@EnterLeave.done)="finishAnimation($event)">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12 merge-in-console">
+                    <span class="float-right mt-2 mr-2 cursor-pointer"
+                        (click)="openOrCloseConsole()">
+                        <div>
+                            <i class="bx bx-chevron-down" style="font-size: 20px;"></i>
+                        </div>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pubsub-container container-fluid mt-3">
+            <div class="mt-2 console">
+                <p class="ml-3 mt-3 mb-2">
+                    <i class="bx bx-loader bx-spin"></i> Listening events, you will see info if a
+                    new event is detected (new idea, new order, etc)
+                </p>
+                <div *ngFor="let res of messages; let i = index">
+                    <p class="pubsub-row cursor-pointer">
+                        <b>{{ res.createdAt | date: "yyyy-MM-dd hh:mm:ss a":"UTC" }} UTC: </b>
+                        <span>
+                            <i class="{{iconByType(res?.type)}}"></i>
+                        </span>
+                        <span class="message" (click)="expandInfo(res, i)"> {{ res.message }}</span>
+                    </p>
+                    <div *ngIf="currentRawInfo && currentIndex === i" class="mt-1 mb-1 ml-3">
+                        <div class="mb-1">
+                            <p class="pre-json cursor-pointer"
+                                (click)="copyCode(currentRawInfo, $event)"> <i
+                                    class='bx bx-copy-alt'></i> Copy</p>
+                        </div>
+                        <pre class="pre-json">{{currentRawInfo}}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <span
+                    class="float-right mt-2 ml-1 info mr-10"
+                    *ngIf="!checkConsole && finishEvent">
+                    <div (click)="openOrCloseConsole()" class="arrow-up">
+                        <span class="console-msg">
+                            <i class='bx bx-code-alt'></i> D2 Event Listener
+                        </span>
+                    </div>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

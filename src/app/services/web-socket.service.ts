@@ -31,8 +31,7 @@ export class WSService {
     listenData(serviceName: string): Observable<any> {
         return new Observable((observer) => {
             WSService.wsObj[serviceName].onmessage = (event: any) => {
-                const result = JSON.parse(event.data);
-                const data = result?.data;
+                const data = JSON.parse(event.data);
                 observer.next(data);
             };
         });

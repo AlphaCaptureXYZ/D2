@@ -1,0 +1,137 @@
+$container-height: 280px;
+$arrow-up-mt: 230px;
+$info-border: #d9d9d9;
+$theme: #20293a;
+
+.contaniner-fluid {
+    padding: 0;
+    width: 100%;
+}
+
+.pubsub-container {
+    width: 100%;
+    height: $container-height;
+    border: 3px solid $theme;
+    border-radius: 10px 10px 0px 0px;
+    color: #000;
+    background-color: #fff;
+    overflow: auto;
+}
+
+.pubsub-container p {
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+.pre-json {
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+.pubsub-row {
+    margin: 0;
+    padding-top: 3px;
+    padding-bottom: 2px;
+    padding-left: 10px;
+}
+
+.message {
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.info {
+    border-top: 1px solid $info-border;
+    border-left: 1px solid $info-border;
+    border-right: 1px solid $info-border;
+    border-radius: 2px 2px 0 0;
+    background: $theme;
+    color: #fff;
+    text-shadow: 1px 3px 2px rgba(0, 0, 0, 0.6);
+    padding: 2px;
+    padding-right: 4px;
+    border-radius: 10px 10px 0px 0px;
+    cursor: pointer;
+}
+
+.arrow-up {
+    cursor: pointer;
+}
+
+.fixed-accounts ::-webkit-scrollbar {
+    width: 12px;
+    background: $theme;
+}
+
+.fixed-accounts ::-webkit-scrollbar-thumb {
+    background: #fff;
+    border-radius: 5px;
+    border: 3px solid $theme;
+}
+
+.console-msg {
+    font-size: 11px;
+    padding: 10px;
+}
+
+.fixed-accounts {
+    position: fixed;
+    display: block;
+    z-index: 98;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.fixed-accounts div {
+    right: 0;
+    left: 0;
+}
+
+.merge-in-console {
+    margin-bottom: -16px;
+}
+
+.flag {
+    color: #424242;
+}
+
+.error {
+    color: #ff5252;
+}
+
+.mobile-icon {
+    font-size: 15px;
+    margin-left: 2px;
+}
+
+.ib-status {
+    border-top: 1px solid #000;
+    border-left: 1px solid #000;
+    border-right: 1px solid #000;
+    border-radius: 2px 2px 0 0;
+    background: #000;
+    text-shadow: 1px 3px 2px rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 2px;
+    padding-right: 4px;
+    border-radius: 10px 10px 0px 0px;
+    cursor: pointer;
+}
+
+.success-message {
+    color: #00c853;
+}
+
+.warning-message {
+    color: #ffab00;
+}
+
+.info-message {
+    color: #2196f3;
+}
+
+.error-message {
+    color: #ff5252;
+}
