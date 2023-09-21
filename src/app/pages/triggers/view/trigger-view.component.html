@@ -5,7 +5,11 @@
       NFT Event Trigger
     </p>
 
-{{trigger}}
+    <p class="mt-4 ml-1"><a routerLink="/triggers" class="link text-xs hover:underline cursor-pointer">&#60; Back</a></p>
+
+    <div *ngIf="isLoading" class="mt-4">
+      <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading trigger details</span>
+    </div>
 
     <!-- <div class="flex flex-col mt-8 mb-8">
       <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -13,78 +17,101 @@
       </div>
     </div> -->
 
-    <div class="relative overflow-x-auto" *ngIf="trigger">
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+    <div class="relative overflow-x-auto mt-4" *ngIf="trigger.action && !isLoading">
+
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2">
+        Summary
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
         <tbody>
-          <!-- <tr
-            class="bg-white border-b border-t dark:bg-gray-800 dark:border-gray-700"
-          >
-            <th
-              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
-              nftId
-            </th>
-            <td class="px-6 py-4">{{ idea.nftId }}</td>
-          </tr> -->
-          <!-- <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <th
-              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
-              Action
-            </th>
-            <td class="px-6 py-4">
-              {{ idea.strategy.name }}
-            
-            </td>
-          </tr> -->
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
             >
-              Strategy 
+              Action:
             </th>
-            <td class="px-6 py-4"><a routerLink="nfts/strategies/{{trigger.strategy.reference}}">{{ trigger?.strategy?.name }}</a></td>
+            <td class="w-3/4 px-6 py-4">
+              <span [ngSwitch]="trigger.action">
+                <span *ngSwitchCase="'copy-trade'" class="">
+                  Copy Trade
+                </span>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Strategy:
+            </th>
+            <td class="w-3/4 px-6 py-4"><a routerLink="/nfts/strategies/{{trigger.strategy?.reference}}" class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Account:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
+                {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})              
+              </a>
+            
+            </td>
           </tr>
 
         </tbody>
       </table>
 
-      account
-      : 
-      reference
-      : 
-      "0x0d111f8a500685d685a93b9320d7818e"
-      [[Prototype]]
-      : 
-      Object
-      action
-      : 
-      "copy-trade"
-      docId
-      : 
-      "8938ec07f7f1d42b909f8b656c54c35b"
-      settings
-      : 
-      maxLeverage
-      : 
-      1
-      maxPositionSize
-      : 
-      5
-      orderSize
-      : 
-      2
-      [[Prototype]]
-      : 
-      Object
-      strategy
-      : 
-      name
-      : 
-      " D2 Test Strategy"
-      reference
-      :      
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2">
+        Copy Trade Settings
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed">
+        <tbody>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Maximum Leverage:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              {{ trigger?.settings?.maxLeverage }}x
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Maximum Position Size:
+            </th>
+            <td class="px-6 py-4">
+              {{ trigger?.settings?.maxPositionSize }}%
+            </td>
+          </tr>
+          
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
+            >
+              Default Order Size:
+            </th>
+            <td class="px-6 py-4">
+              {{ trigger?.settings?.orderSize }}%
+            </td>
+          </tr>
+          
+          
+    
+        </tbody>
+      </table>
+
     </div>
 
 
