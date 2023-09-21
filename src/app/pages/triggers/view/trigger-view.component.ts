@@ -39,11 +39,9 @@ export default class TriggerViewComponent implements OnInit {
     this.isLoading = true;
 
     try {
-      console.log('triggerId', this.triggerId);
       this.trigger = await this.weaveDBService.getDataByDocID<any>(this.triggerId);
-      console.log('trigger', this.trigger);
     } catch (err) {
-      console.log('get trigger error', err);
+      // console.log('get trigger error', err);
       this.isLoading = false;
     }
 

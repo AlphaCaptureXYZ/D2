@@ -37,6 +37,7 @@ export default class TriggersListComponent implements OnInit {
       this.triggers = await this.weaveDBService.getAllData<any>({
         type: 'trigger',
       });
+      // console.log('triggers', this.triggers);
     } catch (err) {
       this.isLoading = false;
     }
