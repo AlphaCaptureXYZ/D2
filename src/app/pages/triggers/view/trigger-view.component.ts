@@ -4,6 +4,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 // import { EventService } from 'src/app/services/event.service';
 // import { ActivService } from 'src/app/services/activ.service';
@@ -28,6 +29,7 @@ export default class TriggerViewComponent implements OnInit {
     private route: ActivatedRoute,
     private weaveDBService: WeaveDBService,
     private nftCredentialService: NFTCredentialService,
+    private pkpGeneratorService: PKPGeneratorService,
   ) {
     this.trigger = {};
     this.account = {};
@@ -62,7 +64,8 @@ export default class TriggerViewComponent implements OnInit {
 
   async getAccount(accountReference: string) {
     try {
-      const accounts = await this.nftCredentialService.getMyCredentials();
+      const { pkpWalletAddress } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+      const accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
 
       for (const i in accounts) {
         if (i) {
