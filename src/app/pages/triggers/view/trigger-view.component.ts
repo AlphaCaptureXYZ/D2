@@ -67,6 +67,7 @@ export default class TriggerViewComponent implements OnInit {
 
       const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
       const accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+      console.log('accoubts', accounts);
 
       for (const i in accounts) {
         if (i) {
