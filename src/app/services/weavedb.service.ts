@@ -213,6 +213,8 @@ export class WeaveDBService {
 
             const wallet = await getDefaultAccount();
 
+            await wait(500);
+
             let docs: any[] = await this.db.cget(
                 COLLECTION_NAME,
                 ['type'],
@@ -288,11 +290,9 @@ export class WeaveDBService {
 
             data = data?.filter((item) => item) || [];
 
-        } catch (e) {
-            console.error(e)
+        } catch (e: any) {
+            console.log('[weavedb] getAllData (error)', e?.message);
         }
-
-        console.log('data', data);
 
         return data as T[];
     }
