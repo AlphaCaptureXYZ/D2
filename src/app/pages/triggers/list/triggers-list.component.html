@@ -50,23 +50,23 @@
         </thead>
 
         <tbody *ngIf="!isLoading  && triggers.length > 0">
-            <tr
-              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-              *ngFor="let data of triggers"
-              routerLink="/triggers/{{ data.docId }}"
-              >
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                {{ data.account.reference }}
-              </th>
-              <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-              <td class="px-6 py-4">{{ data.action }}</td>
-              <td class="px-6 py-4">
-                <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
-              </td>
-            </tr>
-          </tbody>
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+            *ngFor="let data of triggers"
+            routerLink="/triggers/{{ data.docId }}"
+            >
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              {{ data.account.reference }}
+            </th>
+            <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
+            <td class="px-6 py-4">{{ data.action }}</td>
+            <td class="px-6 py-4">
+              <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
+            </td>
+          </tr>
+        </tbody>
 
           <tbody *ngIf="!isLoading && triggers.length === 0">
             <tr
@@ -79,19 +79,6 @@
               </th>
             </tr>
           </tbody>
-          <tr
-            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-            *ngFor="let data of triggers"
-            routerLink="/triggers/{{ data.docId }}">
-            <td class="px-6 py-4">{{ data.docId }}</td>
-            <td class="px-6 py-4">{{ data.account.reference }}</td>
-            <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">{{ data.action }}</td>
-            <td class="px-6 py-4">
-              <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
-            </td>
-          </tr>
-        </tbody>
 
         <tbody *ngIf="isLoading">
           <tr
