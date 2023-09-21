@@ -16,8 +16,6 @@ import { NFTStorageService } from './nft-store.service';
 
 const COLLECTION_NAME = 'D2-data';
 
-const contractTxId = 'uItgIC0zhIGUM3uK0DPb__1TVb-2F5Q1awI2mVMICbk';
-
 type CollectionType =
     | 'setting'
     | 'trigger'
@@ -39,6 +37,9 @@ export class WeaveDBService {
 
     private async setupWeaveDB() {
         if (isNullOrUndefined(this.db)) {
+
+            const contractTxId = 'uItgIC0zhIGUM3uK0DPb__1TVb-2F5Q1awI2mVMICbk';
+            
             this.db = new WeaveDB({
                 contractTxId,
                 nocache: true,
