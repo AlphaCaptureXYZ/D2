@@ -4,6 +4,8 @@ import { BigNumber, ethers } from "ethers";
 import { getDefaultNetwork, getEthereum } from '../shared/shared';
 import { WeaveDBService } from './weavedb.service';
 
+import { getDefaultAccount } from 'src/app/shared/shared';
+
 const ECDSA_KEY = 2;
 
 const pkpNftContractAddress = '0x8F75a53F65e31DD0D2e40d0827becAaE2299D111';
@@ -131,11 +133,12 @@ interface MultiETHFormat {
 }
 
 export interface IPkpInfo {
-    tx?: any;
+    docId: string;
     tokenId: string;
     pkpPublicKey: string;
     pkpWalletAddress: string;
     wallets?: string[];
+    tx?: any;
 }
 
 @Injectable({
@@ -207,6 +210,7 @@ export class PKPGeneratorService {
         contract: any = null
     ) {
         const response = {
+            docId: null as any,
             tx: null as any,
             tokenId: null as any,
             pkpPublicKey: null as any,
@@ -236,7 +240,9 @@ export class PKPGeneratorService {
             const pubKey = await contract.getPubkey(tokenIdFromEvent);
 
             response.pkpPublicKey = pubKey;
-            response.pkpWalletAddress = ethers.utils.computeAddress(pubKey);
+
+            const pkpWalletAddress = ethers.utils.computeAddress(pubKey);
+            response.pkpWalletAddress = pkpWalletAddress;
 
             response.wallets = await this.getWalletsWithAccess(
                 tokenIdFromEvent,
@@ -244,6 +250,16 @@ export class PKPGeneratorService {
             );
 
             await getDefaultNetwork();
+
+            const userWallet = await getDefaultAccount();
+
+            await this.weaveDBService.upsertData({
+                type: 'pkp-info',
+                jsonData: response,
+                userWallet,
+                isCompressed: false,
+                pkpKey: pubKey,
+            });
 
         } catch (err: any) {
             console.log('mint ERROR', err.message);
@@ -329,6 +345,8 @@ export class PKPGeneratorService {
         const data = await this.weaveDBService.getAllData<any>({
             type: 'pkp-info'
         });
+
+        console.log('getPKPInfo (data)', data)
 
         return data?.find(res => res) || null;
     }

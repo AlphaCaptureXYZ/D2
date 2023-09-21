@@ -9,7 +9,7 @@ import {
     Compressor
 } from "src/app/scripts/Compress";
 
-import { isNullOrUndefined } from '../helpers/helpers';
+import { isNullOrUndefined, wait } from '../helpers/helpers';
 import { blobToBase64String } from '@lit-protocol/lit-node-client';
 import { getDefaultAccount } from '../shared/shared';
 import { NFTStorageService } from './nft-store.service';
@@ -291,6 +291,8 @@ export class WeaveDBService {
         } catch (e) {
             console.error(e)
         }
+
+        console.log('data', data);
 
         return data as T[];
     }

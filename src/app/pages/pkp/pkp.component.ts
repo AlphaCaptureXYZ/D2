@@ -8,10 +8,9 @@ import LeftMenuComponent from 'src/app/components/left-menu/left-menu.component'
 
 import { FormsModule } from '@angular/forms';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
-import { getDefaultAccount } from 'src/app/shared/shared';
 
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
-import { copyValue, wait } from 'src/app/helpers/helpers';
+import { copyValue, isNullOrUndefined, wait } from 'src/app/helpers/helpers';
 
 const litPkpUrl = 'https://explorer.litprotocol.com/pkps';
 
@@ -83,66 +82,35 @@ export default class SettingsComponent implements OnInit {
         try {
             this.pkpLoading = true;
 
-            const data = await this.weaveDBService.getAllData<any>({
-                type: 'pkp-info'
-            });
+            const pkpData = await this.pKPGeneratorService.getPKPInfo();
 
-            if (data?.length > 0) {
-                this.pkpInfoDocId = data[0]?.docId;
-                this.pkpInfo = data[0];
+            if (!isNullOrUndefined(pkpData)) {
+                this.pkpInfoDocId = pkpData?.docId;
+                this.pkpInfo = pkpData;
                 this.pkpInfo.url = `${litPkpUrl}/${this.pkpInfo.tokenId}`;
 
                 this.pkpLoading = false;
-                this.pkpUsersLoading = true;
 
-                const wallets =
-                    await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
+                // this.pkpUsersLoading = true;
 
-                this.pkpUsersLoading = false;
+                // const wallets =
+                //     await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
 
-                this.walletsWithAccess = wallets;
+                // this.pkpUsersLoading = false;
+
+                // this.walletsWithAccess = wallets;
 
             }
 
-            if (data?.length <= 0) {
-                await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
-                window.location.reload();
+            if (isNullOrUndefined(pkpData)) {
+                const mint = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+                this.pkpInfo = mint;
+                this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
+                this.pkpLoading = false;
             }
 
         } catch (err) {
-            this.pkpUsersLoading = false;
             this.pkpLoading = false;
-        }
-    }
-
-    async generatePkp() {
-        if (!this.pkpMintLoading) {
-            this.pkpMintLoading = true;
-
-            try {
-                const mint = await this.pKPGeneratorService.mint();
-
-                const userWallet = await getDefaultAccount();
-
-                await this.weaveDBService.upsertData({
-                    type: 'pkp-info',
-                    jsonData: mint,
-                    userWallet,
-                    isCompressed: false,
-                    pkpKey: mint.pkpPublicKey,
-                });
-
-                this.pkpInfo = mint;
-
-                this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
-
-                this.walletsWithAccess = mint.wallets;
-
-            } catch (err: any) {
-                this.pkpMintLoading = false;
-            }
-
-            this.pkpMintLoading = false;
         }
     }
 
@@ -155,5 +123,12 @@ export default class SettingsComponent implements OnInit {
             );
             this.pkpLoading = false;
         }
+    }
+
+    async deletePkp() {
+        const docId = this.pkpInfo.docId;
+        await this.weaveDBService.deleteData(docId);
+        this.pkpInfo = null as any;
+        await this.getPkpInfo();
     }
 }
