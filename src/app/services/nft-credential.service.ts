@@ -162,12 +162,18 @@ export class NFTCredentialService {
         return total;
     }
 
-    async getMyCredentials(): Promise<ICredentialNft[]> {
+    async getMyCredentials(
+        pkpWalletAddress: string
+    ): Promise<ICredentialNft[]> {
         const contract: any = this.getContract();
         const credentials = await contract.getMyCredentials();
 
-        const credentialsFilled = credentials?.map((credential: any) => {
+        let credentialsFilled: ICredentialNft[] = credentials?.map((credential: any) => {
             return this.fillCredential(credential);
+        });
+
+        credentialsFilled = credentialsFilled?.filter((credential: any) => {
+            return credential?.pkpAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
         });
 
         return credentialsFilled;

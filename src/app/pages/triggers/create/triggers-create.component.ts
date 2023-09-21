@@ -57,7 +57,7 @@ export default class TriggersCreateComponent implements OnInit {
     private weaveDBService: WeaveDBService,
     private activService: ActivService,
     private nftCredentialService: NFTCredentialService,
-    private pKPGeneratorService: PKPGeneratorService,
+    private pkpGeneratorService: PKPGeneratorService,
     private formBuilder: FormBuilder,
   ) {
     this.allAccounts = [];
@@ -111,12 +111,10 @@ export default class TriggersCreateComponent implements OnInit {
 
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(account)) {
 
-        const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
-
-        const pkpKey = pkpInfo?.pkpPublicKey;
+        const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
 
         await this.weaveDBService.upsertData({
-          pkpKey,
+          pkpKey: pkpPublicKey,
           type: 'trigger',
           userWallet,
           jsonData: {
@@ -165,8 +163,8 @@ export default class TriggersCreateComponent implements OnInit {
 
   async getAccounts() {
     this.isLoading = true;
-    // brokerage account details on weaver
-    this.allAccounts = await this.nftCredentialService.getMyCredentials();
+    const { pkpWalletAddress } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     console.log('allAccounts', this.allAccounts);
     this.isLoading = false;
   }
