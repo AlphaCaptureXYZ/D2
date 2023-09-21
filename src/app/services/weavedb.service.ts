@@ -9,7 +9,7 @@ import {
     Compressor
 } from "src/app/scripts/Compress";
 
-import { isNullOrUndefined } from '../helpers/helpers';
+import { isNullOrUndefined, wait } from '../helpers/helpers';
 import { blobToBase64String } from '@lit-protocol/lit-node-client';
 import { getDefaultAccount } from '../shared/shared';
 import { NFTStorageService } from './nft-store.service';
@@ -205,13 +205,15 @@ export class WeaveDBService {
 
         try {
 
+            await this.setupWeaveDB();
+            
             const {
                 type,
             } = payload;
 
-            await this.setupWeaveDB();
-
             const wallet = await getDefaultAccount();
+
+            await wait(1000);
 
             let docs: any[] = await this.db.cget(
                 COLLECTION_NAME,
@@ -288,8 +290,8 @@ export class WeaveDBService {
 
             data = data?.filter((item) => item) || [];
 
-        } catch (e) {
-            console.error(e)
+        } catch (e: any) {
+            console.log('[weavedb] getAllData (error)', e?.message);
         }
 
         return data as T[];
