@@ -205,15 +205,15 @@ export class WeaveDBService {
 
         try {
 
+            await this.setupWeaveDB();
+            
             const {
                 type,
             } = payload;
 
-            await this.setupWeaveDB();
-
             const wallet = await getDefaultAccount();
 
-            await wait(500);
+            await wait(1000);
 
             let docs: any[] = await this.db.cget(
                 COLLECTION_NAME,

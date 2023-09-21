@@ -346,8 +346,6 @@ export class PKPGeneratorService {
             type: 'pkp-info'
         });
 
-        console.log('getPKPInfo (data)', data)
-
         return data?.find(res => res) || null;
     }
 
