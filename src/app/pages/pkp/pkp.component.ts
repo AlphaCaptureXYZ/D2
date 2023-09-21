@@ -39,6 +39,7 @@ export default class SettingsComponent implements OnInit {
     walletsWithAccess: any[] = [];
 
     pkpLoading = false;
+    pkpUsersLoading = false;
     pkpMintLoading = false;
 
     constructor(
@@ -79,25 +80,38 @@ export default class SettingsComponent implements OnInit {
     }
 
     async getPkpInfo() {
-
-        const data = await this.weaveDBService.getAllData<any>({
-            type: 'pkp-info'
-        });
-
-        if (data?.length > 0) {
-            this.pkpInfoDocId = data[0]?.docId;
-            this.pkpInfo = data[0];
-            this.pkpInfo.url = `${litPkpUrl}/${this.pkpInfo.tokenId}`;
-
+        try {
             this.pkpLoading = true;
 
-            const wallets =
-                await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
+            const data = await this.weaveDBService.getAllData<any>({
+                type: 'pkp-info'
+            });
 
+            if (data?.length > 0) {
+                this.pkpInfoDocId = data[0]?.docId;
+                this.pkpInfo = data[0];
+                this.pkpInfo.url = `${litPkpUrl}/${this.pkpInfo.tokenId}`;
+
+                this.pkpLoading = false;
+                this.pkpUsersLoading = true;
+
+                const wallets =
+                    await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
+
+                this.pkpUsersLoading = false;
+
+                this.walletsWithAccess = wallets;
+
+            }
+
+            if (data?.length <= 0) {
+                await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+                window.location.reload();
+            }
+
+        } catch (err) {
+            this.pkpUsersLoading = false;
             this.pkpLoading = false;
-
-            this.walletsWithAccess = wallets;
-
         }
     }
 

@@ -12,7 +12,11 @@
           <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 
             <div class="mb-4">
-              <p class="text-sm pt-3 pb-3">A PKP is a type of MPC wallet provided by Lit Protocol which is used to store your credentials.  It is necessary to create a PKP before configuring a brokerage account. For further details, please see the Lit Protocol documentation on PKPs <a href="https://developer.litprotocol.com/v2/pkp/usage" target="_new" class="link hover:underline cursor-pointer">https://developer.litprotocol.com/v2/pkp/usage</a></p>
+              <p class="text-sm pt-3 pb-3">A PKP is a type of MPC wallet provided by Lit Protocol
+                which is used to store your credentials. It is necessary to create a PKP before
+                configuring a brokerage account. For further details, please see the Lit Protocol
+                documentation on PKPs <a href="https://developer.litprotocol.com/v2/pkp/usage"
+                  target="_new" class="link hover:underline cursor-pointer">https://developer.litprotocol.com/v2/pkp/usage</a></p>
 
               <button type="button"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
@@ -22,6 +26,10 @@
 
             <div *ngIf="pkpMintLoading">
               <p>Generating...</p>
+            </div>
+
+            <div *ngIf="pkpLoading">
+              <p>Loading...</p>
             </div>
 
             <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading">
@@ -84,7 +92,7 @@
                 </p>
               </div>
 
-              <div class="mt-5" *ngIf="pkpLoading">
+              <div class="mt-5" *ngIf="pkpUsersLoading">
                 <p>Loading authorised pkp controllers...</p>
               </div>
 
