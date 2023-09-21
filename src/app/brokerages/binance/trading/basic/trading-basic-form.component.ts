@@ -15,6 +15,7 @@ import { isNullOrUndefined } from 'src/app/helpers/helpers';
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 
 import * as litActions from 'src/app/scripts/lit-actions';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 interface FormType {
   credentialNftUuid: string;
@@ -43,6 +44,7 @@ export default class TradingBasicFormComponent implements OnInit {
   constructor(
     private eventService: EventService,
     private nftCredentialService: NFTCredentialService,
+    private pKPGeneratorService: PKPGeneratorService,
     public cRef: ChangeDetectorRef
   ) {
     this.isLoading = false;
@@ -64,7 +66,8 @@ export default class TradingBasicFormComponent implements OnInit {
   }
 
   async getCredentials() {
-    this.allAccounts = await this.nftCredentialService.getMyCredentials();
+    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
   }
 
   requiredControl = (): void => {

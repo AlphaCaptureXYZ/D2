@@ -42,7 +42,8 @@ export default class DashboardComponent implements OnInit {
   async getAccounts() {
     this.isLoadingAccounts = true;
     try {
-      this.accounts = await this.nftCredentialService.getMyCredentials();
+      const { pkpWalletAddress } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+      this.accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     } catch (err) {
       this.isLoadingAccounts = false;
     }
@@ -52,7 +53,7 @@ export default class DashboardComponent implements OnInit {
   async getMPCWallet() {
     this.isLoadingMPCWallet = true;
     try {
-      this.pkpInfo = await this.pkpGeneratorService.getPKPInfo(); 
+      this.pkpInfo = await this.pkpGeneratorService.getPKPInfo();
     } catch (err) {
       this.isLoadingMPCWallet = false;
     }

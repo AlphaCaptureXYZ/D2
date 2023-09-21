@@ -8,6 +8,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import { FormsModule } from '@angular/forms';
 import { HighlightModule } from 'ngx-highlightjs';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 const chain = 'mumbai';
 
@@ -39,6 +40,7 @@ export default class AccountsComponent implements OnInit {
 
   constructor(
     private nftCredentialService: NFTCredentialService,
+    private pKPGeneratorService: PKPGeneratorService,
   ) {
     this.accounts = [];
     this.broker = 'Binance';
@@ -61,8 +63,9 @@ export default class AccountsComponent implements OnInit {
   async getAccounts() {
     this.isLoading = true;
     try {
-      this.accounts = await this.nftCredentialService.getMyCredentials();
-    } catch(err) {
+      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+      this.accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+    } catch (err) {
       // console.log(err.message);
     }
     this.isLoading = false;

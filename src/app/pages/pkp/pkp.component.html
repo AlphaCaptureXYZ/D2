@@ -27,11 +27,7 @@
               <p>Loading...</p>
             </div>
 
-            <div class="float-right" *ngIf="pkpInfo">
-              <span class="cursor-pointer" (click)="deletePkp()"> <i class='bx bx-trash'></i></span>
-            </div>
-            <br>
-            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading" class="pkp-container">
+            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading">
 
               <p class="mt-5">
                 <b>Token Id:</b> {{pkpInfo?.tokenId}}
