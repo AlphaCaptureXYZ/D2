@@ -42,7 +42,6 @@
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-3">Reference</th>
-            <th scope="col" class="px-6 py-3">Credential UUID</th>
             <th scope="col" class="px-6 py-3">Strategy</th>
             <th scope="col" class="px-6 py-3">Action </th>
             <th scope="col" class="px-6 py-3"></th>
@@ -61,7 +60,13 @@
               {{ data.account.reference }}
             </th>
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">{{ data.action }}</td>
+            <td class="px-6 py-4">
+              <span [ngSwitch]="data.action">
+                <span *ngSwitchCase="'copy-trade'" class="">
+                  Copy Trade
+                </span>
+              </span>
+            </td>
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
             </td>
