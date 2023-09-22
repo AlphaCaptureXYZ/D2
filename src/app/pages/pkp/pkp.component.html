@@ -27,7 +27,19 @@
               <p>Loading...</p>
             </div>
 
-            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading">
+            <div *ngIf="!pkpInfo?.pkpPublicKey && !pkpLoading">
+              <p>Pkp not found, refresh the page to generate again automatically.</p>
+            </div>
+
+            <div class="float-right" *ngIf="pkpInfo?.pkpPublicKey">
+              <span
+                class="cursor-pointer bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-red-900 dark:text-red-300"
+                (click)="deletePkp()">
+                <i class='bx bx-trash'></i><span class="ml-1">Delete</span>
+              </span>
+            </div>
+            <br>
+            <div *ngIf="pkpInfo?.pkpPublicKey && !pkpMintLoading" class="pkp-container">
 
               <p class="mt-5">
                 <b>Token Id:</b> {{pkpInfo?.tokenId}}

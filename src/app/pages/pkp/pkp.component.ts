@@ -124,4 +124,11 @@ export default class SettingsComponent implements OnInit {
             this.pkpLoading = false;
         }
     }
+
+    async deletePkp() {
+        const docId = this.pkpInfo.docId;
+        await this.weaveDBService.deleteData(docId);
+        this.pkpInfo = null as any;
+        await this.getPkpInfo();
+    }
 }

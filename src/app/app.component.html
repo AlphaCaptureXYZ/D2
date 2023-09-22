@@ -6,7 +6,7 @@
     <router-outlet></router-outlet>
 </div>
 
-<div class="site-disabled-container" *ngIf="!isSupportedNetwork">
+<div class="site-disabled-container" *ngIf="!isSupportedNetwork && !starting">
     <div class="invalid-network">
         <img src="/assets/img/metamask.png" alt class="logo-metamask" />
         <p

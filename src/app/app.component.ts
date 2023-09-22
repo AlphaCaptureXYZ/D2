@@ -3,7 +3,7 @@ import { OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, RouterLink } from '@angular/router';
+import { RouterOutlet, RouterLink, Router, NavigationEnd } from '@angular/router';
 import NavbarAuthComponent from './components/navbar-auth/navbar-auth.component';
 import LeftMenuComponent from './components/left-menu/left-menu.component';
 import SplashComponent from './pages/splash/splash.component';
@@ -12,6 +12,7 @@ import { EventService, EventType } from './services/event.service';
 // import { environment } from 'src/environments/environment';
 import { getDefaultAccount, defaultNetworkSwitch, getEthereum, litSigAuthExpirationCheck, getDefaultNetwork } from './shared/shared';
 import { WALLET_NETWORK_CHAIN_NAME, isSupportedNetwork } from './shared/web3-helpers';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -38,16 +39,22 @@ export class AppComponent implements OnInit {
 
   isSupportedNetwork = false;
 
+  currentNetworkInfo: any;
+
   constructor(
+    private router: Router,
     private eventService: EventService,
     private cRef: ChangeDetectorRef,
-  ) { }
+  ) {
+    this.currentNetworkInfo = null;
+  }
 
   async ngOnInit() {
     initFlowbite();
     await litSigAuthExpirationCheck();
     this.callEvents();
     this.detectAuth();
+    this.listenRouteChange();
   }
 
   async detectAuth() {
@@ -62,10 +69,12 @@ export class AppComponent implements OnInit {
 
       const defaultNetwork = await getDefaultNetwork();
 
-      this.eventService.emit('METAMASK_NETWORK_CHANGED', {
+      this.currentNetworkInfo = {
         ...defaultNetwork,
         firstTime: true,
-      });
+      };
+
+      this.eventService.emit('METAMASK_NETWORK_CHANGED', this.currentNetworkInfo);
 
       this.ethereum = await getEthereum();
 
@@ -75,11 +84,14 @@ export class AppComponent implements OnInit {
 
       this.ethereum.on('networkChanged', async (networkId: number) => {
         const network = WALLET_NETWORK_CHAIN_NAME(networkId);
-        this.eventService.emit('METAMASK_NETWORK_CHANGED', {
+
+        this.currentNetworkInfo = {
           id: networkId,
           name: network,
           firstTime: false,
-        });
+        };
+
+        this.eventService.emit('METAMASK_NETWORK_CHANGED', this.currentNetworkInfo);
       });
     }
   }
@@ -96,20 +108,45 @@ export class AppComponent implements OnInit {
           }
           break;
         case 'METAMASK_NETWORK_CHANGED':
-          await this.networkSupporCheck(data);
+          await this.networkSupporCheck();
           break;
       }
     });
   }
 
-  async networkSupporCheck(payload: any) {
-    const check = isSupportedNetwork(payload?.name);
-    this.isSupportedNetwork = check;
-    this.cRef.detectChanges();
+  async networkSupporCheck() {
+    const path = window.location.pathname;
 
-    if (!this.isSupportedNetwork) {
-      await defaultNetworkSwitch();
+    const skipByPath = [
+      '/wallets/mpc',
+    ].includes(path);
+
+    if (skipByPath) {
+      this.isSupportedNetwork = true;
     }
 
+    if (!skipByPath) {
+      const check = isSupportedNetwork(this.currentNetworkInfo?.name);
+      this.isSupportedNetwork = check;
+      this.cRef.detectChanges();
+
+      if (!this.isSupportedNetwork) {
+        await defaultNetworkSwitch();
+      }
+    }
   }
+
+  listenRouteChange() {
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => {
+          const path = window.location.pathname;
+          return path
+        })
+      )
+      .subscribe((path: string) => {
+        this.networkSupporCheck();
+      });
+  };
 }
