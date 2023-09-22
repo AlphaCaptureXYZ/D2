@@ -200,6 +200,7 @@ export class WeaveDBService {
     async getAllData<T>(
         payload: {
             type: CollectionType,
+            
         }
     ) {
         let data = [];
@@ -280,6 +281,7 @@ export class WeaveDBService {
 
                     if (decryptedString) {
                         decryptedString.docId = docId;
+                        decryptedString.pkpWalletAddress = pkpWalletAddress;
                     }
 
                     return decryptedString;

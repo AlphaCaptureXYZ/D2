@@ -44,10 +44,8 @@ export default class TriggersListComponent implements OnInit {
 
       const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
 
-      const accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
-
       this.triggers = this.triggers?.filter((trigger) => {
-        const check = accounts?.find((account) => account?.uuid === trigger?.account?.reference);
+        const check = trigger?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
         return check;
       });
 
