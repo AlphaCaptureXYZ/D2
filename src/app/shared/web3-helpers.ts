@@ -15,24 +15,52 @@ export const WALLET_NETWORK_CHAIN_IDS_OPTS = {
   bnb: 56,
 };
 
-export const supportedNetworkAll = [
-  'polygon',
-  'ethereum',
-  'mumbai',
-  'goerli',
-  'hardhat',
-];
-export const supportedNetworkMainnet = ['polygon', 'ethereum'];
-export const supportedNetworkTestnet = ['mumbai', 'goerli', 'hardhat'];
+export const supportedNetworkAllArrayObj = [
+  // {
+  //   name: 'polygon',
+  //   testnet: false,
+  // },
+  // {
+  //   name: 'ethereum',
+  //   testnet: false,
+  // },
+  {
+    name: 'mumbai',
+    testnet: true,
+  },
+  // {
+  //   name: 'goerli',
+  //   testnet: true,
+  // },
+  // {
+  //   name: 'hardhat',
+  //   testnet: true,
+  // },
+] as const;
+
+
+export const supportedNetworkAll =
+  supportedNetworkAllArrayObj.map((item) => item.name);
+
+export const supportedNetworkMainnet =
+  supportedNetworkAllArrayObj.filter(
+    (item) => !item.testnet
+  ).map((item) => item.name);
+
+
+export const supportedNetworkTestnet =
+  supportedNetworkAllArrayObj.filter(
+    (item) => item.testnet
+  ).map((item) => item.name);
 
 export function isSupportedNetwork(network: string) {
-  return supportedNetworkAll?.includes(network?.toLowerCase());
+  return supportedNetworkAll?.includes(network?.toLowerCase() as any);
 }
 export function isMainnet(network: string) {
-  return supportedNetworkMainnet?.includes(network?.toLowerCase());
+  return supportedNetworkMainnet?.includes(network?.toLowerCase() as any);
 }
 export function isTestnet(network: string) {
-  return supportedNetworkTestnet?.includes(network?.toLowerCase());
+  return supportedNetworkTestnet?.includes(network?.toLowerCase() as any);
 }
 
 export type IWalletNetworkChain = keyof typeof WALLET_NETWORK_CHAIN_IDS_OPTS;
