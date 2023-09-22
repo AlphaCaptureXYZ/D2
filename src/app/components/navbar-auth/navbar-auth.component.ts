@@ -6,6 +6,7 @@ import { EventService, EventType } from 'src/app/services/event.service';
 import { ShortenContractAddress } from 'src/app/pipes/shorten-contract-address.pipe';
 import { ActivService } from 'src/app/services/activ.service';
 import WSLoggerComponent from '../ws-logger/ws-logger.component';
+import { getDefaultNetwork } from 'src/app/shared/shared';
 
 // import { BigNumber, ethers } from "ethers";
 // import { WALLET_NETWORK_CHAIN_IDS } from 'src/app/shared/web3-helpers';
@@ -39,9 +40,11 @@ export default class NavbarAuthComponent implements OnInit {
       const data = res?.data || null;
 
       switch (event) {
+        case 'METAMASK_NETWORK_CHANGED':
+          this.getNetwork();
+          break;
         case 'METAMASK_WALLET_DETECTED':
           this.walletAddress = data?.wallet || null;
-          this.getNetwork();
           break;
         case 'METAMASK_WALLET_CHANGED':
           window.location.reload();
@@ -51,8 +54,9 @@ export default class NavbarAuthComponent implements OnInit {
   }
 
   getNetwork = async (): Promise<void> => {
-    this.networkName = await this.activService.getNetworkName();
-  };
+    const defaultNetwork = await getDefaultNetwork();
+    this.networkName = defaultNetwork?.name || '-';
+  }
 
   getBalance = async (): Promise<void> => {
     const balance = await (window.ethereum as any).

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import { BigNumber, ethers } from "ethers";
-import { getDefaultNetwork, getEthereum } from '../shared/shared';
+import { defaultNetworkSwitch, getEthereum } from '../shared/shared';
 import { WeaveDBService } from './weavedb.service';
 
 import { getDefaultAccount } from 'src/app/shared/shared';
@@ -249,7 +249,7 @@ export class PKPGeneratorService {
                 contract,
             );
 
-            await getDefaultNetwork();
+            await defaultNetworkSwitch();
 
             const userWallet = await getDefaultAccount();
 
@@ -336,7 +336,7 @@ export class PKPGeneratorService {
             console.log('getWalletsWithAccess ERROR', err.message);
         }
 
-        await getDefaultNetwork();
+        await defaultNetworkSwitch();
 
         return addresses;
     }

@@ -64,6 +64,24 @@ export const getDefaultAccount = async () => {
 };
 
 export const getDefaultNetwork = async () => {
+  let networkInfo: any = null as any;
+  try {
+    const ethereum = await getEthereum();
+    if (ethereum) {
+      const networkId = (window as any).ethereum.networkVersion;
+      networkInfo = {
+        id: networkId,
+        name: WALLET_NETWORK_CHAIN_NAME(networkId),
+      }
+    }
+  } catch (err: any) {
+    console.log('getDefaultNetwork error', err.message);
+  }
+
+  return networkInfo;
+};
+
+export const defaultNetworkSwitch = async () => {
 
   let network = {
     id: null as any,
@@ -92,7 +110,7 @@ export const getDefaultNetwork = async () => {
     network.name = data;
 
   } catch (err: any) {
-    console.log('getDefaultNetwork error', err.message);
+    console.log('defaultNetworkSwitch error', err.message);
   }
 
   return network;
