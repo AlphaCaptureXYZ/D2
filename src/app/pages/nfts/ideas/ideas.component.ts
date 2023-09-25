@@ -86,7 +86,7 @@ export default class NftIdeasComponent implements OnInit {
       let image;
       for (let i = 0; i < this.allIdeas.length; i++) {
         image = await displayImage('idea', this.allIdeas[i].idea.asset.image);
-        this.allIdeas[i].idea.asset.image.b64 = image?.source;
+        // this.allIdeas[i].idea.asset.image.b64 = image?.source;
       }
     }
     // this.allIdeas = getAllIdeas?.data as v4.ITradeIdeaIdea[];

@@ -132,7 +132,7 @@
                 <div class="flex-shrink-0 h-10 w-10">
                   <img
                     class="h-10 w-10 rounded-full"
-                    [src]="data?.idea?.asset?.image?.b64"
+                    [src]="data?.idea?.asset?.image?.b64 || 'https://picsum.photos/200/200?id=' + data.nftId"
                     alt="{{ data.idea.asset.ticker | uppercase }}"
                   />
                 </div>
