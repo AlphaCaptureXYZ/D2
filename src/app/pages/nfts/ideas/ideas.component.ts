@@ -54,7 +54,7 @@ export default class NftIdeasComponent implements OnInit {
     } else {
       getAllIdeas = await this.activService.listMyIdeas(1, 10, this.myFilter);
     }
-    // console.log('getAllIdeas', getAllIdeas);
+    console.log('getAllIdeas', getAllIdeas);
     for (const i in getAllIdeas.data) {
       if (i) {
         // if we have a string, it means the data is encrypted
