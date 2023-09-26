@@ -13,6 +13,7 @@ import { getDefaultAccount } from 'src/app/shared/shared';
 import { copyValue, isNullOrUndefined, wait } from 'src/app/helpers/helpers';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { environment } from 'src/environments/environment';
+import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
 const animationsSettings = [
     trigger('EnterLeave', [
@@ -51,6 +52,7 @@ export default class WSLoggerComponent implements OnInit {
     constructor(
         private wsService: WSService,
         private weaveDBService: WeaveDBService,
+        private pKPGeneratorService: PKPGeneratorService,
     ) {
 
     }
@@ -58,8 +60,15 @@ export default class WSLoggerComponent implements OnInit {
     async ngOnInit() {
         const walletAddress = await getDefaultAccount();
 
-        const data = await this.weaveDBService.getAllData<any>({
+        let data = await this.weaveDBService.getAllData<any>({
             type: 'setting',
+        });
+
+        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+        data = data?.filter((s) => {
+            const check = s?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
+            return check;
         });
 
         const eventListenerUrl: string =

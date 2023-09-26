@@ -116,14 +116,21 @@ export default class SettingsComponent implements OnInit {
     async getSettings() {
         this.isLoading = true;
 
-        const data = await this.weaveDBService.getAllData<any>({
+        let data = await this.weaveDBService.getAllData<any>({
             type: 'setting',
+        });
+
+        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+        data = data?.filter((s) => {
+            const check = s?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
+            return check;
         });
 
         if (data?.length > 0) {
             this.settingsDocId =
                 data[0]?.docId;
-                
+
             this.form.croupier_url =
                 data[0]?.croupier_url || environment.defaultCroupierUrl;
 

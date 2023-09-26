@@ -1,10 +1,12 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { FormsModule } from '@angular/forms';
+import { getDefaultAccount } from 'src/app/shared/shared';
 
 // import { EventService } from 'src/app/services/event.service';
 // import { ActivService } from 'src/app/services/activ.service';
@@ -13,7 +15,7 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 @Component({
   selector: 'app-trigger-view',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './trigger-view.component.html',
   styleUrls: ['./trigger-view.component.scss'],
 })
@@ -24,6 +26,14 @@ export default class TriggerViewComponent implements OnInit {
   isLoading = false;
   account: any;
   triggerId: string;
+
+  maxLeverageIsEdit = signal(false);
+  maxPositionSizeIsEdit = signal(false);
+  orderSizeIsEdit = signal(false);
+
+  isFullEdit = computed(() => {
+    return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
+  });
 
   constructor(
     private route: ActivatedRoute,
@@ -54,7 +64,6 @@ export default class TriggerViewComponent implements OnInit {
           await this.getAccount(this.trigger.account?.reference);
         }
       }
-      console.log('get trigger', this.trigger);
     } catch (err) {
       // console.log('get trigger error', err);
     }
@@ -78,10 +87,49 @@ export default class TriggerViewComponent implements OnInit {
           }
         }
       }
-    } catch(err) {
+    } catch (err) {
       // console.log(err.message);
     }
     this.isLoading = false;
   }
 
+  setEditable(field: string) {
+    if (field === 'maxLeverage') {
+      this.maxLeverageIsEdit.set(!this.maxLeverageIsEdit());
+    }
+    if (field === 'maxPositionSize') {
+      this.maxPositionSizeIsEdit.set(!this.maxPositionSizeIsEdit());
+    }
+    if (field === 'orderSize') {
+      this.orderSizeIsEdit.set(!this.orderSizeIsEdit());
+    }
+  }
+
+  async updateTrigger() {
+
+    const userWallet = await getDefaultAccount();
+
+    const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+
+    const docId = this.trigger.docId;
+
+    const triggerInfo = {
+      ...this.trigger,
+    };
+
+    delete triggerInfo.docId;
+
+    await this.weaveDBService.upsertData({
+      pkpKey: pkpPublicKey,
+      type: 'trigger',
+      userWallet,
+      jsonData: triggerInfo,
+      isCompressed: false,
+      docId,
+    });
+
+    this.maxLeverageIsEdit.set(false);
+    this.maxPositionSizeIsEdit.set(false);
+    this.orderSizeIsEdit.set(false);
+  }
 }
