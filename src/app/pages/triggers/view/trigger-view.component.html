@@ -5,7 +5,8 @@
       NFT Event Trigger
     </p>
 
-    <p class="mt-4 ml-1"><a routerLink="/triggers" class="link text-xs hover:underline cursor-pointer">&#60; Back</a></p>
+    <p class="mt-4 ml-1"><a routerLink="/triggers"
+        class="link text-xs hover:underline cursor-pointer">&#60; Back</a></p>
 
     <div *ngIf="isLoading" class="mt-4">
       <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading trigger details</span>
@@ -28,13 +29,12 @@
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Action:
             </th>
             <td class="w-3/4 px-6 py-4">
               <span [ngSwitch]="trigger.action">
-                <span *ngSwitchCase="'copy-trade'" class="">
+                <span *ngSwitchCase="'copy-trade'" class>
                   Copy Trade
                 </span>
               </span>
@@ -43,28 +43,28 @@
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Strategy:
             </th>
-            <td class="w-3/4 px-6 py-4"><a routerLink="/nfts/strategies/{{trigger.strategy?.reference}}" class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
+            <td class="w-3/4 px-6 py-4"><a
+                routerLink="/nfts/strategies/{{trigger.strategy?.reference}}"
+                class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
           </tr>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Account:
             </th>
             <td class="w-3/4 px-6 py-4">
               <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
-                {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})              
+                {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})
               </a>
 
               <a routerLink="/accounts" class="link hover:underline" *ngIf="!account?.accountName">
                 {{ trigger?.account?.reference }}
               </a>
-              
+
             </td>
           </tr>
 
@@ -80,44 +80,85 @@
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Maximum Leverage:
             </th>
             <td class="w-3/4 px-6 py-4">
-              {{ trigger?.settings?.maxLeverage }}x
+              <span class="mr-2 cursor-pointer" (click)="setEditable('maxLeverage')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!maxLeverageIsEdit()">
+                {{trigger?.settings?.maxLeverage}}x
+              </span>
+              <span *ngIf="maxLeverageIsEdit()">
+                <input class="copy-trade-setting-input" type="number"
+                  [(ngModel)]="trigger.settings.maxLeverage">x
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="maxLeverageIsEdit() && !isFullEdit()">
+                <i class="bx bx-check-circle ml-2"></i>
+              </span>
             </td>
           </tr>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Maximum Position Size:
             </th>
             <td class="px-6 py-4">
-              {{ trigger?.settings?.maxPositionSize }}%
+              <span class="mr-2 cursor-pointer" (click)="setEditable('maxPositionSize')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!maxPositionSizeIsEdit()">
+                {{trigger?.settings?.maxPositionSize}}%
+              </span>
+              <span *ngIf="maxPositionSizeIsEdit()">
+                <input class="copy-trade-setting-input" type="number"
+                  [(ngModel)]="trigger.settings.maxPositionSize">%
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="maxPositionSizeIsEdit() && !isFullEdit()">
+                <i class="bx bx-check-circle ml-2"></i>
+              </span>
             </td>
           </tr>
-          
+
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
             <th
-              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
-            >
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Default Order Size:
             </th>
             <td class="px-6 py-4">
-              {{ trigger?.settings?.orderSize }}%
+              <span class="mr-2 cursor-pointer" (click)="setEditable('orderSize')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!orderSizeIsEdit()">
+                {{trigger?.settings?.orderSize}}%
+              </span>
+              <span *ngIf="orderSizeIsEdit()">
+                <input class="copy-trade-setting-input" type="number"
+                  [(ngModel)]="trigger.settings.orderSize">%
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="orderSizeIsEdit() && !isFullEdit()">
+                <i class="bx bx-check-circle ml-2"></i>
+              </span>
             </td>
           </tr>
-          
-          
-    
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <i class="bx bx-check-circle cursor-pointer" (click)="updateTrigger()"></i>
+            </td>
+          </tr>
+
         </tbody>
       </table>
 
     </div>
-
 
   </div>
 </main>
