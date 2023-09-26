@@ -90,6 +90,10 @@ export default class LeftMenuComponent implements OnInit {
       this.router.navigateByUrl('/wallets/mpc');
     }
 
+    if (option === 'faqs') {
+      this.router.navigateByUrl('/faqs');
+    }
+
     if (option === 'support') {
       this.router.navigateByUrl('/support');
     }

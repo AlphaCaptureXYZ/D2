@@ -74,6 +74,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/settings/settings.component'),
   },
   {
+    path: 'faqs',
+    loadComponent: () => import('./pages/faqs/faqs.component'),
+  },
+  {
     path: 'wallets/mpc',
     loadComponent: () => import('./pages/pkp/pkp.component'),
   },
