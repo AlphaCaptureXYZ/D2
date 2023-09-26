@@ -119,7 +119,7 @@ export default class TriggerViewComponent implements OnInit {
 
     delete triggerInfo.docId;
 
-    this.weaveDBService.upsertData({
+    await this.weaveDBService.upsertData({
       pkpKey: pkpPublicKey,
       type: 'trigger',
       userWallet,
