@@ -1,13 +1,22 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { v4 } from '@ixily/activ-web';
+import { SDK, CONTRACT } from '@ixily/activ-web';
+import v4 = SDK.v4;
+import CI = CONTRACT.CONTRACT_INTERFACES;
 import { ActivService } from 'src/app/services/activ.service';
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { getDefaultAccount } from 'src/app/shared/shared';
 
-import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
@@ -18,18 +27,13 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 @Component({
   selector: 'app-triggers-create',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule
-  ],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
   templateUrl: './triggers-create.component.html',
   styleUrls: ['./triggers-create.component.scss'],
 })
 export default class TriggersCreateComponent implements OnInit {
   stage = 1;
-  strategies = [] as v4.ITradeIdeaStrategy[];
+  strategies = [] as CI.ITradeIdeaStrategy[];
   isLoading = false;
 
   allAccounts: any[];
@@ -38,7 +42,7 @@ export default class TriggersCreateComponent implements OnInit {
     {
       option: 'copy-trade',
       label: 'Copy Trade',
-    }
+    },
   ];
 
   defaulAction = 'copy-trade';
@@ -58,17 +62,13 @@ export default class TriggersCreateComponent implements OnInit {
     private activService: ActivService,
     private nftCredentialService: NFTCredentialService,
     private pkpGeneratorService: PKPGeneratorService,
-    private formBuilder: FormBuilder,
+    private formBuilder: FormBuilder
   ) {
     this.allAccounts = [];
   }
 
   async ngOnInit() {
-
-    await Promise.all([
-      this.getStrategies(),
-      this.getAccounts(),
-    ]);
+    await Promise.all([this.getStrategies(), this.getAccounts()]);
 
     this.form = this.formBuilder.group({
       action: [this.defaulAction, Validators.required],
@@ -100,18 +100,19 @@ export default class TriggersCreateComponent implements OnInit {
 
   async setSettings() {
     if (this.form.valid) {
-
       const userWallet = await getDefaultAccount();
 
-      const strategy: any = this.strategies.find((s) =>
-        s.reference === this.form.value.strategy);
+      const strategy = this.strategies.find(
+        (s) => s.reference === this.form.value.strategy
+      );
 
-      const account: any = this.allAccounts.find((a) =>
-        a.uuid === this.form.value.account);
+      const account: any = this.allAccounts.find(
+        (a) => a.uuid === this.form.value.account
+      );
 
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(account)) {
-
-        const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+        const { pkpPublicKey } =
+          await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
 
         await this.weaveDBService.upsertData({
           pkpKey: pkpPublicKey,
@@ -120,8 +121,8 @@ export default class TriggersCreateComponent implements OnInit {
           jsonData: {
             action: this.form.value.action,
             strategy: {
-              reference: strategy.reference,
-              name: strategy.name,
+              reference: strategy?.uniqueKey,
+              name: strategy?.name,
             },
             account: {
               reference: account.uuid,
@@ -130,7 +131,7 @@ export default class TriggersCreateComponent implements OnInit {
               maxLeverage: this.form.value.maximumLeverage,
               orderSize: this.form.value.defaultOrderSize,
               maxPositionSize: this.form.value.maxSizePortofolio,
-            }
+            },
           },
           isCompressed: false,
         });
@@ -138,7 +139,6 @@ export default class TriggersCreateComponent implements OnInit {
         this.stage = 5;
 
         this.router.navigateByUrl('/triggers');
-
       }
     }
   }
@@ -163,15 +163,17 @@ export default class TriggersCreateComponent implements OnInit {
 
   async getAccounts() {
     this.isLoading = true;
-    const { pkpWalletAddress } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
-    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+    const { pkpWalletAddress } =
+      await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+    this.allAccounts = await this.nftCredentialService.getMyCredentials(
+      pkpWalletAddress
+    );
     console.log('allAccounts', this.allAccounts);
     this.isLoading = false;
   }
 
   submitForm() {
     if (this.form.invalid) {
-
     }
   }
 }

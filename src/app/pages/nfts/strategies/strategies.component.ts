@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { EventService } from 'src/app/services/event.service';
+import { CONTRACT } from '@ixily/activ-web';
 import { ActivService } from 'src/app/services/activ.service';
-import { v4 } from '@ixily/activ-web';
+import { EventService } from 'src/app/services/event.service';
+// import v4 = SDK.v4;
+import CI = CONTRACT.CONTRACT_INTERFACES;
 
 @Component({
   selector: 'app-strategies',
@@ -19,7 +21,7 @@ export default class SrategiesComponent implements OnInit {
   end = this.pageSize;
   currentPage = 1;
   pageNumber = 1;
-  strategies: v4.ITradeIdeaStrategy[];
+  strategies: CI.ITradeIdeaStrategy[];
   isLoading = false;
   itemMenu = 'accessible';
 

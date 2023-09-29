@@ -78,7 +78,7 @@
           <tr
             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
             *ngFor="let data of strategies | slice : start : end"
-            (click)="viewStrategy(data.reference)"
+            (click)="viewStrategy(data.uniqueKey!)"
           >
             <th
               scope="row"

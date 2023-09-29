@@ -4,7 +4,9 @@ import { Router, RouterModule } from '@angular/router';
 
 import { EventService } from 'src/app/services/event.service';
 import { ActivService } from 'src/app/services/activ.service';
-import { v4 } from '@ixily/activ-web';
+import { CONTRACT } from '@ixily/activ-web';
+import CI = CONTRACT.CONTRACT_INTERFACES;
+
 import { displayImage } from 'src/app/shared/shared';
 
 @Component({
@@ -16,7 +18,7 @@ import { displayImage } from 'src/app/shared/shared';
 })
 export default class NftIdeasComponent implements OnInit {
   currentOption = 'nft-ideas';
-  allIdeas: any[];
+  allIdeas: CI.ITradeIdea[];
   pageSize = 5;
   start = 0;
   end = this.pageSize;
@@ -24,7 +26,7 @@ export default class NftIdeasComponent implements OnInit {
   isLoading = false;
   itemMenu = 'accessible';
   subitemMenu = 'progress';
-  myFilter = ['open'] as v4.ITradeIdeaIdeaKind[];
+  myFilter = ['open'] as CI.ITradeIdeaIdeaKind[];
 
   constructor(
     private cRef: ChangeDetectorRef,
@@ -61,8 +63,8 @@ export default class NftIdeasComponent implements OnInit {
         // but if we have an object (which we expect), it means we have a properly decrypted idea
         // the simplest test is to check if we have an nftId which we will always have if there is decrypted data
         if (getAllIdeas.data[i]?.nftId) {
-          const idea = getAllIdeas.data[i] as v4.ITradeIdea;
-          idea.idea = getAllIdeas.data[i].idea as v4.ITradeIdeaIdea;
+          const idea = getAllIdeas.data[i] as CI.ITradeIdea;
+          idea.idea = getAllIdeas.data[i].idea as CI.ITradeIdeaIdea;
 
           if (idea?.idea?.asset?.image) {
             idea.idea.asset.image.b64 =
@@ -85,11 +87,15 @@ export default class NftIdeasComponent implements OnInit {
     if (this.allIdeas.length > 0) {
       let image;
       for (let i = 0; i < this.allIdeas.length; i++) {
-        image = await displayImage('idea', this.allIdeas[i].idea.asset.image);
+        if (typeof this.allIdeas[i].idea === 'string') {
+          throw new Error('Domain Error: Not expected encrypted idea here.');
+        }
+        const ideaIdea = this.allIdeas[i].idea as CI.ITradeIdeaIdea;
+        image = await displayImage('idea', ideaIdea.asset.image!);
         // this.allIdeas[i].idea.asset.image.b64 = image?.source;
       }
     }
-    // this.allIdeas = getAllIdeas?.data as v4.ITradeIdeaIdea[];
+    // this.allIdeas = getAllIdeas?.data as CI.ITradeIdeaIdea[];
     this.isLoading = false;
     console.log('ideas', this.allIdeas);
     this.cRef.detectChanges();
@@ -138,5 +144,13 @@ export default class NftIdeasComponent implements OnInit {
       this.itemMenu = value;
       this.getIdeas();
     }
+  };
+
+  isString = (value: any): boolean => {
+    return typeof value === 'string';
+  };
+
+  sureIdeaDecrypted = (value: any): CI.ITradeIdeaIdea => {
+    return value as unknown as CI.ITradeIdeaIdea;
   };
 }

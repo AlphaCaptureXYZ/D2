@@ -116,7 +116,7 @@
           <tr
             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
             *ngFor="let data of allIdeas | slice : start : end"
-            (click)="viewIdea(data.nftId)"
+            (click)="viewIdea(data.nftId!)"
           >
             <th
               scope="row"
@@ -129,22 +129,41 @@
               class="px-6 py-4 whitespace-no-wrap border-b border-gray-200 cursor-pointer"
             >
               <div class="flex items-center">
-                <div class="flex-shrink-0 h-10 w-10">
+                <div
+                  class="flex-shrink-0 h-10 w-10"
+                  *ngIf="!isString(data.idea)"
+                >
                   <img
                     class="h-10 w-10 rounded-full"
-                    [src]="data?.idea?.asset?.image?.b64 || 'https://picsum.photos/200/200?id=' + data.nftId"
-                    alt="{{ data.idea.asset.ticker | uppercase }}"
+                    [src]="
+                      sureIdeaDecrypted(data.idea).asset.image?.b64 ||
+                      'https://picsum.photos/200/200?id=' + data.nftId
+                    "
+                    alt="{{
+                      sureIdeaDecrypted(data.idea).asset.ticker | uppercase
+                    }}"
                   />
                 </div>
                 <div class="ml-4">
-                  <div>{{ data.idea.asset.ticker | uppercase }}</div>
+                  <div>
+                    {{ sureIdeaDecrypted(data.idea).asset.ticker | uppercase }}
+                  </div>
                 </div>
               </div>
             </td>
 
-            <td class="px-6 py-4">{{ data.idea.asset.description }}</td>
-            <td class="px-6 py-4">{{ data.idea.priceInfo.price.timestamp | date : "fullDate" }}</td>
-            <td class="px-6 py-4">{{ data.idea.kind | titlecase }}</td>
+            <td class="px-6 py-4">
+              {{ sureIdeaDecrypted(data.idea).asset.description }}
+            </td>
+            <td class="px-6 py-4">
+              {{
+                sureIdeaDecrypted(data.idea).priceInfo!.price!.timestamp
+                  | date : "fullDate"
+              }}
+            </td>
+            <td class="px-6 py-4">
+              {{ sureIdeaDecrypted(data.idea).kind | titlecase }}
+            </td>
           </tr>
         </tbody>
       </table>
