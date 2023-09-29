@@ -9,11 +9,12 @@ import {
     trigger
 } from '@angular/animations';
 import { WSService } from 'src/app/services/web-socket.service';
-import { getDefaultAccount } from 'src/app/shared/shared';
+import { getDefaultAccount, getTickerIcon } from 'src/app/shared/shared';
 import { copyValue, isNullOrUndefined, wait } from 'src/app/helpers/helpers';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import { environment } from 'src/environments/environment';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { EventService } from 'src/app/services/event.service';
 
 const animationsSettings = [
     trigger('EnterLeave', [
@@ -53,6 +54,7 @@ export default class WSLoggerComponent implements OnInit {
         private wsService: WSService,
         private weaveDBService: WeaveDBService,
         private pKPGeneratorService: PKPGeneratorService,
+        private eventService: EventService,
     ) {
 
     }
@@ -86,9 +88,45 @@ export default class WSLoggerComponent implements OnInit {
 
     async getLogs() {
         this.wsService.listenData('ws-logger')
-            .subscribe((data: any) => {
+            .subscribe(async (data: any) => {
                 this.messages.unshift(data);
+                this.tradeDetector(data);
             });
+    }
+
+    async tradeDetector(info: any) {
+        const trade = info?.data;
+
+        // Binance
+        const binanceTrade = trade?.eventType === 'executionReport';
+
+        let payload = {
+            raw: null,
+            id: null,
+            ticker: null,
+            direction: null,
+            quantity: 0,
+            price: 0,
+            logo: null,
+        };
+
+        if (binanceTrade) {
+            const logo = await getTickerIcon(trade?.symbol);
+
+            payload = {
+                raw: trade,
+                id: trade?.orderId,
+                ticker: trade?.symbol,
+                direction: trade?.side,
+                quantity: parseFloat(trade?.lastTradeQuantity),
+                price: parseFloat(trade?.lastTradePrice),
+                logo,
+            };
+        }
+
+        if (payload?.ticker) {
+            this.eventService.emit('TRADE_VIA_WS_LISTENER', payload);
+        }
     }
 
     finishAnimation(e: any) {

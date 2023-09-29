@@ -29,6 +29,8 @@ const chain = 'mumbai';
 })
 export class WeaveDBService {
 
+    private static firstLoad: boolean = true;
+
     private db: any;
 
     constructor(
@@ -39,7 +41,7 @@ export class WeaveDBService {
         if (isNullOrUndefined(this.db)) {
 
             const contractTxId = 'uItgIC0zhIGUM3uK0DPb__1TVb-2F5Q1awI2mVMICbk';
-            
+
             this.db = new WeaveDB({
                 contractTxId,
                 nocache: true,
@@ -200,7 +202,7 @@ export class WeaveDBService {
     async getAllData<T>(
         payload: {
             type: CollectionType,
-            
+
         }
     ) {
         let data = [];
@@ -208,14 +210,19 @@ export class WeaveDBService {
         try {
 
             await this.setupWeaveDB();
-            
+
             const {
                 type,
             } = payload;
 
             const wallet = await getDefaultAccount();
 
-            await wait(1000);
+            if (WeaveDBService.firstLoad) {
+                await wait(5000);
+                WeaveDBService.firstLoad = false;
+            } else {
+                await wait(1000);
+            }
 
             let docs: any[] = await this.db.cget(
                 COLLECTION_NAME,
