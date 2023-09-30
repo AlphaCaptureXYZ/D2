@@ -7,7 +7,10 @@ import { Router } from '@angular/router';
 import { getEthereum } from '../shared/shared';
 import { WALLET_NETWORK_CHAIN_NAME } from '../shared/web3-helpers';
 
-import { v4 } from '@ixily/activ-web';
+import { CONTRACT, SDK } from '@ixily/activ-web';
+import CI = CONTRACT.CONTRACT_INTERFACES;
+import v4 = SDK.v4;
+
 import { isNullOrUndefined, wait } from '../helpers/helpers';
 
 declare let Jimp: any;
@@ -163,51 +166,51 @@ export class ActivService {
     return await this.activ.getIdeaByNftId(id);
   }
 
-  async getAllIdeas(page = 1, limit = 10, filter?: v4.ITradeIdeaIdeaKind[]) {
+  async getAllIdeas(page = 1, limit = 10, filter?: CI.ITradeIdeaIdeaKind[]) {
     if (filter === undefined) {
-      filter = ['open', 'close'] as v4.ITradeIdeaIdeaKind[];
+      filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    return this.activ.getAllIdeas(page, limit, filter);
+    return this.activ.getPublicIdeas(page, limit /*, filter*/);
   }
 
-  async listMyIdeas(page = 1, limit = 10, filter?: v4.ITradeIdeaIdeaKind[]) {
+  async listMyIdeas(page = 1, limit = 10, filter?: CI.ITradeIdeaIdeaKind[]) {
     if (filter === undefined) {
-      filter = ['open', 'close'] as v4.ITradeIdeaIdeaKind[];
+      filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    return this.activ.getIdeasOwnedBy(page, limit, filter);
+    return this.activ.getAccessibleIdeas(page, limit /*, filter*/);
   }
 
   // Strategies
   async listMyStrategies(
     page = 1,
     limit = 10
-  ): Promise<v4.ITradeIdeaStrategy[]> {
+  ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return await this.activ.listMyStrategies(page, limit);
+    return this.activ.query().listAllMyStrategies();
   }
 
   async listAccessibleStrategies(
     page = 1,
     limit = 10
-  ): Promise<v4.ITradeIdeaStrategy[]> {
+  ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return await this.activ.listAccesibleStrategies(page, limit);
+    return (await this.activ.listAccesibleStrategies(page, limit)).data;
   }
 
   async listAllStrategies(
     page = 1,
     limit = 10
-  ): Promise<v4.ITradeIdeaStrategy[]> {
+  ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return await this.activ.listAllStrategies(page, limit);
+    return (await this.activ.listAllStrategies(page, limit)).data;
   }
 
   // Single Strategy
   async getStrategyInfoDetails(strategyReference: string): Promise<{
-    strategy: v4.ITradeIdeaStrategy;
-    creator: v4.ITradeIdeaCreator;
+    strategy: CI.ITradeIdeaStrategy;
+    creator: CI.ITradeIdeaCreator;
   }> {
     await this.init();
     return await this.activ.getStrategyInfoDetails(strategyReference);
@@ -217,14 +220,28 @@ export class ActivService {
     strategyReference: string,
     page = 1,
     limit = 10,
-    filterType = ['open', 'close'] as v4.ITradeIdeaIdeaKind[]
+    filterType = ['open', 'close'] as CI.ITradeIdeaIdeaKind[]
   ) {
     await this.init();
-    return await this.activ.getIdeasByStrategy(
-      strategyReference,
+    const ideas = await this.activ.getIdeasByStrategy(
+      strategyReference
+      /*
       page,
       limit,
+      
       filterType
+      */
     );
+    return ideas.filter((ones) => {
+      if (typeof ones.idea === 'string') {
+        return false;
+      } else {
+        return (
+          filterType.find(
+            (oneFilter) => oneFilter === (ones.idea as CI.ITradeIdeaIdea).kind
+          ) !== undefined
+        );
+      }
+    });
   }
 }

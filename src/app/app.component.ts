@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { initFlowbite } from 'flowbite';
 
@@ -40,6 +40,9 @@ export class AppComponent implements OnInit {
   isSupportedNetwork = false;
 
   currentNetworkInfo: any;
+
+  tradeInfo: any;
+
 
   constructor(
     private router: Router,
@@ -110,6 +113,10 @@ export class AppComponent implements OnInit {
         case 'METAMASK_NETWORK_CHANGED':
           await this.networkSupporCheck();
           break;
+        case 'TRADE_VIA_WS_LISTENER':
+          this.tradeInfo = data;
+          this.cRef.detectChanges();
+          break;
       }
     });
   }
@@ -149,4 +156,8 @@ export class AppComponent implements OnInit {
         this.networkSupporCheck();
       });
   };
+
+  closeTradeBanner() {
+    this.tradeInfo = null;
+  }
 }

@@ -5,7 +5,9 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { EventService, EventType } from 'src/app/services/event.service';
 import NavbarAuthComponent from 'src/app/components/navbar-auth/navbar-auth.component';
 import LeftMenuComponent from 'src/app/components/left-menu/left-menu.component';
-import { v4 } from '@ixily/activ-web';
+import { SDK, CONTRACT } from '@ixily/activ-web';
+import v4 = SDK.v4;
+import CI = CONTRACT.CONTRACT_INTERFACES;
 import { ActivService } from 'src/app/services/activ.service';
 import { displayImage } from 'src/app/shared/shared';
 
@@ -19,8 +21,8 @@ import { displayImage } from 'src/app/shared/shared';
 export default class StrategyViewComponent implements OnInit {
   currentOption: string;
   reference = '';
-  strategy = {} as v4.ITradeIdeaStrategy;
-  creator = {} as v4.ITradeIdeaCreator;
+  strategy = {} as CI.ITradeIdeaStrategy;
+  creator = {} as CI.ITradeIdeaCreator;
   ideas = [] as any[];
   isLoading = false as boolean;
   pageSize = 5;
@@ -55,9 +57,9 @@ export default class StrategyViewComponent implements OnInit {
     this.isLoading = true;
     let filter;
     if (this.itemMenu === 'progress') {
-      filter = ['open'] as v4.ITradeIdeaIdeaKind[];
+      filter = ['open'] as CI.ITradeIdeaIdeaKind[];
     } else {
-      filter = ['close'] as v4.ITradeIdeaIdeaKind[];
+      filter = ['close'] as CI.ITradeIdeaIdeaKind[];
     }
     const data = await this.activService.listIdeasByStrategyReference(
       this.reference,
@@ -65,7 +67,7 @@ export default class StrategyViewComponent implements OnInit {
       10,
       filter
     );
-    this.ideas = data?.data;
+    this.ideas = data;
     if (this.ideas.length > 0) {
       let image;
       for (let i = 0; i < this.ideas.length; i++) {

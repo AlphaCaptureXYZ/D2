@@ -4,11 +4,12 @@
 import detectEthereumProvider from '@metamask/detect-provider';
 import { WALLET_NETWORK_CHAIN_NAME } from './web3-helpers';
 
-import { v4 } from '@ixily/activ-web';
-import { CryptoIdeasModule } from '@ixily/activ-web/dist/src/modules/activ-v4';
+import { SDK, CONTRACT } from '@ixily/activ-web';
+import v4 = SDK.v4;
+import CI = CONTRACT.CONTRACT_INTERFACES;
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 
-import { ethers } from "ethers";
+import { ethers } from 'ethers';
 
 let ethereum: any;
 
@@ -18,20 +19,26 @@ const valueToHexadecimal = (value: any) => {
   return response;
 };
 
+export const getTickerIcon = async (ticker: string) => {
+  const url = `https://technicals-rlco.ixily.io/v1/assets/${ticker}/logo`
+  const data = await fetch(url)
+  const response = await data.json()
+  const base64 = response?.data
+  return base64
+}
+
 const defaultChainInfo = {
-  chainId: "0x13881",
-  chainName: "Mumbai",
+  chainId: '0x13881',
+  chainName: 'Mumbai',
   nativeCurrency: {
-    name: "MATIC",
-    symbol: "MATIC",
+    name: 'MATIC',
+    symbol: 'MATIC',
     decimals: 18,
   },
   rpcUrls: [
-    "https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78"
+    'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
   ],
-  blockExplorerUrls: [
-    "https://mumbai.polygonscan.com"
-  ],
+  blockExplorerUrls: ['https://mumbai.polygonscan.com'],
 };
 
 export const getEthereum = async () => {
@@ -72,7 +79,7 @@ export const getDefaultNetwork = async () => {
       networkInfo = {
         id: networkId,
         name: WALLET_NETWORK_CHAIN_NAME(networkId),
-      }
+      };
     }
   } catch (err: any) {
     console.log('getDefaultNetwork error', err.message);
@@ -82,24 +89,24 @@ export const getDefaultNetwork = async () => {
 };
 
 export const defaultNetworkSwitch = async () => {
-
   let network = {
     id: null as any,
     name: null as any,
   };
 
   try {
-
-    const provider: any = new ethers.providers.Web3Provider((window as any).ethereum);
+    const provider: any = new ethers.providers.Web3Provider(
+      (window as any).ethereum
+    );
 
     try {
-      await provider.send("wallet_switchEthereumChain", [
+      await provider.send('wallet_switchEthereumChain', [
         { chainId: defaultChainInfo.chainId },
       ]);
     } catch (e) {
       const ethereum = await getEthereum();
       await ethereum.request({
-        method: "wallet_addEthereumChain",
+        method: 'wallet_addEthereumChain',
         params: [defaultChainInfo],
       });
     }
@@ -108,7 +115,6 @@ export const defaultNetworkSwitch = async () => {
 
     network.id = defaultChainInfo.chainId;
     network.name = data;
-
   } catch (err: any) {
     console.log('defaultNetworkSwitch error', err.message);
   }
@@ -116,11 +122,8 @@ export const defaultNetworkSwitch = async () => {
   return network;
 };
 
-export const litSigAuthExpirationCheck = (
-  test = false
-) => {
+export const litSigAuthExpirationCheck = (test = false) => {
   try {
-
     console.log('[litSigAuthExpirationCheck] running...');
 
     const web3Provider = localStorage.getItem('lit-web3-provider');
@@ -128,27 +131,28 @@ export const litSigAuthExpirationCheck = (
     const signature = localStorage.getItem('lit-auth-signature');
 
     if (web3Provider && keyPair && signature) {
-
       const sig = JSON.parse(signature);
 
       const signedMessage = sig?.signedMessage;
 
-      const regex = /Expiration Time: ([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})/gm;
+      const regex =
+        /Expiration Time: ([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2})/gm;
       const match = regex.exec(signedMessage);
 
       if (match) {
-
         const expirationTime = match[1];
         const expirationDate = new Date(expirationTime);
         let now = new Date();
 
-        // if test is true, we add 10 days to the current date to force the expiration 
+        // if test is true, we add 10 days to the current date to force the expiration
         // and test the logic
         if (test) {
           const daysToIncrease = 10;
           const today = new Date();
           now = new Date(
-            today.getFullYear(), today.getMonth(), today.getDate() + daysToIncrease
+            today.getFullYear(),
+            today.getMonth(),
+            today.getDate() + daysToIncrease
           );
         }
 
@@ -164,19 +168,21 @@ export const litSigAuthExpirationCheck = (
         } else {
           console.log('[litSigAuthExpirationCheck] not expired');
           console.log('[litSigAuthExpirationCheck] the current auth is ok');
-          console.log('[litSigAuthExpirationCheck] the current info will expire', expirationTime);
+          console.log(
+            '[litSigAuthExpirationCheck] the current info will expire',
+            expirationTime
+          );
         }
       }
     }
-
-  } catch (err) { }
-}
+  } catch (err) {}
+};
 
 export const displayImage = async (
   // simple string to know what process is calling this function (example: strategy, idea, etc)
   indicator: string,
   // the image object
-  imgObj: v4.ITradeIdeaImage,
+  imgObj: CI.ITradeIdeaImage,
   // the default image to use if we can't find the image
   defaultImage?: string
 ) => {
@@ -185,7 +191,7 @@ export const displayImage = async (
   let img;
 
   const restoreImageByCID = async (cid: string) => {
-    return CryptoIdeasModule?.restoreImage(cid);
+    return v4.CryptoIdeasModule.restoreImage(cid);
   };
 
   const displayImageErrorLog = (err: any) => {

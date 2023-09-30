@@ -4,12 +4,14 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { EventService } from 'src/app/services/event.service';
 import { ActivService } from 'src/app/services/activ.service';
-import { v4 } from '@ixily/activ-web';
+import { SDK, CONTRACT } from '@ixily/activ-web';
+import v4 = SDK.v4;
+import CI = CONTRACT.CONTRACT_INTERFACES;
 
 import NftSectionsComponent from './sections/nft-sections.component';
 
 // interface OpenType {
-//   idea: v4.ITradeIdeaIdea;
+//   idea: CI.ITradeIdeaIdea;
 //   ideaSha512Hash: string;
 //   nftId: number;
 //   url: string;
@@ -23,17 +25,17 @@ import NftSectionsComponent from './sections/nft-sections.component';
   styleUrls: ['./idea-view.component.scss'],
 })
 export default class IdeaViewComponent implements OnInit {
-  idea = {} as v4.ITradeIdea;
-  ideaCore = {} as v4.ITradeIdeaIdea;
-  access = {} as v4.ITradeIdeaAccess;
+  idea = {} as CI.ITradeIdea;
+  ideaCore = {} as CI.ITradeIdeaIdea;
+  access = {} as CI.ITradeIdeaAccess;
   wallets: string[];
   nftId = 0;
   settings = {} as v4.IWalletSettings;
 
   // nft parts
-  open = {} as v4.ITradeIdeaIdea;
-  adjustments = [] as v4.ITradeIdeaIdea[];
-  close = {} as v4.ITradeIdeaIdea;
+  open = {} as CI.ITradeIdeaIdea;
+  adjustments = [] as CI.ITradeIdeaIdea[];
+  close = {} as CI.ITradeIdeaIdea;
 
   tokenStandard: string;
   isEncrypted = false;
@@ -62,31 +64,37 @@ export default class IdeaViewComponent implements OnInit {
       this.idea = await this.activService.getIdeaByNftId(this.nftId);
 
       // allow for data that is unencrypted
-      if (this.idea.nftId) {
-        this.ideaCore = this.idea.idea as v4.ITradeIdeaIdea;
-        this.access = this.idea.access as v4.ITradeIdeaAccess;
+      if (this.idea?.nftId) {
+        this.ideaCore = this.idea.idea as CI.ITradeIdeaIdea;
+        this.access = this.idea.access as CI.ITradeIdeaAccess;
         this.wallets = this.access.wallets;
         this.isEncrypted = this.idea?.access?.encryption?.encrypt || true;
 
         console.log('idea', this.idea);
 
+        if (typeof this.idea!.idea === 'string') {
+          throw new Error(
+            'Domain Error: Idea is a encrypted string when we expected to be decrypted'
+          );
+        }
+
+        const ideaIdea = this.idea!.idea as CI.ITradeIdeaIdea;
+
         // depending on the status of our idea, we'll split out the nft parts i.e. the open. adjustment or close
-        if (this.idea.status === 2 || this.idea.status === 3) {
+        if (ideaIdea.kind === 'adjust' || ideaIdea.kind === 'close') {
           // then we have a closed idea
           // we need to look up our chain of ideas
           if (this.ideaCore.chainIdeas) {
             // this should always exist given the closed statud
-            this.open = this.ideaCore?.chainIdeas[0].idea as v4.ITradeIdeaIdea;
+            this.open = this.ideaCore?.chainIdeas[0].idea as CI.ITradeIdeaIdea;
 
             if (this.ideaCore.chainIdeas.length > 0) {
               // loop through and add our adjustments
               // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              for (const [
-                index,
-              ] of this.ideaCore.chainIdeas.entries()) {
+              for (const [index] of this.ideaCore.chainIdeas.entries()) {
                 if (index > 0) {
                   this.adjustments.push(
-                    this.ideaCore?.chainIdeas[index].idea as v4.ITradeIdeaIdea
+                    this.ideaCore?.chainIdeas[index].idea as CI.ITradeIdeaIdea
                   );
                 }
               }
@@ -94,15 +102,15 @@ export default class IdeaViewComponent implements OnInit {
           }
 
           //
-          if (this.idea.status === 2) {
+          if (ideaIdea.kind === 'adjust') {
             // add the final adjustment to the array
-            this.adjustments.push(this.ideaCore as v4.ITradeIdeaIdea);
-          } else if (this.idea.status === 3) {
-            this.close = this.ideaCore as v4.ITradeIdeaIdea;
+            this.adjustments.push(this.ideaCore as CI.ITradeIdeaIdea);
+          } else if (ideaIdea.kind === 'close') {
+            this.close = this.ideaCore as CI.ITradeIdeaIdea;
           }
-        } else if (this.idea.status === 1) {
+        } else if (ideaIdea.kind === 'open') {
           // we only have the open, no previous ideas
-          this.open = this.ideaCore as v4.ITradeIdeaIdea;
+          this.open = this.ideaCore as CI.ITradeIdeaIdea;
         }
       }
     }
@@ -113,7 +121,8 @@ export default class IdeaViewComponent implements OnInit {
   }
 
   async getSettings() {
-    this.settings = await this.activService.getSettings() as v4.IWalletSettings;
+    this.settings =
+      (await this.activService.getSettings()) as v4.IWalletSettings;
   }
 
   back = (): void => {
