@@ -6,7 +6,7 @@
       Investment Idea View
     </p>
 
-    <div class="relative overflow-x-auto" *ngIf="idea.nftId">
+    <div class="relative overflow-x-auto" *ngIf="idea !== undefined">
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <tbody>
           <tr
@@ -120,25 +120,41 @@
         </tbody>
       </table>
 
-      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6">
+      <p
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6"
+      >
         Open Idea NFT
       </p>
 
-      <app-nft-section [idea]="idea" [open]="open"></app-nft-section>
+      <app-nft-section
+        [idea]="idea"
+        [open]="open"
+        *ngIf="idea"
+      ></app-nft-section>
 
-      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6" *ngIf="ideaCore.kind === 'adjust' || ideaCore.kind === 'close'">
+      <p
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6"
+        *ngIf="ideaCore.kind === 'adjust' || ideaCore.kind === 'close'"
+      >
         Adjustment Idea NFTs
       </p>
 
-      <div *ngFor="let adj of adjustments let i = index">
+      <div *ngFor="let adj of adjustments; let i = index">
         <app-nft-section [idea]="idea" [adjustment]="adj"></app-nft-section>
       </div>
 
-      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6" *ngIf="ideaCore.kind === 'close'">
+      <p
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6"
+        *ngIf="ideaCore.kind === 'close'"
+      >
         Close Idea NFT
       </p>
 
-      <app-nft-section [idea]="idea" [close]="close" *ngIf="ideaCore.kind === 'close'"></app-nft-section>
+      <app-nft-section
+        [idea]="idea"
+        [close]="close"
+        *ngIf="ideaCore.kind === 'close'"
+      ></app-nft-section>
 
       <button
         type="button"

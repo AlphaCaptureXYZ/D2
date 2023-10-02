@@ -1,4 +1,7 @@
-<table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+<table
+  class="w-full text-sm text-left text-gray-500 dark:text-gray-400"
+  *ngIf="idea !== undefined && data !== undefined"
+>
   <tbody>
     <tr
       class="bg-white border-b border-t dark:bg-gray-800 dark:border-gray-700"
@@ -8,7 +11,7 @@
       >
         Token ID
       </th>
-      <td class="px-6 py-4">{{ idea.nftId }}</td>
+      <td class="px-6 py-4">{{ idea!.nftId }}</td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
@@ -17,7 +20,7 @@
         Created At
       </th>
       <td class="px-6 py-4">
-        {{ data.priceInfo?.price?.timestamp | date : "full" }}
+        {{ data!.priceInfo?.price?.timestamp | date : "full" }}
       </td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -26,7 +29,7 @@
       >
         Stage
       </th>
-      <td class="px-6 py-4">{{ data.kind | titlecase }}</td>
+      <td class="px-6 py-4">{{ data!.kind | titlecase }}</td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
@@ -35,7 +38,7 @@
         Metadata
       </th>
       <td class="px-6 py-4">
-        <!-- {{ data.url }} -->
+        <!-- {{ data!.url }} -->
       </td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -87,7 +90,7 @@
       >
         Asset
       </th>
-      <td class="px-6 py-4">{{ data.asset.description }}</td>
+      <td class="px-6 py-4">{{ data!.asset.description }}</td>
     </tr>
 
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -96,7 +99,7 @@
       >
         Tradable Ticker
       </th>
-      <td class="px-6 py-4">{{ data.asset.ticker }}</td>
+      <td class="px-6 py-4">{{ data!.asset.ticker }}</td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
@@ -104,19 +107,15 @@
       >
         Direction
       </th>
-      <td class="px-6 py-4">{{ data.trade?.direction }}</td>
+      <td class="px-6 py-4">{{ data!.trade?.direction }}</td>
     </tr>
-    <tr
-      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-    >
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
         class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
       >
         Conviction
       </th>
-      <td class="px-6 py-4">
-        {{ data.trade?.conviction }}%
-      </td>
+      <td class="px-6 py-4">{{ data!.trade?.conviction }}%</td>
     </tr>
     <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
@@ -132,37 +131,31 @@
             data?.adjustment?.kind === 'increase'
           "
         >
-          {{ data.priceInfo?.price?.ask }}
+          {{ data!.priceInfo?.price?.ask }}
 
           <span
-            *ngIf="
-              data.priceInfo?.price?.ask !==
-              data.priceInfo?.price?.bid
-            "
+            *ngIf="data!.priceInfo?.price?.ask !== data!.priceInfo?.price?.bid"
             class="valuec"
           >
-            ( Bid: {{ data.priceInfo?.price?.bid }} / Ask:
-            {{ data.priceInfo?.price?.ask }})
+            ( Bid: {{ data!.priceInfo?.price?.bid }} / Ask:
+            {{ data!.priceInfo?.price?.ask }})
           </span>
         </div>
         <div
           class="value"
           *ngIf="
-            data.trade?.direction === 'short' ||
-            data.adjustment?.kind === 'decrease'
+            data!.trade?.direction === 'short' ||
+            data!.adjustment?.kind === 'decrease'
           "
         >
-          {{ data.priceInfo?.price?.bid }}
+          {{ data!.priceInfo?.price?.bid }}
 
           <span
-            *ngIf="
-              data.priceInfo?.price?.ask !==
-              data.priceInfo?.price?.bid
-            "
+            *ngIf="data!.priceInfo?.price?.ask !== data!.priceInfo?.price?.bid"
             class="valuec"
           >
-            ( Bid: {{ data.priceInfo?.price?.bid }} / Ask:
-            {{ data.priceInfo?.price?.ask }})
+            ( Bid: {{ data!.priceInfo?.price?.bid }} / Ask:
+            {{ data!.priceInfo?.price?.ask }})
           </span>
         </div>
       </td>
@@ -175,56 +168,66 @@
       </th>
       <td class="pl-6 py-4">
         <!-- <app-pricing-standard
-          [pricing]="data.priceInfo?.price"
-          [signature]="data.priceInfo?.signature"
+          [pricing]="data!.priceInfo?.price"
+          [signature]="data!.priceInfo?.signature"
         ></app-pricing-standard> -->
 
         <span class="indentprice">
           <p class="pr-text">
-            The following data reflects the market pricing at the time of NFT creation.
+            The following data reflects the market pricing at the time of NFT
+            creation.
           </p>
-        
-          <div class="line-sm" *ngIf="data.priceInfo?.price?.timestamp">
+
+          <div class="line-sm" *ngIf="data!.priceInfo?.price?.timestamp">
             <div class="title">Timestamp</div>
-            <div class="value">{{ data.priceInfo?.price?.timestamp }}</div>
+            <div class="value">{{ data!.priceInfo?.price?.timestamp }}</div>
           </div>
-          <div class="line-sm" *ngIf="data.priceInfo?.price?.bid">
+          <div class="line-sm" *ngIf="data!.priceInfo?.price?.bid">
             <div class="title">Bid</div>
-            <div class="value">{{ data.priceInfo?.price?.bid }}</div>
+            <div class="value">{{ data!.priceInfo?.price?.bid }}</div>
           </div>
-          <div class="line-sm" *ngIf="data.priceInfo?.price?.ask">
+          <div class="line-sm" *ngIf="data!.priceInfo?.price?.ask">
             <div class="title">Ask</div>
-            <div class="value">{{ data.priceInfo?.price?.ask }}</div>
+            <div class="value">{{ data!.priceInfo?.price?.ask }}</div>
           </div>
-        
-          <div class="line-sm" *ngIf="data.priceInfo?.price?.symbol">
-            <div class="title" *ngIf="data.priceInfo?.price?.provider === 'IG Group'">Epic</div>
-            <div class="title" *ngIf="data.priceInfo?.price?.provider !== 'IG Group'">Symbol</div>
-            <div class="value">{{ data.priceInfo?.price?.symbol }}</div>
+
+          <div class="line-sm" *ngIf="data!.priceInfo?.price?.symbol">
+            <div
+              class="title"
+              *ngIf="data!.priceInfo?.price?.provider === 'IG Group'"
+            >
+              Epic
+            </div>
+            <div
+              class="title"
+              *ngIf="data!.priceInfo?.price?.provider !== 'IG Group'"
+            >
+              Symbol
+            </div>
+            <div class="value">{{ data!.priceInfo?.price?.symbol }}</div>
           </div>
           <!-- Signature -->
-        
-          <div class="line-sm" *ngIf="data.priceInfo?.signature?.signature">
+
+          <div class="line-sm" *ngIf="data!.priceInfo?.signature?.signature">
             <div class="title">Signature</div>
-            <div class="value">{{ data.priceInfo?.signature?.signature }}</div>
+            <div class="value">{{ data!.priceInfo?.signature?.signature }}</div>
           </div>
-        
-          <div class="line-sm" *ngIf="data.priceInfo?.signature?.dataSigned">
+
+          <div class="line-sm" *ngIf="data!.priceInfo?.signature?.dataSigned">
             <div class="title">Data</div>
-            <div class="value">{{ data.priceInfo?.signature?.dataSigned }}</div>
+            <div class="value">
+              {{ data!.priceInfo?.signature?.dataSigned }}
+            </div>
           </div>
-        
-          <div class="line-sm" *ngIf="data.priceInfo?.signature?.publicKey">
+
+          <div class="line-sm" *ngIf="data!.priceInfo?.signature?.publicKey">
             <div class="title">Public Key</div>
-            <div class="value">{{ data.priceInfo?.signature?.publicKey }}</div>
+            <div class="value">{{ data!.priceInfo?.signature?.publicKey }}</div>
           </div>
         </span>
-        
       </td>
     </tr>
-    <tr
-      class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-    >
+    <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <th
         class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"
       >
@@ -246,9 +249,7 @@
         >
           Managed
         </button>
-        
       </td>
     </tr>
-
   </tbody>
 </table>

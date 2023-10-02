@@ -25,7 +25,7 @@ import NftSectionsComponent from './sections/nft-sections.component';
   styleUrls: ['./idea-view.component.scss'],
 })
 export default class IdeaViewComponent implements OnInit {
-  idea = {} as CI.ITradeIdea;
+  idea = undefined as CI.ITradeIdea | undefined;
   ideaCore = {} as CI.ITradeIdeaIdea;
   access = {} as CI.ITradeIdeaAccess;
   wallets: string[];
@@ -65,9 +65,14 @@ export default class IdeaViewComponent implements OnInit {
 
       // allow for data that is unencrypted
       if (this.idea?.nftId) {
+        if (typeof this.idea.idea === 'string') {
+          throw new Error('View Idea Error: Unexpected encrypted idea here.');
+        } else {
+          console.log(this.idea);
+        }
         this.ideaCore = this.idea.idea as CI.ITradeIdeaIdea;
         this.access = this.idea.access as CI.ITradeIdeaAccess;
-        this.wallets = this.access.wallets;
+        this.wallets = this.access?.wallets || [];
         this.isEncrypted = this.idea?.access?.encryption?.encrypt || true;
 
         console.log('idea', this.idea);
