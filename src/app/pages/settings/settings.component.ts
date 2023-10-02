@@ -116,9 +116,11 @@ export default class SettingsComponent implements OnInit {
     async getSettings() {
         this.isLoading = true;
 
-        let data = await this.weaveDBService.getAllData<any>({
+        let settings = await this.weaveDBService.getAllData<any>({
             type: 'setting',
         });
+
+        let data = settings?.data;
 
         const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
 

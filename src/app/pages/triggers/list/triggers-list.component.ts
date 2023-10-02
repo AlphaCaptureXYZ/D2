@@ -38,9 +38,11 @@ export default class TriggersListComponent implements OnInit {
     this.isLoading = true;
 
     try {
-      this.triggers = await this.weaveDBService.getAllData<any>({
+      const triggersData = await this.weaveDBService.getAllData<any>({
         type: 'trigger',
       });
+
+      this.triggers = triggersData?.data;
 
       const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
 

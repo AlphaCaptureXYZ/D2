@@ -62,9 +62,11 @@ export default class WSLoggerComponent implements OnInit {
     async ngOnInit() {
         const walletAddress = await getDefaultAccount();
 
-        let data = await this.weaveDBService.getAllData<any>({
+        const settings = await this.weaveDBService.getAllData<any>({
             type: 'setting',
         });
+
+        let data = settings?.data;
 
         const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
 

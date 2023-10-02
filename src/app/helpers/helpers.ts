@@ -1,3 +1,5 @@
+import { IPaging } from "../interfaces/interfaces";
+
 export const isNullOrUndefined = (value: any) => {
   const checkValue = [
     undefined,
@@ -176,3 +178,22 @@ export const loop = (
       reject(err)
     }
   });
+
+export const getDataWithPaging = <T>(params: IPaging<T>): IPaging<T> => {
+  
+  const array = params.data;
+  const total = array.length;
+  const { page, limit } = params.paging;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const data = array.slice(startIndex, endIndex);
+
+  return {
+    data,
+    paging: {
+      page,
+      limit,
+    },
+    total,
+  }
+}

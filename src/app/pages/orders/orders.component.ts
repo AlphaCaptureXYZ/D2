@@ -47,9 +47,12 @@ export default class OrdersComponent implements OnInit {
   async getOrders() {
     this.isLoading = true;
     this.orders = [];
-    const orders = await this.weaveDBService.getAllData<any>({
+
+    const ordersData = await this.weaveDBService.getAllData<any>({
       type: 'order',
     });
+
+    let orders = ordersData?.data;
 
     this.orders = orders?.map((data: any) => {
 

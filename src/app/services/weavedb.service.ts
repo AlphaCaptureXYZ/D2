@@ -2,6 +2,8 @@ import { Injectable, } from '@angular/core';
 
 //@ts-ignore
 import WeaveDB from 'weavedb-sdk';
+//@ts-ignore
+import { last } from "ramda";
 
 import litClient from "src/app/scripts/Lit";
 
@@ -9,10 +11,11 @@ import {
     Compressor
 } from "src/app/scripts/Compress";
 
-import { isNullOrUndefined, wait } from '../helpers/helpers';
+import { getDataWithPaging, isNullOrUndefined, wait } from '../helpers/helpers';
 import { blobToBase64String } from '@lit-protocol/lit-node-client';
 import { getDefaultAccount } from '../shared/shared';
 import { NFTStorageService } from './nft-store.service';
+import { IPaging } from '../interfaces/interfaces';
 
 const COLLECTION_NAME = 'D2-data';
 
@@ -202,18 +205,22 @@ export class WeaveDBService {
     async getAllData<T>(
         payload: {
             type: CollectionType,
-
+            page?: number,
+            limit?: number,
         }
-    ) {
+    ): Promise<IPaging<T>> {
         let data = [];
+        let total = 0;
+
+        const {
+            type,
+            page,
+            limit,
+        } = payload;
 
         try {
 
             await this.setupWeaveDB();
-
-            const {
-                type,
-            } = payload;
 
             const wallet = await getDefaultAccount();
 
@@ -237,6 +244,20 @@ export class WeaveDBService {
             docs = docs?.sort((a, b) => {
                 return b?.data?.createdAt - a?.data?.createdAt;
             });
+
+            total = docs?.length || 0;
+
+            if (((page || 0) > 0) && (limit || 0) > 0) {
+                const pagination = getDataWithPaging<any>({
+                    data: docs,
+                    paging: {
+                        page: 1,
+                        limit: 5,
+                    },
+                });
+
+                docs = pagination?.data;
+            }
 
             data = (await Promise?.all(docs?.map(async (res) => {
                 try {
@@ -304,7 +325,14 @@ export class WeaveDBService {
             console.log('[weavedb] getAllData (error)', e?.message);
         }
 
-        return data as T[];
+        return {
+            data,
+            paging: {
+                limit: limit || data?.length,
+                page: page || 1,
+            },
+            total,
+        }
     }
 
     async getDataByDocID<T>(

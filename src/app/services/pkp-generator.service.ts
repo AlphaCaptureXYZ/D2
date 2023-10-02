@@ -342,9 +342,11 @@ export class PKPGeneratorService {
     }
 
     async getPKPInfo(): Promise<IPkpInfo> {
-        const data = await this.weaveDBService.getAllData<any>({
+        const pkpInfoData = await this.weaveDBService.getAllData<any>({
             type: 'pkp-info'
         });
+
+        let data = pkpInfoData?.data;
 
         return data?.find(res => res) || null;
     }
