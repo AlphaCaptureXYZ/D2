@@ -50,6 +50,8 @@ export default class OrdersComponent implements OnInit {
 
     const ordersData = await this.weaveDBService.getAllData<any>({
       type: 'order',
+      page: 1,
+      limit: 30,
     });
 
     let orders = ordersData?.data;

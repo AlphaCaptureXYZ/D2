@@ -251,8 +251,8 @@ export class WeaveDBService {
                 const pagination = getDataWithPaging<any>({
                     data: docs,
                     paging: {
-                        page: 1,
-                        limit: 5,
+                        page: page || 1,
+                        limit: limit || 30,
                     },
                 });
 
