@@ -150,7 +150,9 @@ export default class AccountsBinanceComponent implements OnInit {
 
         const credentialEncrypted = `${encryptedFileB64}||${encryptedSymmetricKeyString}`;
 
-        const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+        const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+          autoRedirect: true,
+        });
 
         const pkpKey = pkpInfo?.pkpPublicKey;
 

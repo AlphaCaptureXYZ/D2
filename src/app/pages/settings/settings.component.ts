@@ -122,7 +122,9 @@ export default class SettingsComponent implements OnInit {
 
         let data = settings?.data;
 
-        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+            autoRedirect: true,
+        });
 
         data = data?.filter((s) => {
             const check = s?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
@@ -151,7 +153,9 @@ export default class SettingsComponent implements OnInit {
         try {
             const userWallet = await getDefaultAccount();
 
-            const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+            const pkpInfo = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+                autoRedirect: true,
+            });
 
             const pkpKey = pkpInfo?.pkpPublicKey;
 

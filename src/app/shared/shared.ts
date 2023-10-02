@@ -89,6 +89,8 @@ export const getDefaultNetwork = async () => {
 };
 
 export const defaultNetworkSwitch = async () => {
+  let isNewNetwork = false;
+
   let network = {
     id: null as any,
     name: null as any,
@@ -109,6 +111,7 @@ export const defaultNetworkSwitch = async () => {
         method: 'wallet_addEthereumChain',
         params: [defaultChainInfo],
       });
+      isNewNetwork = true;
     }
 
     const data = WALLET_NETWORK_CHAIN_NAME(80001);
@@ -117,6 +120,10 @@ export const defaultNetworkSwitch = async () => {
     network.name = data;
   } catch (err: any) {
     console.log('defaultNetworkSwitch error', err.message);
+  }
+
+  if (isNewNetwork) {
+    window.location.reload();
   }
 
   return network;
@@ -175,7 +182,7 @@ export const litSigAuthExpirationCheck = (test = false) => {
         }
       }
     }
-  } catch (err) {}
+  } catch (err) { }
 };
 
 export const displayImage = async (

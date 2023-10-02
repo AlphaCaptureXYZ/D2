@@ -103,7 +103,9 @@ export default class SettingsComponent implements OnInit {
             }
 
             if (isNullOrUndefined(pkpData)) {
-                const mint = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+                const mint = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+                    autoMint: true,
+                });
                 this.pkpInfo = mint;
                 this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
                 this.pkpLoading = false;
@@ -130,5 +132,9 @@ export default class SettingsComponent implements OnInit {
         await this.weaveDBService.deleteData(docId);
         this.pkpInfo = null as any;
         await this.getPkpInfo();
+    }
+
+    reload() {
+        window.location.reload();
     }
 }

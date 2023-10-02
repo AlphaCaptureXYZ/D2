@@ -44,7 +44,9 @@ export default class TriggersListComponent implements OnInit {
 
       this.triggers = triggersData?.data;
 
-      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
 
       this.triggers = this.triggers?.filter((trigger) => {
         const check = trigger?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();

@@ -28,7 +28,8 @@
             </div>
 
             <div *ngIf="!pkpInfo?.pkpPublicKey && !pkpLoading">
-              <p>Pkp not found, refresh the page to generate again automatically.</p>
+              <p>Pkp not found, click to refresh icon to generate again automatically. <span (click)="reload()"><i
+                    class="bx bx-refresh refresh-icon"></i></span> </p>
             </div>
 
             <div class="float-right" *ngIf="pkpInfo?.pkpPublicKey">

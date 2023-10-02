@@ -111,8 +111,9 @@ export default class TriggersCreateComponent implements OnInit {
       );
 
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(account)) {
-        const { pkpPublicKey } =
-          await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+        const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+          autoRedirect: true,
+        });
 
         await this.weaveDBService.upsertData({
           pkpKey: pkpPublicKey,
@@ -164,7 +165,9 @@ export default class TriggersCreateComponent implements OnInit {
   async getAccounts() {
     this.isLoading = true;
     const { pkpWalletAddress } =
-      await this.pkpGeneratorService.getOrGenerateAutoPKPInfo();
+      await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(
       pkpWalletAddress
     );

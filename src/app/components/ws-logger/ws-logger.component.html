@@ -18,9 +18,13 @@
 
         <div class="pubsub-container container-fluid mt-3">
             <div class="mt-2 console">
-                <p class="ml-3 mt-3 mb-2">
+                <p class="ml-3 mt-3 mb-2" *ngIf="pkpWalletAddress">
                     <i class="bx bx-loader bx-spin"></i> Listening events, you will see info if a
                     new event is detected (new idea, new order, etc)
+                </p>
+                <p class="ml-3 mt-3 mb-2" *ngIf="!pkpWalletAddress">
+                    <i class='bx bx-error'></i> Your MPC Wallet is required to access on this,
+                    please generate.
                 </p>
                 <div *ngFor="let res of messages; let i = index">
                     <p class="pubsub-row cursor-pointer">

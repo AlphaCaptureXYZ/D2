@@ -5,6 +5,7 @@ import { defaultNetworkSwitch, getEthereum } from '../shared/shared';
 import { WeaveDBService } from './weavedb.service';
 
 import { getDefaultAccount } from 'src/app/shared/shared';
+import { Router } from '@angular/router';
 
 const ECDSA_KEY = 2;
 
@@ -148,6 +149,7 @@ export class PKPGeneratorService {
 
     constructor(
         private weaveDBService: WeaveDBService,
+        private router: Router,
     ) { }
 
     private getProvider() {
@@ -351,10 +353,34 @@ export class PKPGeneratorService {
         return data?.find(res => res) || null;
     }
 
-    async getOrGenerateAutoPKPInfo(): Promise<IPkpInfo> {
+    async getOrGenerateAutoPKPInfo(config?: {
+        autoMint?: boolean,
+        autoRedirect?: boolean,
+    }): Promise<IPkpInfo> {
+
+        const autoMint = config?.autoMint || false;
+        const autoRedirect = config?.autoRedirect || false;
+
         let pkpInfo = await this.getPKPInfo();
 
-        if (!pkpInfo?.pkpPublicKey) {
+        const pkpKey = pkpInfo?.pkpPublicKey;
+
+        if (!pkpKey && !autoMint) {
+            pkpInfo = {
+                docId: null as any,
+                pkpWalletAddress: null as any,
+                pkpPublicKey: null as any,
+                tokenId: null as any,
+                tx: null as any,
+                wallets: [] as string[],
+            };
+
+            if (autoRedirect) {
+                this.router.navigateByUrl('/wallets/mpc');
+            }
+        }
+
+        if (!pkpKey && autoMint) {
             pkpInfo = await this.mint();
         }
 

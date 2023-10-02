@@ -90,7 +90,9 @@ export default class TradingManagedFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+      autoRedirect: true,
+    });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     this.callEvents();
   }

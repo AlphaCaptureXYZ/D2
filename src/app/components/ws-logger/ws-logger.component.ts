@@ -50,6 +50,8 @@ export default class WSLoggerComponent implements OnInit {
     currentIndex = -1;
     currentRawInfo: any = null;
 
+    pkpWalletAddress: string = null as any;
+
     constructor(
         private wsService: WSService,
         private weaveDBService: WeaveDBService,
@@ -68,24 +70,31 @@ export default class WSLoggerComponent implements OnInit {
 
         let data = settings?.data;
 
-        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
-
-        data = data?.filter((s) => {
-            const check = s?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
-            return check;
+        const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+            autoRedirect: false,
+            autoMint: false,
         });
 
-        const eventListenerUrl: string =
-            data[0]?.event_listener_url || environment.defaultEventListenerUrl;
+        this.pkpWalletAddress = pkpWalletAddress;
 
-        const wsUrl =
-            eventListenerUrl.replace('http://', 'ws://').replace('https://', 'wss://') + '?walletAddress=' + walletAddress;
+        if (!isNullOrUndefined(pkpWalletAddress)) {
+            data = data?.filter((s) => {
+                const check = s?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
+                return check;
+            });
 
-        this.wsService.connect(
-            'ws-logger', wsUrl,
-        );
+            const eventListenerUrl: string =
+                data[0]?.event_listener_url || environment.defaultEventListenerUrl;
 
-        this.getLogs();
+            const wsUrl =
+                eventListenerUrl.replace('http://', 'ws://').replace('https://', 'wss://') + '?walletAddress=' + walletAddress;
+
+            this.wsService.connect(
+                'ws-logger', wsUrl,
+            );
+
+            this.getLogs();
+        }
     }
 
     async getLogs() {

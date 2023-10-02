@@ -66,7 +66,9 @@ export default class TradingBasicFormComponent implements OnInit {
   }
 
   async getCredentials() {
-    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+      autoRedirect: true,
+    });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
   }
 

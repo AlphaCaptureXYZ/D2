@@ -63,7 +63,9 @@ export default class AccountsComponent implements OnInit {
   async getAccounts() {
     this.isLoading = true;
     try {
-      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
       this.accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     } catch (err) {
       // console.log(err.message);

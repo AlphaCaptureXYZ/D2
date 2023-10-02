@@ -49,6 +49,7 @@ export class WeaveDBService {
                 contractTxId,
                 nocache: true,
             });
+
             await this.db.init();
         }
     }
@@ -219,7 +220,6 @@ export class WeaveDBService {
         } = payload;
 
         try {
-
             await this.setupWeaveDB();
 
             const wallet = await getDefaultAccount();

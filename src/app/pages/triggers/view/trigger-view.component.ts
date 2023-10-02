@@ -74,7 +74,9 @@ export default class TriggerViewComponent implements OnInit {
   async getAccount(accountReference: string) {
     try {
 
-      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+      const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
       const accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
       // console.log('accoubts', accounts);
 
@@ -109,7 +111,9 @@ export default class TriggerViewComponent implements OnInit {
 
     const userWallet = await getDefaultAccount();
 
-    const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo();
+    const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+      autoRedirect: true,
+    });
 
     const docId = this.trigger.docId;
 
