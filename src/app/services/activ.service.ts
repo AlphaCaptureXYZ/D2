@@ -171,7 +171,9 @@ export class ActivService {
       filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    return this.activ.getPublicIdeas(page, limit /*, filter*/);
+    const ideas = await this.activ.getPublicIdeas(page, limit /*, filter*/);
+    await this.activ.restoreIdeasImages(ideas.data);
+    return ideas;
   }
 
   async listMyIdeas(page = 1, limit = 10, filter?: CI.ITradeIdeaIdeaKind[]) {
@@ -179,7 +181,9 @@ export class ActivService {
       filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    return this.activ.getAccessibleIdeas(page, limit /*, filter*/);
+    const ideas = await this.activ.getAccessibleIdeas(page, limit /*, filter*/);
+    await this.activ.restoreIdeasImages(ideas.data);
+    return ideas;
   }
 
   // Strategies

@@ -151,6 +151,10 @@ export default class NftIdeasComponent implements OnInit {
   };
 
   sureIdeaDecrypted = (value: any): CI.ITradeIdeaIdea => {
-    return value as unknown as CI.ITradeIdeaIdea;
+    if (typeof value?.idea === 'string') {
+      throw new Error('Domain Error: Not expected encrypted idea here.');
+    }
+    const tidea = value as unknown as CI.ITradeIdeaIdea;
+    return tidea;
   };
 }
