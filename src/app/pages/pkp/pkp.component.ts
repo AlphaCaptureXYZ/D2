@@ -88,32 +88,22 @@ export default class SettingsComponent implements OnInit {
                 this.pkpInfoDocId = pkpData?.docId;
                 this.pkpInfo = pkpData;
                 this.pkpInfo.url = `${litPkpUrl}/${this.pkpInfo.tokenId}`;
-
-                this.pkpLoading = false;
-
-                // this.pkpUsersLoading = true;
-
-                // const wallets =
-                //     await this.pKPGeneratorService.getWalletsWithAccess(this.pkpInfo.tokenId);
-
-                // this.pkpUsersLoading = false;
-
-                // this.walletsWithAccess = wallets;
-
             }
 
-            if (isNullOrUndefined(pkpData)) {
-                const mint = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
-                    autoMint: true,
-                });
-                this.pkpInfo = mint;
-                this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
-                this.pkpLoading = false;
-            }
+            this.pkpLoading = false;
 
         } catch (err) {
             this.pkpLoading = false;
         }
+    }
+
+    async generatePkp() {
+        const mint = await this.pKPGeneratorService.mint();
+        this.pkpInfo = mint;
+        this.pkpInfo.url = `${litPkpUrl}/${mint.tokenId}`;
+        this.pkpLoading = false;
+        await this.getPkpInfo();
+        window.location.reload();
     }
 
     async addWalletAccess() {

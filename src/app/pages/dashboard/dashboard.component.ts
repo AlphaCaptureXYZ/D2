@@ -43,7 +43,6 @@ export default class DashboardComponent implements OnInit {
     this.isLoadingAccounts = true;
     try {
       const { pkpWalletAddress } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
-        autoMint: false,
         autoRedirect: false,
       });
       this.accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);

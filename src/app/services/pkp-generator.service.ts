@@ -354,18 +354,16 @@ export class PKPGeneratorService {
     }
 
     async getOrGenerateAutoPKPInfo(config?: {
-        autoMint?: boolean,
         autoRedirect?: boolean,
     }): Promise<IPkpInfo> {
 
-        const autoMint = config?.autoMint || false;
         const autoRedirect = config?.autoRedirect || false;
 
         let pkpInfo = await this.getPKPInfo();
 
         const pkpKey = pkpInfo?.pkpPublicKey;
 
-        if (!pkpKey && !autoMint) {
+        if (!pkpKey) {
             pkpInfo = {
                 docId: null as any,
                 pkpWalletAddress: null as any,
@@ -378,10 +376,6 @@ export class PKPGeneratorService {
             if (autoRedirect) {
                 this.router.navigateByUrl('/wallets/mpc');
             }
-        }
-
-        if (!pkpKey && autoMint) {
-            pkpInfo = await this.mint();
         }
 
         return pkpInfo;

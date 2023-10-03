@@ -72,7 +72,6 @@ export default class WSLoggerComponent implements OnInit {
 
         const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
             autoRedirect: false,
-            autoMint: false,
         });
 
         this.pkpWalletAddress = pkpWalletAddress;
