@@ -20,6 +20,9 @@ interface IOrder {
   raw: any;
 }
 
+const defaultPage = 1;
+const defaultLimit = 10;
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -34,8 +37,10 @@ export default class OrdersComponent implements OnInit {
   orders: IOrder[];
 
   totalOrders = 0;
-  ordersPage = 1;
-  ordersLimit = 10;
+  ordersPage = defaultPage;
+  ordersLimit = defaultLimit;
+
+  arrayLoader = Array.from({ length: defaultLimit }, (_, i) => i);
 
   constructor(
     private weaveDBService: WeaveDBService,
@@ -47,8 +52,8 @@ export default class OrdersComponent implements OnInit {
 
   resetIndicators() {
     this.totalOrders = 0;
-    this.ordersPage = 1;
-    this.ordersLimit = 10;
+    this.ordersPage = defaultPage;
+    this.ordersLimit = defaultLimit;
   }
 
   async ngOnInit() {
@@ -123,7 +128,6 @@ export default class OrdersComponent implements OnInit {
   }
 
   paginationChanged(event: any) {
-    console.log('paginationChanged (event)', event);
     this.ordersPage = event.page;
     this.ordersLimit = event.limit;
     this.getOrders();

@@ -39,13 +39,50 @@
 
                 <tbody *ngIf="isLoading">
                     <tr
-                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                        class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-600"
+                        *ngFor="let al of arrayLoader">
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
                         <th
                             scope="row"
-                            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            colspan="4">
-                            <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
+                            class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
                         </th>
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                            <div class="h-2.5 bg-gray-300 rounded-full dark:bg-gray-600 w-24 mb-2.5"></div>
+                            <div class="w-32 h-2 bg-gray-200 rounded-full dark:bg-gray-700"></div>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
+                            <i class="bx bx-loader bx-spin text-1xl loader-icon"></i>
+                        </td>
                     </tr>
                 </tbody>
 
@@ -131,8 +168,7 @@
                 [page]="ordersPage"
                 [limit]="ordersLimit"
                 [total]="totalOrders"
-                (changed)="paginationChanged($event)"
-                ></app-pagination-table-row>
+                (changed)="paginationChanged($event)"></app-pagination-table-row>
         </div>
 
     </div>
