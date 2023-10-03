@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <div class="p-4 cursor-pointer" (click)="getOrders()">
+        <div class="p-4 cursor-pointer" (click)="refresh()">
             <i class='bx bx-refresh'></i> <span class="ml-1 text-xs hover:underline">Refresh</span>
         </div>
 
@@ -124,8 +124,17 @@
                     </tr>
                 </tbody>
             </table>
-
         </div>
+
+        <div>
+            <app-pagination-table-row
+                [page]="ordersPage"
+                [limit]="ordersLimit"
+                [total]="totalOrders"
+                (changed)="paginationChanged($event)"
+                ></app-pagination-table-row>
+        </div>
+
     </div>
 
 </main>

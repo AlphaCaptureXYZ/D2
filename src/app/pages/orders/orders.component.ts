@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HighlightModule } from 'ngx-highlightjs';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
+import PaginationTableRowComponent from 'src/app/components/pagination-table-row/pagination-table-row.component';
 
 interface IOrder {
   id: string;
@@ -22,7 +23,7 @@ interface IOrder {
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HighlightModule],
+  imports: [CommonModule, RouterModule, FormsModule, HighlightModule, PaginationTableRowComponent],
   templateUrl: './orders.component.html',
   styleUrls: ['./orders.component.scss'],
 })
@@ -32,6 +33,10 @@ export default class OrdersComponent implements OnInit {
   rawInfo: any;
   orders: IOrder[];
 
+  totalOrders = 0;
+  ordersPage = 1;
+  ordersLimit = 10;
+
   constructor(
     private weaveDBService: WeaveDBService,
     private router: Router,
@@ -40,7 +45,18 @@ export default class OrdersComponent implements OnInit {
     this.isLoading = false;
   }
 
+  resetIndicators() {
+    this.totalOrders = 0;
+    this.ordersPage = 1;
+    this.ordersLimit = 10;
+  }
+
   async ngOnInit() {
+    this.getOrders();
+  }
+
+  async refresh() {
+    this.resetIndicators();
     this.getOrders();
   }
 
@@ -50,10 +66,11 @@ export default class OrdersComponent implements OnInit {
 
     const ordersData = await this.weaveDBService.getAllData<any>({
       type: 'order',
-      page: 1,
-      limit: 30,
+      page: this.ordersPage,
+      limit: this.ordersLimit,
     });
 
+    this.totalOrders = ordersData?.total || 0;
     let orders = ordersData?.data;
 
     this.orders = orders?.map((data: any) => {
@@ -103,6 +120,13 @@ export default class OrdersComponent implements OnInit {
 
   goToIdeaPage(order: IOrder) {
     window.open(`/nfts/idea/${order.nftIdLinked}`, '_blank');
+  }
+
+  paginationChanged(event: any) {
+    console.log('paginationChanged (event)', event);
+    this.ordersPage = event.page;
+    this.ordersLimit = event.limit;
+    this.getOrders();
   }
 
 }
