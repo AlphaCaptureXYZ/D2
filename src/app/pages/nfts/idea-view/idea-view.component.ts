@@ -67,8 +67,6 @@ export default class IdeaViewComponent implements OnInit {
       if (this.idea?.nftId) {
         if (typeof this.idea.idea === 'string') {
           throw new Error('View Idea Error: Unexpected encrypted idea here.');
-        } else {
-          console.log(this.idea);
         }
         this.ideaCore = this.idea.idea as CI.ITradeIdeaIdea;
         this.access = this.idea.access as CI.ITradeIdeaAccess;
