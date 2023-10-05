@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { FormsModule } from '@angular/forms';
 import { HighlightModule } from 'ngx-highlightjs';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 import PaginationTableRowComponent from 'src/app/components/pagination-table-row/pagination-table-row.component';
+
+import { IPaging } from 'src/app/interfaces/interfaces';
+import { isNullOrUndefined } from 'src/app/helpers/helpers';
 
 interface IOrder {
   id: string;
@@ -42,12 +45,17 @@ export default class OrdersComponent implements OnInit {
 
   arrayLoader = Array.from({ length: defaultLimit }, (_, i) => i);
 
+  accountReference: string = null as any;
+  strategyReference: string = null as any;
+
   constructor(
+    private route: ActivatedRoute,
     private weaveDBService: WeaveDBService,
     private router: Router,
   ) {
     this.orders = [];
     this.isLoading = false;
+
   }
 
   resetIndicators() {
@@ -57,6 +65,8 @@ export default class OrdersComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.accountReference = this.route.snapshot.params['accountReference'];
+    this.strategyReference = this.route.snapshot.params['strategyReference'];
     this.getOrders();
   }
 
@@ -69,11 +79,37 @@ export default class OrdersComponent implements OnInit {
     this.isLoading = true;
     this.orders = [];
 
-    const ordersData = await this.weaveDBService.getAllData<any>({
-      type: 'order',
-      page: this.ordersPage,
-      limit: this.ordersLimit,
-    });
+    let ordersData: IPaging<any>;
+
+    if (!isNullOrUndefined(this.accountReference)) {
+
+      ordersData = await this.weaveDBService.getAllData<any>({
+        type: 'order',
+        page: this.ordersPage,
+        limit: this.ordersLimit,
+        filter: {
+          accountReference: this.accountReference,
+        }
+      });
+
+    } else if (!isNullOrUndefined(this.strategyReference)) {
+
+      ordersData = await this.weaveDBService.getAllData<any>({
+        type: 'order',
+        page: this.ordersPage,
+        limit: this.ordersLimit,
+        filter: {
+          strategyReference: this.strategyReference,
+        }
+      });
+
+    } else {
+      ordersData = await this.weaveDBService.getAllData<any>({
+        type: 'order',
+        page: this.ordersPage,
+        limit: this.ordersLimit,
+      });
+    }
 
     this.totalOrders = ordersData?.total || 0;
     let orders = ordersData?.data;

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import litClient from "src/app/scripts/Lit";
 
@@ -39,6 +39,7 @@ export default class AccountsComponent implements OnInit {
   credentialCode = null as any;
 
   constructor(
+    private router: Router,
     private nftCredentialService: NFTCredentialService,
     private pKPGeneratorService: PKPGeneratorService,
   ) {
@@ -124,5 +125,10 @@ export default class AccountsComponent implements OnInit {
     this.decryptedValueResultCompleted = false;
     this.apiKey = null as any;
     this.apiSecret = null as any;
+  }
+
+  goToAccountOrders(account: any) {
+    const reference = account?.uuid;
+    this.router.navigateByUrl(`accounts/${reference}/orders`);
   }
 }

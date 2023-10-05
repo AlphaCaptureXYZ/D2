@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/accounts/accounts.component'),
   },
   {
+    path: 'accounts/:accountReference/orders',
+    loadComponent: () => import('./pages/orders/orders.component'),
+  },
+  {
     path: 'accounts/binance',
     loadComponent: () => import('./brokerages/binance/account/binance.component'),
   },
@@ -56,6 +60,10 @@ export const routes: Routes = [
     path: 'nfts/strategies/:id',
     loadComponent: () =>
       import('./pages/nfts/strategy-view/strategy-view.component'),
+  },
+  {
+    path: 'strategies/:strategyReference/orders',
+    loadComponent: () => import('./pages/orders/orders.component'),
   },
   {
     path: 'triggers',

@@ -208,6 +208,7 @@ export class WeaveDBService {
             type: CollectionType,
             page?: number,
             limit?: number,
+            filter?: any,
         }
     ): Promise<IPaging<T>> {
         let data = [];
@@ -217,6 +218,7 @@ export class WeaveDBService {
             type,
             page,
             limit,
+            filter,
         } = payload;
 
         try {
@@ -240,6 +242,18 @@ export class WeaveDBService {
             docs = docs?.filter((doc) => {
                 return doc?.data?.userAddress === wallet;
             });
+
+            if (!isNullOrUndefined(filter)) {
+                docs = docs?.filter((doc) => {
+                    let result = false;
+                    Object.keys(filter)?.forEach((key) => {
+                        if (doc?.data?.additionalInfo?.[key] === filter?.[key]) {
+                            result = true;
+                        }
+                    });
+                    return result;
+                });
+            };
 
             docs = docs?.sort((a, b) => {
                 return b?.data?.createdAt - a?.data?.createdAt;

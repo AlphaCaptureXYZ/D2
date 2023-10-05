@@ -123,4 +123,9 @@ export default class StrategyViewComponent implements OnInit {
       this.getIdeasByStrategy();
     }
   };
+
+  goToStrategyOrders() {
+    const reference = this.strategy.reference
+    this.router.navigateByUrl(`strategies/${reference}/orders`);
+  }
 }

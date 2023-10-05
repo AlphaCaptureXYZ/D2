@@ -38,6 +38,7 @@
             <th scope="col" class="px-6 py-3">Environment</th>
             <th scope="col" class="px-6 py-3">Account Name</th>
             <th scope="col" class="px-6 py-3">Credentials</th>
+            <th scope="col" class="px-6 py-3">Orders</th>
             <!-- <th scope="col" class="px-6 py-3">Actions</th> -->
           </tr>
         </thead>
@@ -52,7 +53,7 @@
               <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
             </th>
           </tr>
-        </tbody>     
+        </tbody>
 
         <tbody *ngIf="!isLoading && accounts.length === 0">
           <tr
@@ -64,7 +65,7 @@
               No accounts have been configured yet
             </th>
           </tr>
-        </tbody>        
+        </tbody>
 
         <tbody *ngIf="!isLoading && accounts.length > 0">
           <tr
@@ -87,6 +88,11 @@
             <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
               <span class="cursor-pointer" (click)="decrypt(account.uuid)">
                 <i class='bx bx-key text-2xl'></i>
+              </span>
+            </td>
+            <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
+              <span class="cursor-pointer" (click)="goToAccountOrders(account)">
+                <i class='bx bx-receipt text-2xl'></i>
               </span>
             </td>
             <!-- <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
