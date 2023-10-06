@@ -228,24 +228,11 @@ export class ActivService {
   ) {
     await this.init();
     const ideas = await this.activ.getIdeasByStrategy(
-      strategyReference
-      /*
+      strategyReference,
       page,
       limit,
-      
       filterType
-      */
     );
-    return ideas.filter((ones) => {
-      if (typeof ones.idea === 'string') {
-        return false;
-      } else {
-        return (
-          filterType.find(
-            (oneFilter) => oneFilter === (ones.idea as CI.ITradeIdeaIdea).kind
-          ) !== undefined
-        );
-      }
-    });
+    return ideas;
   }
 }

@@ -61,7 +61,7 @@ export default class StrategyViewComponent implements OnInit {
     } else {
       filter = ['close'] as CI.ITradeIdeaIdeaKind[];
     }
-    const data = await this.activService.listIdeasByStrategyReference(
+    const { data } = await this.activService.listIdeasByStrategyReference(
       this.reference,
       1,
       10,
