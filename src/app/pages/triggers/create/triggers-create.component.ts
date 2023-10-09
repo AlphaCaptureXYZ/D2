@@ -122,7 +122,7 @@ export default class TriggersCreateComponent implements OnInit {
           jsonData: {
             action: this.form.value.action,
             strategy: {
-              reference: strategy?.uniqueKey,
+              reference: strategy?.reference,
               name: strategy?.name,
             },
             account: {
