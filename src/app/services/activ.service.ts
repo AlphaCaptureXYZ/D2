@@ -171,9 +171,9 @@ export class ActivService {
       filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    const ideas = await this.activ.getPublicIdeas(page, limit /*, filter*/);
+    const ideas = await this.activ.query().listLatestPublicIdeas(page, limit /*, filter*/);
     await this.activ.restoreIdeasImages(ideas.data);
-    return ideas;
+    return ideas?.data;
   }
 
   async listMyIdeas(page = 1, limit = 10, filter?: CI.ITradeIdeaIdeaKind[]) {
@@ -181,8 +181,8 @@ export class ActivService {
       filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
     }
     await this.init();
-    const ideas = await this.activ.getAccessibleIdeas(page, limit /*, filter*/);
-    await this.activ.restoreIdeasImages(ideas.data);
+    const ideas = await this.activ.query().getAllMyIdeas();
+    await this.activ.restoreIdeasImages(ideas);
     return ideas;
   }
 
@@ -200,7 +200,7 @@ export class ActivService {
     limit = 10
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return (await this.activ.listAccesibleStrategies(page, limit)).data;
+    return (await this.activ.query().listPublicStrategies(page, limit)).data;
   }
 
   async listAllStrategies(
@@ -208,7 +208,7 @@ export class ActivService {
     limit = 10
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return (await this.activ.listAllStrategies(page, limit)).data;
+    return (await this.activ.query().listAllMyStrategies());
   }
 
   // Single Strategy

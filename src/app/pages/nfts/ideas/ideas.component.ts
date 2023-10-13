@@ -57,14 +57,14 @@ export default class NftIdeasComponent implements OnInit {
       getAllIdeas = await this.activService.listMyIdeas(1, 10, this.myFilter);
     }
     console.log('getAllIdeas', getAllIdeas);
-    for (const i in getAllIdeas.data) {
+    for (const i in getAllIdeas) {
       if (i) {
         // if we have a string, it means the data is encrypted
         // but if we have an object (which we expect), it means we have a properly decrypted idea
         // the simplest test is to check if we have an nftId which we will always have if there is decrypted data
-        if (getAllIdeas.data[i]?.nftId) {
-          const idea = getAllIdeas.data[i] as CI.ITradeIdea;
-          idea.idea = getAllIdeas.data[i].idea as CI.ITradeIdeaIdea;
+        if (getAllIdeas[i]?.nftId) {
+          const idea = getAllIdeas[i] as CI.ITradeIdea;
+          idea.idea = getAllIdeas[i].idea as CI.ITradeIdeaIdea;
 
           if (idea?.idea?.asset?.image) {
             idea.idea.asset.image.b64 =
