@@ -60,6 +60,15 @@ export class AppComponent implements OnInit {
     this.listenRouteChange();
   }
 
+  async setCurrentNetworkInfo() {
+    const defaultNetwork = await getDefaultNetwork();
+
+    this.currentNetworkInfo = {
+      ...defaultNetwork,
+      firstTime: true,
+    };
+  }
+
   async detectAuth() {
 
     const account = await getDefaultAccount();
@@ -70,12 +79,7 @@ export class AppComponent implements OnInit {
 
       this.starting = false;
 
-      const defaultNetwork = await getDefaultNetwork();
-
-      this.currentNetworkInfo = {
-        ...defaultNetwork,
-        firstTime: true,
-      };
+      await this.setCurrentNetworkInfo();
 
       this.eventService.emit('METAMASK_NETWORK_CHANGED', this.currentNetworkInfo);
 
@@ -108,6 +112,8 @@ export class AppComponent implements OnInit {
         case 'METAMASK_WALLET_DETECTED':
           if (data?.wallet) {
             this.starting = false;
+            await this.setCurrentNetworkInfo();
+            await this.networkSupporCheck();
           }
           break;
         case 'METAMASK_NETWORK_CHANGED':
@@ -133,6 +139,7 @@ export class AppComponent implements OnInit {
     }
 
     if (!skipByPath) {
+      console.log('networkSupporCheck (name)', this.currentNetworkInfo?.name);
       const check = isSupportedNetwork(this.currentNetworkInfo?.name);
       this.isSupportedNetwork = check;
       this.cRef.detectChanges();
