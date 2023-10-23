@@ -192,7 +192,9 @@ export class ActivService {
     limit = 10
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return this.activ.query().listAllMyStrategies();
+    const data = await this.activ.listMyStrategies(page, limit);
+    const strategies = data?.data?.map(res => res.strategy);
+    return strategies;
   }
 
   async listAccessibleStrategies(
@@ -200,7 +202,9 @@ export class ActivService {
     limit = 10
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return (await this.activ.query().listPublicStrategies(page, limit)).data;
+    const data = await this.activ.query().listStrategiesSubscribedTo(undefined, page, limit)
+    const strategies = data?.data?.map(res => res.strategy);
+    return strategies;
   }
 
   async listAllStrategies(
@@ -208,7 +212,10 @@ export class ActivService {
     limit = 10
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
-    return (await this.activ.query().listAllMyStrategies());
+    await this.init();
+    const data = await this.activ.listPublicStrategies(page, limit);
+    const strategies = data?.data?.map(res => res.strategy);
+    return strategies;
   }
 
   // Single Strategy
@@ -217,7 +224,7 @@ export class ActivService {
     creator: CI.ITradeIdeaCreator;
   }> {
     await this.init();
-    return await this.activ.getStrategyInfoDetails(strategyReference);
+    return await this.activ.query().public.getStrategyWithCreator(strategyReference);
   }
 
   async listIdeasByStrategyReference(
@@ -227,8 +234,9 @@ export class ActivService {
     filterType = ['open', 'close'] as CI.ITradeIdeaIdeaKind[]
   ) {
     await this.init();
-    const ideas = await this.activ.getIdeasByStrategy(
+    const ideas = await this.activ.listIdeasByStrategy(
       strategyReference,
+      undefined,
       page,
       limit,
       filterType
