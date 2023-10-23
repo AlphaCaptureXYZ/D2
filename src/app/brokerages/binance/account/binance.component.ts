@@ -49,6 +49,9 @@ export default class AccountsBinanceComponent implements OnInit {
 
   isLoading = false;
 
+  error: boolean = false;
+  errorMsg: string = '';
+
   form: FormGroup = new FormGroup({
     name: new FormControl(''),
     publicApi: new FormControl(''),
@@ -222,7 +225,7 @@ export default class AccountsBinanceComponent implements OnInit {
 
       const response = litActionCall?.response as any;
 
-      console.log('litActionToCheckCredentials (response)', response);
+      this.errorHandling(response);
 
       if (response?.msg) {
         alert(response?.msg);
@@ -243,8 +246,28 @@ export default class AccountsBinanceComponent implements OnInit {
   copyProxyIp() {
     copyValue(this.defaultProxyIp);
   }
+
   copyMyIp() {
     copyValue(this.ipAddress);
+  }
+
+  errorHandling = (response: any) => {
+
+    console.log('errorHandling (response)', response);
+
+    const error = response?.error;
+
+    console.log('errorHandling (error)', error);
+
+    if (error.includes('Invalid API-key')) {
+      this.error = true;
+      this.errorMsg = 'Invalid API-key, IP, or permissions for action.';
+    }
+
+    if(error.includes('API-key format invalid')){
+      this.error = true;
+      this.errorMsg = 'API-key format invalid.';
+    }
   }
 
 }

@@ -122,27 +122,37 @@
             <p class="p-3">
               Binance recommends that access to API keys that you create is
               restricted to trusted IPs only. While an excellent recommendation,
-              D2 Triggers use <a href="https://litprotocol.com/" target="_new" class="link hover:underline cursor-pointer">Lit Protocol's</a> distributed node network to make
+              D2 Triggers use <a href="https://litprotocol.com/" target="_new"
+                class="link hover:underline cursor-pointer">Lit Protocol's</a> distributed node
+              network to make
               requests. While using a distributed network has many advantages,
               it does make it impossible to use Binance's IP restriction as there is no single IP
-              address used.  
+              address used.
             </p>
 
             <p class="p-3">
-              For this reason a proxy server is used where appropriate.  You may wish to configure which proxy server to use (see <a routerLink="/settings" class="link hover:underline cursor-pointer">Settings</a>) or setup your own proxy server to ensure maximum transparency (see <a routerLink="/guides/proxy-service" class="link hover:underline cursor-pointer">Guides</a>).
+              For this reason a proxy server is used where appropriate. You may wish to configure
+              which proxy server to use (see <a routerLink="/settings"
+                class="link hover:underline cursor-pointer">Settings</a>) or setup your own proxy
+              server to ensure maximum transparency (see <a routerLink="/guides/proxy-service"
+                class="link hover:underline cursor-pointer">Guides</a>).
             </p>
 
             <p class="p-3" *ngIf="ipAddress.length > 0">
-              For verification of account credentials before creating an NFT, an API call is made locally to Binance.
+              For verification of account credentials before creating an NFT, an API call is made
+              locally to Binance.
             </p>
 
-            <p class="p-3">NOTE: Please add the following IP addresses in your trusted IPs list in Binance and mark/enable the option "Enable Spot & Margin Trading":</p>
+            <p class="p-3">NOTE: Please add the following IP addresses in your trusted IPs list in
+              Binance and mark/enable the option "Enable Spot & Margin Trading":</p>
 
             <ul class="indent-8 list-inside list-disc mb-8">
-              <li class="mt-4">Current IP Address: {{ipAddress}} <i (click)="copyMyIp()" class='bx bx-copy cursor-pointer'></i></li>
-              <li class="mt-4">Default Proxy Server: {{defaultProxyIp}} ({{defaultProxyUrl}}) <i (click)="copyProxyIp()" class='bx bx-copy cursor-pointer'></i></li>
+              <li class="mt-4">Current IP Address: {{ipAddress}} <i (click)="copyMyIp()"
+                  class='bx bx-copy cursor-pointer'></i></li>
+              <li class="mt-4">Default Proxy Server: {{defaultProxyIp}} ({{defaultProxyUrl}}) <i
+                  (click)="copyProxyIp()" class='bx bx-copy cursor-pointer'></i></li>
             </ul>
-    
+
           </div>
 
           <div class="mb-6 text-right" *ngIf="!isLoading">
@@ -160,11 +170,23 @@
               class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
               MINTING...
             </button>
-            <br/>
-            <p class="text-xs">An NFT of your credentials is being minted and will be added to your wallet shortly.</p>
+            <br />
+            <p class="text-xs">An NFT of your credentials is being minted and will be added to your
+              wallet shortly.</p>
+
           </div>
 
         </form>
+
+        <div class="warning-brokerage-account" *ngIf="error">
+          <span>
+            <i class='bx bxs-error warning-icon'></i>
+          </span>
+          <span class="ml-2">
+            {{errorMsg}}
+          </span>
+        </div>
+
       </div>
     </div>
   </div>
