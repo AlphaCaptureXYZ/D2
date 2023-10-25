@@ -3,11 +3,9 @@ import * as LitJsSdk from "lit-js-sdk";
 
 import * as LitNodeClient from '@lit-protocol/lit-node-client';
 
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 
 import { isNullOrUndefined } from "src/app/helpers/helpers";
-
-import * as web3 from "web3";
 
 const client = new LitJsSdk.LitNodeClient({
     alertWhenUnauthorized: false,
@@ -16,13 +14,34 @@ const client = new LitJsSdk.LitNodeClient({
     debug: false,
 });
 
-const chain = "mumbai";
 class Lit {
     litNodeClient: any;
+    provider: any;
 
     async connect() {
         await client.connect();
         this.litNodeClient = client;
+    }
+
+    private getProvider() {
+        if (isNullOrUndefined(this.provider)) {
+            this.provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
+        return this.provider;
+    }
+
+    private async getChain() {
+        const provider = this.getProvider();
+        const network = await provider.getNetwork();
+
+        const chainObj: any = {
+            137: 'polygon',
+            80001: 'mumbai'
+        };
+
+        const chain = chainObj[network.chainId] || null;
+
+        return chain as string;
     }
 
     private base64StringToBlob(base64Data: string): Blob {
@@ -72,6 +91,7 @@ class Lit {
             await this.connect();
         };
 
+        const chain = await this.getChain();
         const authSig = await this.getAuthSig(chain);
 
         const { encryptedString, symmetricKey } = await LitJsSdk.encryptString(str);
@@ -106,6 +126,7 @@ class Lit {
             await this.connect();
         };
 
+        const chain = await this.getChain();
         const authSig = await this.getAuthSig(chain);
 
         const encryptionKey = await this.litNodeClient.getEncryptionKey({
@@ -134,6 +155,7 @@ class Lit {
             await this.connect();
         };
 
+        const chain = await this.getChain();
         const authSig = await this.getAuthSig(chain);
 
         await this.litNodeClient.saveEncryptionKey({

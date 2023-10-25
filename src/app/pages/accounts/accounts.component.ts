@@ -10,8 +10,6 @@ import { HighlightModule } from 'ngx-highlightjs';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
-const chain = 'mumbai';
-
 @Component({
   selector: 'app-accounts',
   standalone: true,
@@ -87,7 +85,7 @@ export default class AccountsComponent implements OnInit {
 
         const accessControlConditionsNFT = [
           {
-            contractAddress: this.nftCredentialService.getContractAddress(),
+            contractAddress: await this.nftCredentialService.getContractAddress(),
             standardContractType: 'ERC1155',
             method: 'balanceOf',
             parameters: [':userAddress', credentialInfo?.tokenId?.toString()],
@@ -95,7 +93,7 @@ export default class AccountsComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain,
+            chain: await this.nftCredentialService.getChain(),
           },
         ];
 

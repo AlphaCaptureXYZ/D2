@@ -45,8 +45,6 @@ export default class AccountsBinanceComponent implements OnInit {
   verified = false;
   submitted = false;
 
-  chain = 'mumbai';
-
   isLoading = false;
 
   error: boolean = false;
@@ -126,9 +124,11 @@ export default class AccountsBinanceComponent implements OnInit {
           apiSecret: this.form.value.secretApi,
         });
 
+        console.log('epador [encrypt] (credentials)', credentials);
+
         const initialAccessControlConditionsNFT = [
           {
-            contractAddress: this.nftCredentialService.getContractAddress(),
+            contractAddress: await this.nftCredentialService.getContractAddress(),
             standardContractType: 'ERC1155',
             method: 'balanceOf',
             parameters: [':userAddress', '0'],
@@ -136,9 +136,11 @@ export default class AccountsBinanceComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain: this.chain,
+            chain: await this.nftCredentialService.getChain(),
           },
         ];
+
+        console.log('epador [encrypt] (initialAccessControlConditionsNFT)', initialAccessControlConditionsNFT);
 
         const {
           encryptedFile,
@@ -148,6 +150,10 @@ export default class AccountsBinanceComponent implements OnInit {
           credentials,
           initialAccessControlConditionsNFT,
         );
+
+        console.log('epador [encrypt] (encryptedFile)', encryptedFile);
+        console.log('epador [encrypt] (encryptedSymmetricKey)', encryptedSymmetricKey);
+        console.log('epador [encrypt] (encryptedSymmetricKeyString)', encryptedSymmetricKeyString);
 
         const encryptedFileB64 = await blobToBase64String(encryptedFile);
 
@@ -173,7 +179,7 @@ export default class AccountsBinanceComponent implements OnInit {
 
         const accessControlConditionsNFT = [
           {
-            contractAddress: this.nftCredentialService.getContractAddress(),
+            contractAddress: await this.nftCredentialService.getContractAddress(),
             standardContractType: 'ERC1155',
             method: 'balanceOf',
             parameters: [':userAddress', tokenId?.toString()],
@@ -181,9 +187,11 @@ export default class AccountsBinanceComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain: this.chain,
+            chain: await this.nftCredentialService.getChain(),
           },
         ];
+
+        console.log('epador [encrypt] (accessControlConditionsNFT)', accessControlConditionsNFT);
 
         await litClient.updateAccessControlConditions(
           encryptedSymmetricKey,
@@ -216,7 +224,7 @@ export default class AccountsBinanceComponent implements OnInit {
       };
 
       const litActionCall = await litClient.runLitAction({
-        chain: this.chain,
+        chain: await this.nftCredentialService.getChain(),
         litActionCode,
         listActionCodeParams,
         nodes: 1,
@@ -253,18 +261,19 @@ export default class AccountsBinanceComponent implements OnInit {
 
   errorHandling = (response: any) => {
 
-    console.log('errorHandling (response)', response);
-
     const error = response?.error;
 
-    console.log('errorHandling (error)', error);
+    if (error) {
+      console.log('errorHandling (response)', response);
+      console.log('errorHandling (error)', error);
+    }
 
-    if (error.includes('Invalid API-key')) {
+    if (error?.includes('Invalid API-key')) {
       this.error = true;
       this.errorMsg = 'Invalid API-key, IP, or permissions for action.';
     }
 
-    if(error.includes('API-key format invalid')){
+    if (error?.includes('API-key format invalid')) {
       this.error = true;
       this.errorMsg = 'API-key format invalid.';
     }

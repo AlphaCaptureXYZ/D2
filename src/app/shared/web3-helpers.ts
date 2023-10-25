@@ -1,3 +1,5 @@
+import { environment } from "src/environments/environment";
+
 export const SINGLE_DEMO_FUND_STRATEGY_REFERENCE = '9631b2de4627b706b95299';
 export const PORTFOLIO_DEMO_FUND_STRATEGY_REFERENCE = '90e3h6a7bdcf42647f76c8';
 
@@ -15,11 +17,11 @@ export const WALLET_NETWORK_CHAIN_IDS_OPTS = {
   bnb: 56,
 };
 
-export const supportedNetworkAllArrayObj = [
-  // {
-  //   name: 'polygon',
-  //   testnet: false,
-  // },
+let supportedNetworkAllArrayObj = [
+  {
+    name: 'polygon',
+    testnet: false,
+  },
   // {
   //   name: 'ethereum',
   //   testnet: false,
@@ -38,18 +40,27 @@ export const supportedNetworkAllArrayObj = [
   // },
 ] as const;
 
+export const getSupportedNetworkAllArrayObj = () => {
+  let data = [];
+  if (environment.demoEnv) {
+    data = supportedNetworkAllArrayObj.filter((item) => item.testnet);
+  } else {
+    data = supportedNetworkAllArrayObj.filter((item) => !item.testnet);
+  }
+  return data;
+}
 
 export const supportedNetworkAll =
-  supportedNetworkAllArrayObj.map((item) => item.name);
+  getSupportedNetworkAllArrayObj().map((item) => item.name);
 
 export const supportedNetworkMainnet =
-  supportedNetworkAllArrayObj.filter(
+  getSupportedNetworkAllArrayObj().filter(
     (item) => !item.testnet
   ).map((item) => item.name);
 
 
 export const supportedNetworkTestnet =
-  supportedNetworkAllArrayObj.filter(
+  getSupportedNetworkAllArrayObj().filter(
     (item) => item.testnet
   ).map((item) => item.name);
 

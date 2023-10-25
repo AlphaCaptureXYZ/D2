@@ -1,9 +1,9 @@
 import { Injectable, } from '@angular/core';
 
+import { ethers } from "ethers";
+
 //@ts-ignore
 import WeaveDB from 'weavedb-sdk';
-//@ts-ignore
-import { last } from "ramda";
 
 import litClient from "src/app/scripts/Lit";
 
@@ -25,8 +25,6 @@ type CollectionType =
     | 'order'
     | 'pkp-info';
 
-const chain = 'mumbai';
-
 @Injectable({
     providedIn: 'root',
 })
@@ -39,6 +37,25 @@ export class WeaveDBService {
     constructor(
         private nftStorageService: NFTStorageService
     ) { }
+
+    private getProvider() {
+        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        return provider;
+    }
+
+    private async getChain() {
+        const provider = this.getProvider();
+        const network = await provider.getNetwork();
+
+        const chainObj: any = {
+            137: 'polygon',
+            80001: 'mumbai'
+        };
+
+        const chain = chainObj[network.chainId] || null;
+
+        return chain as string;
+    }
 
     private async setupWeaveDB() {
         if (isNullOrUndefined(this.db)) {
@@ -54,10 +71,12 @@ export class WeaveDBService {
         }
     }
 
-    private accessControlConditions(
+    private async accessControlConditions(
         userWallet: string,
         pkpWalletAddress?: string,
     ) {
+        const chain = await this.getChain();
+
         // https://developer.litprotocol.com/accessControl/EVM/basicExamples#a-specific-wallet-address
         const accessControlConditions: any[] = [
             {
@@ -134,7 +153,7 @@ export class WeaveDBService {
             }
 
             const accessControlConditions =
-                this.accessControlConditions(userWallet, pkpWalletAddress);
+                await this.accessControlConditions(userWallet, pkpWalletAddress);
 
             const {
                 encryptedFile,
@@ -297,7 +316,7 @@ export class WeaveDBService {
                     const dataIsCompressed = info?.isCompressed || false;
 
                     const accessControlConditions =
-                        this.accessControlConditions(userWallet, pkpWalletAddress);
+                        await this.accessControlConditions(userWallet, pkpWalletAddress);
 
                     let doc = null as any;
 
@@ -377,7 +396,7 @@ export class WeaveDBService {
         const dataIsCompressed = info?.isCompressed || false;
 
         const accessControlConditions =
-            this.accessControlConditions(userWallet, pkpWalletAddress);
+            await this.accessControlConditions(userWallet, pkpWalletAddress);
 
         let doc = null as any;
 

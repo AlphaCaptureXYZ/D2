@@ -10,6 +10,7 @@ import CI = CONTRACT.CONTRACT_INTERFACES;
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 
 import { ethers } from 'ethers';
+import { environment } from 'src/environments/environment';
 
 let ethereum: any;
 
@@ -27,23 +28,44 @@ export const getTickerIcon = async (ticker: string) => {
   return base64
 }
 
-const defaultChainInfo = {
-  chainId: '0x13881',
-  chainName: 'Mumbai',
-  nativeCurrency: {
-    name: 'MATIC',
-    symbol: 'MATIC',
-    decimals: 18,
-  },
-  rpcUrls: [
-    'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
-  ],
-  blockExplorerUrls: ['https://mumbai.polygonscan.com'],
-};
+const getDefaultChainInfo = () => {
+
+  let defaultChainInfo = {
+    chainId: '0x13881',
+    chainName: 'Mumbai',
+    nativeCurrency: {
+      name: 'MATIC',
+      symbol: 'MATIC',
+      decimals: 18,
+    },
+    rpcUrls: [
+      'https://polygon-mumbai.infura.io/v3/4458cf4d1689497b9a38b1d6bbf05e78',
+    ],
+    blockExplorerUrls: ['https://mumbai.polygonscan.com'],
+  };
+
+  if (!environment.demoEnv) {
+    defaultChainInfo = {
+      chainId: '0x89',
+      chainName: 'Polygon Mainnet',
+      nativeCurrency: {
+        name: 'MATIC',
+        symbol: 'MATIC',
+        decimals: 18,
+      },
+      rpcUrls: [
+        'https://polygon-rpc.com',
+      ],
+      blockExplorerUrls: ['https://polygonscan.com'],
+    };
+  }
+
+  return defaultChainInfo;
+}
 
 export const getEthereum = async () => {
   try {
-    if (isNullOrUndefined(ethereum) && (window as any)?.ethereum) {
+    if (isNullOrUndefined(ethereum) && window.ethereum) {
       ethereum = await detectEthereumProvider();
     }
   } catch (err) {
@@ -89,8 +111,6 @@ export const getDefaultNetwork = async () => {
 };
 
 export const defaultNetworkSwitch = async () => {
-  let isNewNetwork = false;
-
   let network = {
     id: null as any,
     name: null as any,
@@ -103,31 +123,27 @@ export const defaultNetworkSwitch = async () => {
 
     try {
       await provider.send('wallet_switchEthereumChain', [
-        { chainId: defaultChainInfo.chainId },
+        { chainId: getDefaultChainInfo().chainId },
       ]);
     } catch (e) {
       const ethereum = await getEthereum();
       await ethereum.request({
         method: 'wallet_addEthereumChain',
-        params: [defaultChainInfo],
+        params: [getDefaultChainInfo()],
       });
-      isNewNetwork = true;
     }
 
     const data = WALLET_NETWORK_CHAIN_NAME(80001);
 
-    network.id = defaultChainInfo.chainId;
+    network.id = getDefaultChainInfo().chainId;
     network.name = data;
   } catch (err: any) {
     console.log('defaultNetworkSwitch error', err.message);
   }
 
-  if (isNewNetwork) {
-    window.location.reload();
-  }
-
   return network;
 };
+
 
 export const litSigAuthExpirationCheck = (test = false) => {
   try {

@@ -139,7 +139,6 @@ export class AppComponent implements OnInit {
     }
 
     if (!skipByPath) {
-      console.log('networkSupporCheck (name)', this.currentNetworkInfo?.name);
       const check = isSupportedNetwork(this.currentNetworkInfo?.name);
       this.isSupportedNetwork = check;
       this.cRef.detectChanges();

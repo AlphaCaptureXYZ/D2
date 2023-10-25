@@ -6,6 +6,7 @@ import { WeaveDBService } from './weavedb.service';
 
 import { getDefaultAccount } from 'src/app/shared/shared';
 import { Router } from '@angular/router';
+import { isNullOrUndefined } from '../helpers/helpers';
 
 const ECDSA_KEY = 2;
 
@@ -147,14 +148,18 @@ export interface IPkpInfo {
 })
 export class PKPGeneratorService {
 
+    private provider: any;
+
     constructor(
         private weaveDBService: WeaveDBService,
         private router: Router,
     ) { }
 
     private getProvider() {
-        const provider: any = new ethers.providers.Web3Provider((window as any).ethereum);
-        return provider;
+        if (isNullOrUndefined(this.provider)) {
+            this.provider = new ethers.providers.Web3Provider((window as any).ethereum);
+        }
+        return this.provider;
     }
 
     private async getSigner() {

@@ -168,7 +168,7 @@ export default class TradingManagedFormComponent implements OnInit {
 
         const accessControlConditionsNFT = [
           {
-            contractAddress: this.nftCredentialService.getContractAddress(),
+            contractAddress: await this.nftCredentialService.getContractAddress(),
             standardContractType: 'ERC1155',
             method: 'balanceOf',
             parameters: [':userAddress', credentialInfo?.tokenId?.toString()],
@@ -176,7 +176,7 @@ export default class TradingManagedFormComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain: 'mumbai',
+            chain: await this.nftCredentialService.getChain(),
           },
         ];
 
@@ -231,7 +231,7 @@ export default class TradingManagedFormComponent implements OnInit {
         };
 
         const litActionCall = await litClient.runLitAction({
-          chain: 'mumbai',
+          chain: await this.nftCredentialService.getChain(),
           litActionCode,
           listActionCodeParams,
           nodes: 1,
@@ -276,7 +276,7 @@ export default class TradingManagedFormComponent implements OnInit {
         };
 
         const litActionCall = await litClient.runLitAction({
-          chain: 'mumbai',
+          chain: await this.nftCredentialService.getChain(),
           litActionCode,
           listActionCodeParams,
           nodes: 1,
