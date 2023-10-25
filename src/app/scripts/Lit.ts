@@ -41,6 +41,8 @@ class Lit {
 
         const chain = chainObj[network.chainId] || null;
 
+        console.log('Lit getChain (chain)', chain);
+
         return chain as string;
     }
 

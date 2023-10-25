@@ -177,6 +177,8 @@ export default class AccountsBinanceComponent implements OnInit {
           pkpWalletAddress,
         );
 
+        const chain = await this.nftCredentialService.getChain();
+
         const accessControlConditionsNFT = [
           {
             contractAddress: await this.nftCredentialService.getContractAddress(),
@@ -187,11 +189,9 @@ export default class AccountsBinanceComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain: await this.nftCredentialService.getChain(),
+            chain,
           },
         ];
-
-        console.log('epador [encrypt] (accessControlConditionsNFT)', accessControlConditionsNFT);
 
         await litClient.updateAccessControlConditions(
           encryptedSymmetricKey,
