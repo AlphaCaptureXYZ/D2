@@ -19,6 +19,7 @@ import {
 } from '@angular/forms';
 import { isNullOrUndefined } from 'src/app/helpers/helpers';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { ShortenContractAddress } from 'src/app/pipes/shorten-contract-address.pipe';
 
 // import { EventService } from 'src/app/services/event.service';
 // import { ActivService } from 'src/app/services/activ.service';
@@ -27,7 +28,7 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 @Component({
   selector: 'app-triggers-create',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, ShortenContractAddress],
   templateUrl: './triggers-create.component.html',
   styleUrls: ['./triggers-create.component.scss'],
 })
@@ -157,7 +158,7 @@ export default class TriggersCreateComponent implements OnInit {
   async getStrategies() {
     this.isLoading = true;
     // strategies the user has explicit access to
-    this.strategies = await this.activService.listAccessibleStrategies();
+    this.strategies = await this.activService.listMyStrategies();
     console.log('allStrategies', this.strategies);
     this.isLoading = false;
   }

@@ -58,7 +58,7 @@ export default class SrategiesComponent implements OnInit {
         this.pageSize
       );
     }
-    console.log('allStrategies', this.strategies);
+
     this.isLoading = false;
   }
 

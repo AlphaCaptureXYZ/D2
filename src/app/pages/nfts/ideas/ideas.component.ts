@@ -49,14 +49,15 @@ export default class NftIdeasComponent implements OnInit {
 
   async getIdeas() {
     this.isLoading = true;
-    let getAllIdeas;
+    let getAllIdeas: any;
     this.allIdeas = [];
+
     if (this.itemMenu === 'accessible') {
-      getAllIdeas = await this.activService.getAllIdeas(1, 10, this.myFilter);
+      getAllIdeas = (await this.activService.getNftsClientBy(1, 10, this.myFilter) as any)?.data;
     } else {
-      getAllIdeas = await this.activService.listMyIdeas(1, 10, this.myFilter);
+      getAllIdeas = (await this.activService.getNftsOwnerBy(1, 10, this.myFilter) as any)?.data;
     }
-    console.log('getAllIdeas', getAllIdeas);
+
     for (const i in getAllIdeas) {
       if (i) {
         // if we have a string, it means the data is encrypted

@@ -34,6 +34,24 @@ export class ActivService {
     return this.activ.getUtils();
   }
 
+  dealErrorToVoidArray<T>(err: any): T[] {
+    console.error('ActivService (error)', err.message);
+    return [] as T[];
+  }
+
+  dealErrorToVoidPagination<T>(err: any): v4.IPaging<T> {
+    console.error('ActivService (error)', err.message);
+    const voidPage: v4.IPaging<T> = {
+      data: [] as T[],
+      paging: {
+        page: 1,
+        limit: 10,
+      },
+      total: 0,
+    };
+    return voidPage;
+  }
+
   async isWalletConnected() {
     let isConnected = false;
     try {
@@ -166,6 +184,50 @@ export class ActivService {
     return await this.activ.getIdeaByNftId(id);
   }
 
+  async getNftsOwnerBy(
+    page = 1,
+    limit = 10,
+    filterType: CI.ITradeIdeaIdeaKind[] | 'bypass' = 'bypass',
+    filterIncludesEncrypted = true,
+    bypassPaginationAndGetAll = false
+  ) {
+    await this.init();
+    return this.userWalletIsConnected
+      ? this.activ
+        .getIdeasCreatedBy(
+          page,
+          limit,
+          undefined, // means user connected in
+          filterType,
+          filterIncludesEncrypted,
+          bypassPaginationAndGetAll
+        )
+        .catch(this.dealErrorToVoidPagination<CI.ITradeIdea>)
+      : this.getAllIdeas(page, limit);
+  }
+
+  async getNftsClientBy(
+    page = 1,
+    limit = 10,
+    filterType: CI.ITradeIdeaIdeaKind[] | 'bypass' = 'bypass',
+    filterIncludesEncrypted = true,
+    bypassPaginationAndGetAll = false
+  ) {
+    await this.init();
+    return this.userWalletIsConnected
+      ? this.activ
+        .getIdeasOwnedBy(
+          page,
+          limit,
+          undefined, // means user connected in
+          filterType,
+          filterIncludesEncrypted,
+          bypassPaginationAndGetAll
+        )
+        .catch(this.dealErrorToVoidPagination<CI.ITradeIdea>)
+      : this.getAllIdeas(page, limit);
+  }
+
   async getAllIdeas(page = 1, limit = 10, filter?: CI.ITradeIdeaIdeaKind[]) {
     if (filter === undefined) {
       filter = ['open', 'close'] as CI.ITradeIdeaIdeaKind[];
@@ -203,7 +265,9 @@ export class ActivService {
   ): Promise<CI.ITradeIdeaStrategy[]> {
     await this.init();
     const data = await this.activ.query().listStrategiesSubscribedTo(undefined, page, limit)
+    console.log('listAccessibleStrategies (data)', data);
     const strategies = data?.data?.map(res => res.strategy);
+    console.log('listAccessibleStrategies (strategies)', strategies);
     return strategies;
   }
 
