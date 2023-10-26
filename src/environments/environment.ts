@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  demoEnv: true,
+  demoEnv: false,
   apiUrl: 'https://api.ixily.io',
   defaultProxyUrl: 'https://ixily.io/api/proxy',
   defaultProxyIp: '35.189.88.222',

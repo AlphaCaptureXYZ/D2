@@ -124,7 +124,7 @@ export default class AccountsBinanceComponent implements OnInit {
           apiSecret: this.form.value.secretApi,
         });
 
-        console.log('epador [encrypt] (credentials)', credentials);
+        const chain = await this.nftCredentialService.getChain();
 
         const initialAccessControlConditionsNFT = [
           {
@@ -136,11 +136,11 @@ export default class AccountsBinanceComponent implements OnInit {
               comparator: '>',
               value: '0',
             },
-            chain: await this.nftCredentialService.getChain(),
+            chain,
           },
         ];
 
-        console.log('epador [encrypt] (initialAccessControlConditionsNFT)', initialAccessControlConditionsNFT);
+        console.log('[encrypt] (initialAccessControlConditionsNFT)', initialAccessControlConditionsNFT);
 
         const {
           encryptedFile,
@@ -150,10 +150,6 @@ export default class AccountsBinanceComponent implements OnInit {
           credentials,
           initialAccessControlConditionsNFT,
         );
-
-        console.log('epador [encrypt] (encryptedFile)', encryptedFile);
-        console.log('epador [encrypt] (encryptedSymmetricKey)', encryptedSymmetricKey);
-        console.log('epador [encrypt] (encryptedSymmetricKeyString)', encryptedSymmetricKeyString);
 
         const encryptedFileB64 = await blobToBase64String(encryptedFile);
 
@@ -176,8 +172,6 @@ export default class AccountsBinanceComponent implements OnInit {
           credentialEncrypted,
           pkpWalletAddress,
         );
-
-        const chain = await this.nftCredentialService.getChain();
 
         const accessControlConditionsNFT = [
           {
