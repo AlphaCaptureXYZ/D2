@@ -23,6 +23,10 @@ export const routes: Routes = [
     loadComponent: () => import('./brokerages/binance/account/binance.component'),
   },
   {
+    path: 'accounts/ig',
+    loadComponent: () => import('./brokerages/ig/account/ig.component'),
+  },
+  {
     path: 'orders',
     loadComponent: () => import('./pages/orders/orders.component'),
   },
