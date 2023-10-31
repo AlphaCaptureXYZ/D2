@@ -148,18 +148,13 @@ export interface IPkpInfo {
 })
 export class PKPGeneratorService {
 
-    private provider: any;
-
     constructor(
         private weaveDBService: WeaveDBService,
         private router: Router,
     ) { }
 
     private getProvider() {
-        if (isNullOrUndefined(this.provider)) {
-            this.provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        }
-        return this.provider;
+        return new ethers.providers.Web3Provider((window as any).ethereum);
     }
 
     private async getSigner() {
