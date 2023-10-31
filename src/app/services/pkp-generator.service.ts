@@ -6,7 +6,7 @@ import { WeaveDBService } from './weavedb.service';
 
 import { getDefaultAccount } from 'src/app/shared/shared';
 import { Router } from '@angular/router';
-import { isNullOrUndefined } from '../helpers/helpers';
+import { isNullOrUndefined, wait } from '../helpers/helpers';
 
 const ECDSA_KEY = 2;
 
@@ -154,7 +154,9 @@ export class PKPGeneratorService {
     ) { }
 
     private getProvider() {
-        return new ethers.providers.Web3Provider((window as any).ethereum);
+        return new ethers.providers.Web3Provider(
+            (window as any)?.ethereum
+        );
     }
 
     private async getSigner() {
@@ -254,6 +256,8 @@ export class PKPGeneratorService {
             await defaultNetworkSwitch();
 
             const userWallet = await getDefaultAccount();
+
+            await wait(1000);
 
             await this.weaveDBService.upsertData({
                 type: 'pkp-info',

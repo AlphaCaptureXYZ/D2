@@ -16,7 +16,6 @@ const client = new LitJsSdk.LitNodeClient({
 
 class Lit {
     litNodeClient: any;
-    provider: any;
 
     async connect() {
         await client.connect();
@@ -24,10 +23,9 @@ class Lit {
     }
 
     private getProvider() {
-        if (isNullOrUndefined(this.provider)) {
-            this.provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        }
-        return this.provider;
+        return new ethers.providers.Web3Provider(
+            (window as any).ethereum
+        );
     }
 
     private async getChain() {

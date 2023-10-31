@@ -22,8 +22,6 @@ export interface ICredentialNft {
 })
 export class NFTCredentialService {
 
-    private provider: any;
-
     private abi = [
         "constructor()",
         "event ApprovalForAll(address indexed,address indexed,bool)",
@@ -54,10 +52,9 @@ export class NFTCredentialService {
     constructor() { }
 
     private getProvider() {
-        if (isNullOrUndefined(this.provider)) {
-            this.provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        }
-        return this.provider;
+        return new ethers.providers.Web3Provider(
+            (window as any)?.ethereum
+        );
     }
 
     async getChain() {

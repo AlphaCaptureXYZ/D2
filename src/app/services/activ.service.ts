@@ -95,7 +95,7 @@ export class ActivService {
 
       if (isNullOrUndefined(this.activ)) {
         this.activ = new IXilyACTIV({
-          webProvider: (window as any).ethereum,
+          webProvider: (window as any)?.ethereum,
           public: isPublic,
         });
 

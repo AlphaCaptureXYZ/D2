@@ -97,7 +97,7 @@ export const getDefaultNetwork = async () => {
   try {
     const ethereum = await getEthereum();
     if (ethereum) {
-      const networkId = (window as any).ethereum.networkVersion;
+      const networkId = (window as any)?.ethereum?.networkVersion;
       networkInfo = {
         id: networkId,
         name: WALLET_NETWORK_CHAIN_NAME(networkId),
@@ -118,7 +118,7 @@ export const defaultNetworkSwitch = async () => {
 
   try {
     const provider: any = new ethers.providers.Web3Provider(
-      (window as any).ethereum
+      (window as any)?.ethereum
     );
 
     try {

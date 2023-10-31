@@ -35,7 +35,7 @@ export default class LeftMenuComponent implements OnInit {
 
   async getSdkVersion() {
     const activ = new IXilyACTIV({
-      webProvider: (window as any).ethereum,
+      webProvider: (window as any)?.ethereum,
     });
 
     this.sdk = await activ.getVersion();

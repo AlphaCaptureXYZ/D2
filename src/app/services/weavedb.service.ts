@@ -39,8 +39,9 @@ export class WeaveDBService {
     ) { }
 
     private getProvider() {
-        const provider = new ethers.providers.Web3Provider((window as any).ethereum);
-        return provider;
+        return new ethers.providers.Web3Provider(
+            (window as any)?.ethereum
+        );
     }
 
     private async getChain() {
