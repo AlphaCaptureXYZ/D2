@@ -30,36 +30,6 @@
         </select>
       </div>
 
-      <!-- <div class="mb-6 mt-8">
-        <label
-          for="broker"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Broker</label>
-        <input
-          type="text"
-          id="broker"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="i.e. Binance"
-          [(ngModel)]="form.broker"
-          (ngModelChange)="requiredControl()"
-          disabled="true"
-          required />
-      </div> -->
-
-      <!-- <div class="mb-6">
-        <label
-          for="environment"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Environment</label>
-        <select
-          id="environment"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          [(ngModel)]="form.environment"
-          disabled="true"
-          (ngModelChange)="requiredControl()">
-          <option value="prod">Prod</option>
-          <option value="demo">Demo</option>
-        </select>
-      </div> -->
-
       <div *ngIf="form.credentialNftUuid && form.broker === 'IG'">
         <div class="mb-6">
           <label
@@ -131,21 +101,7 @@
         </div>
       </div>
 
-      <div *ngIf="form.broker === 'Binance' || epic">
-        <div class="mb-6" *ngIf="form.broker === 'Binance'">
-          <label
-            for="asset"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Asset/Pair</label>
-          <input
-            type="text"
-            id="asset"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="i.e. BTCUSDT"
-            [(ngModel)]="form.asset"
-            (ngModelChange)="requiredControl()"
-            required />
-        </div>
-
+      <div *ngIf="epic">
         <div class="mb-6">
           <label
             for="direction"

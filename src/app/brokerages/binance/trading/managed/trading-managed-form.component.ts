@@ -47,6 +47,7 @@ export default class TradingManagedBinanceFormComponent implements OnInit {
   form = {} as FormType;
   submitEnabled = false as boolean;
   allAccounts: any[];
+  broker = 'Binance';
 
   credentials: any;
 
@@ -94,6 +95,7 @@ export default class TradingManagedBinanceFormComponent implements OnInit {
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+    this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
     this.callEvents();
   }
 

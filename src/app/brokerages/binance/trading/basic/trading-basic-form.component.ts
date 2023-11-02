@@ -61,7 +61,7 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.getCredentials();
+    await this.getCredentials();
     this.callEvents();
   }
 
@@ -70,6 +70,7 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+    this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
   }
 
   requiredControl = (): void => {
