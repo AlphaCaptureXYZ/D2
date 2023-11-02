@@ -16,6 +16,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import { Subject, debounceTime } from 'rxjs';
 
 interface FormType {
   credentialNftUuid: string;
@@ -27,19 +28,28 @@ interface FormType {
 }
 
 @Component({
-  selector: 'app-trading-basic-binance-form',
+  selector: 'app-trading-basic-ig-form',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './trading-basic-form.component.html',
   styleUrls: ['./trading-basic-form.component.scss'],
 })
-export default class TradingBasicBinanceFormComponent implements OnInit {
+export default class TradingBasicIGFormComponent implements OnInit {
   form: FormType;
   submitEnabled: boolean;
   credentials: any;
   allAccounts: any[];
   isLoading: boolean;
-  broker = 'Binance';
+  broker = 'IG';
+
+  accountSelected = null;
+
+  symbolToSearch = null;
+  symbolToSearchSub = new Subject<any>();
+
+  igAssets: any[] = [];
+  epic: string;
+  assetInfo = null;
 
   constructor(
     private eventService: EventService,
@@ -47,6 +57,7 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
     private pKPGeneratorService: PKPGeneratorService,
     public cRef: ChangeDetectorRef
   ) {
+    this.epic = null as any;
     this.isLoading = false;
     this.allAccounts = [];
     this.form = {
@@ -63,6 +74,22 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
   async ngOnInit() {
     await this.getCredentials();
     this.callEvents();
+
+    this.symbolToSearchSub.pipe(debounceTime(1000)).subscribe(async (e: any) => {
+      const symbol = e?.target?.value?.trim()?.toUpperCase() || null;
+
+      if (symbol) {
+
+        this.epic = null as any;
+        this.assetInfo = null as any;
+        this.igAssets = [];
+        this.cRef.detectChanges();
+
+        this.symbolToSearch = symbol?.toUpperCase();
+        this.credentials = await this.decrypt(this.accountSelected);
+        await this.igSearchAsset();
+      }
+    });
   }
 
   async getCredentials() {
@@ -79,14 +106,18 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
 
     if (account) {
+      this.accountSelected = account;
       this.form.broker = account.provider;
       this.form.environment = account.environment;
       this.cRef.detectChanges();
     }
 
+    if (!isNullOrUndefined(this.epic)) {
+      this.form.asset = this.epic;
+    }
+
     if (
       this.form.broker.length > 0 &&
-      this.form.asset.length > 0 &&
       this.form.asset.length > 0 &&
       this.form.direction.length > 0 &&
       this.form.quantity > 0
@@ -98,53 +129,66 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
   };
 
   submit = async () => {
-    if (
-      this.form.broker?.toLowerCase() === 'binance'
-    ) {
-      await this.binancePlaceOrder();
-    }
+    await this.igPlaceOrder();
   };
 
-  async binancePlaceOrder() {
+  async igSearchAsset() {
     try {
 
       this.isLoading = true;
       await this.decrypt();
 
       if (
-        !isNullOrUndefined(this.credentials?.apiKey) &&
-        !isNullOrUndefined(this.credentials?.apiSecret)
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
       ) {
 
         const env: 'demo' | 'prod' = this.form.environment as any;
-        const litActionCode = litActions.binance.placeOrder(env);
+        const litActionCodeA = litActions.ig.checkCredentials(env);
 
-        const listActionCodeParams = {
+        const listActionCodeParamsA = {
           credentials: this.credentials,
           form: this.form,
         };
 
-        const litActionCall = await litClient.runLitAction({
+        const litActionCallA = await litClient.runLitAction({
           chain: await this.nftCredentialService.getChain(),
-          litActionCode,
-          listActionCodeParams,
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
           nodes: 1,
           showLogs: true,
         });
 
-        const response = litActionCall?.response as any;
+        const responseA = litActionCallA?.response as any;
 
-        console.log('binancePlaceOrder (response)', response);
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
 
-        const orderId = response?.orderId || null;
+        const litActionCodeB = litActions.ig.getAssetsBySymbol(
+          env,
+          this.symbolToSearch as any,
+          auth,
+        );
 
-        if (orderId) {
-          alert(`Order placed successfully. OrderID: ${orderId}`);
-        }
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
 
-        if (response?.msg) {
-          alert(response?.msg);
-        }
+        const responseB = litActionCallB?.response as any;
+
+        this.igAssets = responseB || [];
+
+        console.log('igSearchAsset (response)', responseB);
+
+        this.cRef.detectChanges();
 
       }
 
@@ -155,13 +199,94 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
     }
   }
 
-  async decrypt() {
+  async igPlaceOrder() {
+    try {
+
+      this.isLoading = true;
+      await this.decrypt();
+
+      if (
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
+      ) {
+
+        const env: 'demo' | 'prod' = this.form.environment as any;
+        const litActionCodeA = litActions.ig.checkCredentials(env);
+
+        const listActionCodeParamsA = {
+          credentials: this.credentials,
+          form: this.form,
+        };
+
+        const litActionCallA = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseA = litActionCallA?.response as any;
+
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
+
+        const litActionCodeB = litActions.ig.placeOrder(
+          env,
+          {
+            direction: this.form.direction,
+            epic: this.form.asset,
+            quantity: this.form.quantity,
+          },
+          auth,
+        );
+
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseB = litActionCallB?.response as any;
+
+        const orderId = responseB?.dealId || null;
+
+        if (responseB?.errorCode) {
+          alert(responseB?.errorCode);
+        }
+
+        if (orderId) {
+          alert(`Order placed successfully. OrderID: ${orderId}`);
+        }
+
+        this.cRef.detectChanges();
+
+      }
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
+    }
+  }
+
+  async decrypt(
+    credentialInfo: any = null
+  ) {
     try {
       if (!isNullOrUndefined(this.form.credentialNftUuid)) {
 
         const uuid = this.form.credentialNftUuid;
 
-        const credentialInfo = await this.nftCredentialService.getCredentialByUUID(uuid);
+        if (isNullOrUndefined(credentialInfo)) {
+          credentialInfo = await this.nftCredentialService.getCredentialByUUID(uuid);
+        }
 
         const encryptedFileB64 =
           credentialInfo?.encryptedCredential?.encryptedFileB64;
@@ -217,5 +342,12 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
           break;
       }
     });
+  };
+
+  selectAssetInfo = (assetInfo: any) => {
+    this.assetInfo = assetInfo;
+    this.epic = assetInfo?.epic || null;
+    this.requiredControl();
+    this.cRef.detectChanges();
   };
 }

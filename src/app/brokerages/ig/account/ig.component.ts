@@ -66,6 +66,7 @@ export default class AccountsIGComponent implements OnInit {
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
+      name: [null, Validators.required],
       username: [null, Validators.required],
       apiKey: [null, Validators.required],
       password: [null, Validators.required],
@@ -104,13 +105,16 @@ export default class AccountsIGComponent implements OnInit {
     try {
 
       this.isLoading = true;
+
+      console.log('credentials', this.form.value);
+      
       const check = this.form.valid;
 
       if (check) {
 
-        const credentials = JSON.stringify(this.form.value);
-
         console.log('credentials', this.form.value);
+
+        const credentials = JSON.stringify(this.form.value);
 
         const chain = await this.nftCredentialService.getChain();
 
@@ -153,7 +157,7 @@ export default class AccountsIGComponent implements OnInit {
           tokenId,
         } = await this.nftCredentialService.mintCredential(
           'IG',
-          this.form.value.username,
+          this.form.value.name,
           this.form.value.environment,
           credentialEncrypted,
           pkpWalletAddress,
@@ -198,6 +202,7 @@ export default class AccountsIGComponent implements OnInit {
 
       const listActionCodeParams = {
         credentials: {
+          name: this.form?.value?.name,
           username: this.form?.value?.username,
           apiKey: this.form?.value?.apiKey,
           password: this.form?.value?.password,
@@ -217,8 +222,6 @@ export default class AccountsIGComponent implements OnInit {
 
       this.errorHandling(response);
 
-      console.log('IG response', response)
-
       if (
         response?.clientSessionToken &&
         response?.activeAccountSessionToken
@@ -236,8 +239,8 @@ export default class AccountsIGComponent implements OnInit {
 
   errorHandling = (response: any) => {
 
-    const clientSessionToken = response?.clientSessionToken;
-    const activeAccountSessionToken = response?.activeAccountSessionToken;
+    const clientSessionToken = response?.clientSessionToken?.trim()?.length > 0;
+    const activeAccountSessionToken = response?.activeAccountSessionToken?.trim()?.length > 0;
 
     if (!clientSessionToken || !activeAccountSessionToken) {
       this.error = true;
