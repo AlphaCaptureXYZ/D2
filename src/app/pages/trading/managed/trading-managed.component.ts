@@ -4,7 +4,10 @@ import { RouterModule } from '@angular/router';
 
 import { EventService } from 'src/app/services/event.service';
 
-import TradingManagedFormComponent from '../../../brokerages/binance/trading/managed/trading-managed-form.component';
+import TradingManagedBinanceFormComponent from 'src/app/brokerages/binance/trading/managed/trading-managed-form.component';
+
+import TradingManagedIGFormComponent from 'src/app/brokerages/ig/trading/managed/trading-managed-form.component';
+
 
 @Component({
     selector: 'app-trading-managed',
@@ -13,19 +16,22 @@ import TradingManagedFormComponent from '../../../brokerages/binance/trading/man
         CommonModule,
         RouterModule,
 
-        TradingManagedFormComponent,
+        TradingManagedBinanceFormComponent,
+        TradingManagedIGFormComponent,
     ],
     templateUrl: './trading-managed.component.html',
     styleUrls: ['./trading-managed.component.scss']
 })
-export default class TradingManagedComponent  {
+export default class TradingManagedComponent {
 
     currentOption: string;
+    provider: string;
 
     constructor(
         private eventService: EventService,
     ) {
         this.currentOption = 'trading-managed';
+        this.provider = null as any;
     }
 
 
@@ -50,7 +56,7 @@ export default class TradingManagedComponent  {
                 valueInBase: 0,
                 quantity: 0,
                 calculation: {
-                    defaultOrderValueInBase: 0, 
+                    defaultOrderValueInBase: 0,
                     defaultOrderSizeAsPercent: 0,
                     maximumPositionValueInBase: 0,
                     maximumPositionSizeAsPercent: 0,
@@ -117,7 +123,7 @@ export default class TradingManagedComponent  {
                     valueInBase: calculatedOrderValueInBase,
                     quantity: 0,
                     calculation: {
-                        defaultOrderValueInBase, 
+                        defaultOrderValueInBase,
                         defaultOrderSizeAsPercent,
                         maximumPositionValueInBase,
                         maximumPositionSizeAsPercent,
@@ -125,14 +131,17 @@ export default class TradingManagedComponent  {
                     }
                 }
             }
-    
+
             return data;
 
         } catch (err: any) {
-          console.log('orderSizeCalculation (error)', err?.message);
-          return data;
+            console.log('orderSizeCalculation (error)', err?.message);
+            return data;
         }
     }
-    
+
+    selectFormToShow(provider: string) {
+        this.provider = provider;
+    }
 
 }

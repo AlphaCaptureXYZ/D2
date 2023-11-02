@@ -217,8 +217,6 @@ export default class AccountsIGComponent implements OnInit {
 
       this.errorHandling(response);
 
-      console.log('IG response', response)
-
       if (
         response?.clientSessionToken &&
         response?.activeAccountSessionToken

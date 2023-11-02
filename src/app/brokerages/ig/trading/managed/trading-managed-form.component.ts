@@ -36,13 +36,13 @@ interface FormType {
 }
 
 @Component({
-  selector: 'app-trading-managed-binance-form',
+  selector: 'app-trading-managed-ig-form',
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './trading-managed-form.component.html',
   styleUrls: ['./trading-managed-form.component.scss'],
 })
-export default class TradingManagedBinanceFormComponent implements OnInit {
+export default class TradingManagedIGFormComponent implements OnInit {
 
   form = {} as FormType;
   submitEnabled = false as boolean;

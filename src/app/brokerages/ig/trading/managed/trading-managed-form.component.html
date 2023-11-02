@@ -1,0 +1,290 @@
+<div class="flex flex-col mt-8 w50">
+  <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+    <div *ngIf="allAccounts.length === 0">
+      <div class="mb-6">
+        <p>To enable trading, please first add an account.</p>
+      </div>
+    </div>
+
+    <div *ngIf="allAccounts.length > 0">
+      <div class="mb-6">
+        <label
+          for="environment"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select the credential
+          to use</label>
+        <select
+          id="environment"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          [(ngModel)]="form.credentialNftUuid"
+          (ngModelChange)="requiredControl('credential')">
+          <option *ngFor="let account of allAccounts" [value]="account.uuid">
+            {{account.accountName}} | {{account.provider}} | {{account.environment}} </option>
+        </select>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="broker"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Broker</label>
+        <input
+          type="text"
+          id="broker"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="i.e. Binance"
+          required
+          [(ngModel)]="form.broker"
+          disabled="true"
+          (ngModelChange)="requiredControl()" />
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="environment"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Environment</label>
+        <select
+          id="environment"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          [(ngModel)]="form.environment"
+          disabled="true"
+          (ngModelChange)="requiredControl()">
+          <option value="prod">Prod</option>
+          <option value="demo">Demo</option>
+        </select>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="asset"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Asset/Pair</label>
+        <input
+          type="text"
+          id="asset"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          placeholder="i.e. BTCUSDT"
+          required
+          [(ngModel)]="form.asset"
+          (ngModelChange)="requiredControl()" />
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="direction"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Direction</label>
+        <select
+          id="direction"
+          [(ngModel)]="form.direction"
+          (ngModelChange)="requiredControl()"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+          <option value="buy">Buy</option>
+          <option value="sell">Sell</option>
+        </select>
+      </div>
+
+      <div
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white mb-8 mt-12">
+        ORDER SIZE
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="quantity"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
+        <input
+          type="number"
+          id="quantity"
+          [(ngModel)]="form.quantity"
+          (ngModelChange)="requiredControl()"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="conviction"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Conviction (%)</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="conviction"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.conviction"
+            (ngModelChange)="requiredControl()" />
+          <span
+            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20">
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="conviction"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Value</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="conviction"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.conviction"
+            (ngModelChange)="requiredControl()" />
+        </div>
+      </div>
+
+      <div
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white mb-8 mt-12">
+        ACCOUNT SETTINGS
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="balance"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum Leverage</label>
+        <input
+          type="number"
+          id="balance"
+          [(ngModel)]="form.maxLeverage"
+          (ngModelChange)="requiredControl()"
+          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="defaultOrderSize"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Default Order Size
+          (%)</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="defaultOrderSize"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.defaultOrderSize"
+            (ngModelChange)="requiredControl()" />
+          <span
+            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20">
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="maxSizePortofolio"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum position size
+          in portfolio (%)</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="maxSizePortofolio"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.maxSizePortofolio"
+            (ngModelChange)="requiredControl()" />
+          <span
+            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20">
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label class="relative inline-flex items-center mb-4 cursor-pointer">
+          <input
+            type="checkbox"
+            value
+            class="sr-only peer"
+            [(ngModel)]="form.orderLimits"
+            (ngModelChange)="requiredControl()" />
+          <div
+            class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+          <span
+            class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Override Limit Order</span>
+        </label>
+      </div>
+
+      <div
+        class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white mb-8 mt-12">
+        SUMMARY
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="accountBalance"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account Balance</label>
+        <div class="flex w-6/12">
+          {{form.accountBalance}}
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="defaultOrderValue"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Default Order Value</label>
+        <div class="flex w-6/12">
+          {{form.defaultOrderValue}}
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="maxPortofolioValue"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum value in
+          portfolio</label>
+        <div class="flex w-6/12">
+          {{form.maxPortofolioValue}}
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="remainingPositionValue"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remaining position
+          value</label>
+        <div class="flex w-6/12">
+          {{form.remainingPositionValue}}
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        (click)="submit()"
+        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+        Submit
+      </button>
+    </div>
+  </div>
+</div>
