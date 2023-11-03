@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 import { EventService } from 'src/app/services/event.service';
 
@@ -22,18 +22,33 @@ import TradingManagedIGFormComponent from 'src/app/brokerages/ig/trading/managed
     templateUrl: './trading-managed.component.html',
     styleUrls: ['./trading-managed.component.scss']
 })
-export default class TradingManagedComponent {
+export default class TradingManagedComponent implements OnInit {
 
     currentOption: string;
     provider: string;
 
     constructor(
+        private route: ActivatedRoute,
+        private router: Router,    
         private eventService: EventService,
     ) {
         this.currentOption = 'trading-managed';
         this.provider = null as any;
+        localStorage.setItem('selectedOrderType', 'managed');
     }
 
+    async ngOnInit() {
+        if (this.route.snapshot.params['broker']) {
+            this.provider = this.route.snapshot.params['broker'].toLowerCase();
+            localStorage.setItem('selectedBroker', this.provider);
+        } else {
+            const selectedBroker = localStorage.getItem('selectedBroker');
+            if (selectedBroker) {
+                this.provider = selectedBroker;
+            }
+        }
+    }
+    
 
     async orderSizeCalculation(
         accountBalanceInBase: number,
@@ -142,6 +157,7 @@ export default class TradingManagedComponent {
 
     selectFormToShow(provider: string) {
         this.provider = provider;
+        localStorage.setItem('selectedBroker', provider);
     }
 
 }

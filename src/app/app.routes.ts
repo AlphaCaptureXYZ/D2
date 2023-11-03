@@ -44,7 +44,17 @@ export const routes: Routes = [
       import('./pages/trading/basic/trading-basic.component'),
   },
   {
+    path: 'trading/basic/:broker',
+    loadComponent: () =>
+      import('./pages/trading/basic/trading-basic.component'),
+  },
+  {
     path: 'trading/managed',
+    loadComponent: () =>
+      import('./pages/trading/managed/trading-managed.component'),
+  },
+  {
+    path: 'trading/managed/:broker',
     loadComponent: () =>
       import('./pages/trading/managed/trading-managed.component'),
   },
