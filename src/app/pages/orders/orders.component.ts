@@ -127,20 +127,19 @@ export default class OrdersComponent implements OnInit {
         SELL: 'sell',
       };
 
-      if (provider === 'Binance') {
-        order = {
-          provider,
-          id: response?.orderId?.toString(),
-          ticker: response?.symbol,
-          direction: orderDirectionObj[response?.side] || null,
-          quantity: Number(response?.executedQty),
-          price: Number(response?.fills?.find((res: any) => res)?.price || 0),
-          createdAt: response?.transactTime,
-          raw: data,
-          environment: additionalInfo?.environment,
-          nftIdLinked: additionalInfo?.nftId || null,
-        }
+      order = {
+        provider,
+        id: response?.orderId?.toString(),
+        ticker: response?.symbol,
+        direction: orderDirectionObj[response?.side] || null,
+        quantity: Number(response?.executedQty),
+        price: Number(response?.fills?.find((res: any) => res)?.price || 0),
+        createdAt: response?.transactTime,
+        raw: data,
+        environment: additionalInfo?.environment,
+        nftIdLinked: additionalInfo?.nftId || null,
       }
+
       return order;
 
     }).filter((order) => {
