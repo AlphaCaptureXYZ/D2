@@ -32,7 +32,6 @@ interface FormType {
   defaultOrderValue: number;
   maxPortofolioValue: number,
   remainingPositionValue: number,
-
 }
 
 @Component({
@@ -52,6 +51,7 @@ export default class TradingManagedBinanceFormComponent implements OnInit {
   credentials: any;
 
   isLoading = false as boolean;
+  isLoadingCredentials = false as boolean;
 
   baseCurrency: string = 'USDT';
 
@@ -91,12 +91,18 @@ export default class TradingManagedBinanceFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    await this.getCredentials();
+    this.callEvents();
+  }
+
+  async getCredentials() {
+    this.isLoadingCredentials = true;
     const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
-    this.callEvents();
+    this.isLoadingCredentials = false;
   }
 
   callEvents = () => {

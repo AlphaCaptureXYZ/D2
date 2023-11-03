@@ -39,6 +39,7 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
   credentials: any;
   allAccounts: any[];
   isLoading: boolean;
+  isLoadingCredentials: boolean;
   broker = 'Binance';
 
   constructor(
@@ -48,6 +49,7 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
     public cRef: ChangeDetectorRef
   ) {
     this.isLoading = false;
+    this.isLoadingCredentials = false;
     this.allAccounts = [];
     this.form = {
       credentialNftUuid: '',
@@ -66,11 +68,13 @@ export default class TradingBasicBinanceFormComponent implements OnInit {
   }
 
   async getCredentials() {
+    this.isLoadingCredentials = true;
     const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
+    this.isLoadingCredentials = false;
   }
 
   requiredControl = (): void => {

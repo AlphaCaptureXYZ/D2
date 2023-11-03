@@ -48,17 +48,43 @@ export default class TradingManagedIGFormComponent implements OnInit {
   submitEnabled = false as boolean;
   allAccounts: any[];
   broker = 'IG';
-
   credentials: any;
 
   isLoading = false as boolean;
+  isLoadingCredentials = false as boolean;
 
-  baseCurrency: string = 'USDT';
+  data = {
+    account: {
+        balance: 0,
+        leverage: 1,
+        leverageBalance: 0,
+    },
+    existingPosition: {
+        valueInBase: 0,
+        currentPortfolioAllocation: 0,
+    },
+    order: {
+      default: {
+        value: 0,
+        valueWithConviction: 0,
+        portfolioAllication: 0,
+        conviction: 0,
+      }
+    }
 
-  portfolioValueInBase = {
-    base: this.baseCurrency,
-    value: 0,
-  };
+    // valueInBase: 0,
+    // quantity: 0,
+    // calculation: {
+    //   base: {
+        
+    //   }
+    //     defaultOrderValueInBase: 0,
+    //     defaultOrderSizeAsPercent: 0,
+    //     maximumPositionValueInBase: 0,
+    //     maximumPositionSizeAsPercent: 0,
+    //     exceedsMaximum: false,
+    // }    
+}  
 
   constructor(
     private router: Router,
@@ -91,12 +117,18 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.getCredentials();
+    this.callEvents();
+  }
+
+  async getCredentials() {
+    this.isLoadingCredentials = true;
     const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
-    this.callEvents();
+    this.isLoadingCredentials = false;
   }
 
   callEvents = () => {
@@ -151,7 +183,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     console.log('form', this.form);
 
     if (this.form.broker?.toLowerCase() === 'binance') {
-      await this.binancePlaceOrder();
+      // await this.binancePlaceOrder();
     }
   };
 
@@ -190,6 +222,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         if (!isNullOrUndefined(decryptedFile)) {
           this.credentials = JSON.parse(decryptedFile);
+          console.log('this.credentials', this.credentials);
         }
       }
     } catch (err: any) {
@@ -202,54 +235,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     try {
 
       this.isLoading = true;
-      await this.decrypt();
-
-      if (
-        !isNullOrUndefined(this.credentials?.apiKey) &&
-        !isNullOrUndefined(this.credentials?.apiSecret)
-      ) {
-
-        const env: 'demo' | 'prod' = this.form.environment as any;
-
-        // work out all the pairs that we have i.e.
-        // BTCUSDT
-
-        // loop through the portfolio
-        // get all our pairs
-
-        // get a price (fx rate) for all our pairs
-
-        // work out the value in the base currency for each pair using the fx rate
-
-        // total all the pairs
-        // return the value
-
-        // NOTE: all the previous steps can be done in one call i.e. getPortfolioAccount(...)
-        const litActionCode = litActions.binance.getPortfolioAccount(env, this.baseCurrency);
-
-        const listActionCodeParams = {
-          credentials: this.credentials,
-          form: this.form,
-        };
-
-        const litActionCall = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode,
-          listActionCodeParams,
-          nodes: 1,
-        });
-
-        const response = litActionCall?.response as any;
-
-        this.portfolioValueInBase = {
-          base: response.baseCurrency,
-          value: response?.baseCurrencyTotal,
-        };
-
-        console.log('calcAccountSettings (response)', response);
-        console.log('calcAccountSettings (portfolioValueInBase)', this.portfolioValueInBase);
-
-      }
+      // await this.decrypt();
 
       this.isLoading = false;
 
@@ -258,116 +244,82 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
-  async binancePlaceOrder() {
+  accountBalanceLeveraged(accountBalance: number) {
+    // we should call this when we have the account balance from IG
+
+    // from IG after a call
+    this.data.account.balance = accountBalance;
+
+    // from the user input
+    this.data.account.balance = this.form.maxLeverage;
+
+    // calculated leverage balance
+    this.data.account.leverageBalance = this.data.account.balance * this.data.account.balance;      
+  }
+
+  defaultOrderCalc() {
+
+    // we're just calculating the default
+    this.data.order.default.value = this.form.defaultOrderSize * this.data.account.balance;
+    this.data.order.default.valueWithConviction = this.data.order.default.value * this.form.conviction;
+    this.data.order.default.conviction = this.form.conviction;
+
+  }
+
+
+  async orderSizeCalculation(
+    accountBalanceInBase: number,
+    accountLeverage: number,
+    defaultOrderSizeAsPercent: number,
+    maximumPositionSizeAsPercent: number,
+    existingPositionValueInBase: number,
+    ) {
     try {
 
-      this.isLoading = true;
-      await this.decrypt();
+        // let calculatedOrderValueInBase = 0;
+        // let remainingPositionValueInBase = 0;
+        // let currentPortfolioAllocation = 0;
+        // let exceedsMaximum = false;
 
-      if (
-        !isNullOrUndefined(this.credentials?.apiKey) &&
-        !isNullOrUndefined(this.credentials?.apiSecret)
-      ) {
+        // // we'll do a very simple calc to start i.e. new order and then I'll add the rest for adjust/close etc
 
-        const env: 'demo' | 'prod' = this.form.environment as any;
-        const litActionCode = litActions.binance.placeOrder(env);
+        // // account balance in a single base currency
+        // // the leveraged balance is the maximum value the portfolio should be at
+        // const leveragedBalanceInBase = accountBalanceInBase * accountLeverage;
 
-        const listActionCodeParams = {
-          credentials: this.credentials,
-          form: this.form,
-        };
+        // // what a normal trade value should be
+        // const defaultOrderValueInBase = defaultOrderSizeAsPercent * leveragedBalanceInBase;
+        // // this becomes our default order value
+        // calculatedOrderValueInBase = defaultOrderValueInBase;
 
-        const litActionCall = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode,
-          listActionCodeParams,
-          nodes: 1,
-          showLogs: true,
-        });
+        // // The existing position 
+        // const maximumPositionValueInBase = maximumPositionSizeAsPercent * leveragedBalanceInBase;
 
-        const response = litActionCall?.response as any;
+        // // the current portfolio percentge
+        // currentPortfolioAllocation = (existingPositionValueInBase / leveragedBalanceInBase) * 100;
 
-        console.log('binancePlaceOrder (response)', response);
+        // // if the current asset value exceeds the maximum, then the 
+        // if (existingPositionValueInBase > maximumPositionValueInBase) {
+        //     calculatedOrderValueInBase = 0;
+        //     exceedsMaximum = true;
+        // } else {
 
-        const orderId = response?.orderId || null;
+        //     // how much extra value can we buy
+        //     remainingPositionValueInBase = maximumPositionValueInBase - existingPositionValueInBase;
 
-        if (orderId) {
-          alert(`Order placed successfully. OrderID: ${orderId}`);
-        }
+        //     if (calculatedOrderValueInBase > remainingPositionValueInBase) {
+        //         calculatedOrderValueInBase = remainingPositionValueInBase;
+        //     } else {
+        //         // there's enough value for the default order
+        //     }
 
-        if (response?.msg) {
-          alert(response?.msg);
-        }
+        // }
 
-      }
-
-      this.isLoading = false;
 
     } catch (err: any) {
-      this.isLoading = false;
+        console.log('orderSizeCalculation (error)', err?.message);
     }
-  }
+}
 
-  async getRatesWithBase(currencyA: string, currencyB: string, baseCurrency: string) {
-    let data = {
-      stepA: {
-        currencyA,
-        currencyB,
-        rate: 0
-      },
-      stepB: {
-        currencyB,
-        baseCurrency,
-        rate: 0
-      },
-    }
-
-    // if currency B and the baseCurrency are the same, then we only have a single price to get
-    // if they are different, we'll need to get two prices and work out the cross rate
-
-    try {
-
-      // Example: BTC/USDT with a USDT Base
-      // we'll need to call Binance to get the price of just BTC/USDT
-      data = {
-        stepA: {
-          currencyA: 'BTC',
-          currencyB: 'USDT',
-          rate: 26440,
-        },
-        stepB: {
-          currencyB: 'USDT',
-          baseCurrency: 'USDT',
-          rate: 1
-        },
-      }
-
-      // Example: BTC/ETH with a USDT Base
-      // we'll need to call Binance to get the price of BTC/USDT AND ETH/USDT
-      // we should be able to make one call to Binance to get both prices
-      data = {
-        stepA: {
-          currencyA: 'BTC',
-          currencyB: 'USDT',
-          rate: 26440,
-        },
-        stepB: {
-          currencyB: 'ETH',
-          baseCurrency: 'USDT',
-          rate: 1668.90
-        },
-      }
-
-      return data;
-
-    } catch (err: any) {
-
-      console.log('getRatesWithBase (error)', err?.message);
-
-      return data;
-
-    }
-
-  }
 
 }

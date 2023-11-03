@@ -40,6 +40,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
   credentials: any;
   allAccounts: any[];
   isLoading: boolean;
+  isLoadingCredentials = false as boolean;
   broker = 'IG';
 
   accountSelected = null;
@@ -93,11 +94,13 @@ export default class TradingBasicIGFormComponent implements OnInit {
   }
 
   async getCredentials() {
+    this.isLoadingCredentials = true;
     const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
+    this.isLoadingCredentials = false;
   }
 
   requiredControl = (): void => {
