@@ -13,6 +13,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
+import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 
 interface FormType {
   credentialNftUuid: string,
@@ -32,7 +33,12 @@ interface FormType {
 @Component({
   selector: 'app-trading-managed-ig-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    AppIgEpicInfoByTickerComponent,
+  ],
   templateUrl: './trading-managed-form.component.html',
   styleUrls: ['./trading-managed-form.component.scss'],
 })
@@ -44,6 +50,11 @@ export default class TradingManagedIGFormComponent implements OnInit {
   broker = 'IG';
   credentials: any;
   refreshLoading = false;
+
+  accountSelected = null;
+
+  epic: string;
+  assetInfo = null;
 
   isLoading = false as boolean;
   isLoadingCredentials = false as boolean;
@@ -61,25 +72,25 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   data = {
     asset: {
-        ticker: '',
-        price: {
-          ask: 0,
-          bid: 0,
-        },
-        minQty: 1,
-        fractional: false,
-        decimals: 1,
+      ticker: '',
+      price: {
+        ask: 0,
+        bid: 0,
+      },
+      minQty: 1,
+      fractional: false,
+      decimals: 1,
     },
     account: {
-        balance: 0,
-        leverage: 1,
-        leverageBalance: 0,
-        currencySymbol: '$',
+      balance: 0,
+      leverage: 1,
+      leverageBalance: 0,
+      currencySymbol: '$',
     },
     existingPosition: {
-        valueInBase: 0,
-        currentPortfolioAllocation: 0,
-        remainingValue: 0,
+      valueInBase: 0,
+      currentPortfolioAllocation: 0,
+      remainingValue: 0,
     },
     order: {
       default: {
@@ -130,7 +141,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         }
       }
     }
-}  
+  }
 
   constructor(
     private router: Router,
@@ -139,6 +150,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     private eventService: EventService,
     public cRef: ChangeDetectorRef,
   ) {
+    this.epic = null as any;
     this.form = {
       credentialNftUuid: '',
       broker: '',
@@ -158,7 +170,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   async ngOnInit() {
-    // this.getCredentials();
+    this.getCredentials();
     this.getAccountBalanceAndPositions();
     this.defaultOrderCalcUsingtheAccountBalance();
     this.callEvents();
@@ -178,6 +190,9 @@ export default class TradingManagedIGFormComponent implements OnInit {
       autoRedirect: true,
     });
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+
+    console.log('this.allAccounts', this.allAccounts);
+
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
     this.isLoadingCredentials = false;
   }
@@ -193,7 +208,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     this.data.account.balance = accountBalance;
     this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
-  
+
     // get any existing position for the asset
     const existingPositionValue = 40;
 
@@ -210,7 +225,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     this.data.asset.ticker = this.form.ticker;
     this.data.asset.price.ask = 95;
     this.data.asset.price.bid = 90;
-    this.data.asset.minQty = 1;  
+    this.data.asset.minQty = 1;
     this.data.asset.fractional = true;
     this.data.asset.decimals = 1;
   }
@@ -242,6 +257,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
 
     if (account) {
+      this.accountSelected = account;
       this.form.broker = account.provider;
       this.form.environment = account.environment;
       this.cRef.detectChanges();
@@ -252,7 +268,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
 
     // get our asset details
-    this.getAsset();    
+    this.getAsset();
 
     // this refreshes everything
     this.refreshFormCalculation();
@@ -338,7 +354,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   accountBalanceLeveraged() {
     // calculated leverage balance
-    this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;      
+    this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;
   }
 
   defaultOrderCalcUsingtheAccountBalance() {
@@ -449,7 +465,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
           this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
           this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
           this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-  
+
         }
 
       } else {
@@ -458,7 +474,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
         this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
         this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-    
+
       }
 
       // now we have a price, we can work out the qty
@@ -503,6 +519,14 @@ export default class TradingManagedIGFormComponent implements OnInit {
       this.orderSummaryMenu[i] = action;
     }
   }
+
+  getIgEpic = ({ igAssetInfo }: any) => {
+    this.assetInfo = igAssetInfo;
+    this.epic = igAssetInfo?.epic || null;
+    this.form.ticker = this.epic;
+    this.requiredControl();
+    this.cRef.detectChanges();
+  };
 
 }
 

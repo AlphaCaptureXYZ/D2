@@ -1,0 +1,29 @@
+p {
+    line-height: 120%;
+    margin-bottom: 15px;
+  }
+  
+  .load {
+    margin: 0px 20px 0px 30px;
+  }
+  
+  .w50 {
+    width: 50%;
+  }
+  
+  .button-submit:disabled {
+    background-color: lightgray;
+    color: gray;
+  }
+  
+  .ig-table-assets {
+    height: 250px;
+  }
+  
+  .ig-table-assets-row {
+    cursor: pointer;
+    &:hover {
+      background-color: #f5f5f5;
+    }
+  }
+  

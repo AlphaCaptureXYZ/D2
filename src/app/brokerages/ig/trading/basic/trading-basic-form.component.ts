@@ -17,6 +17,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { Subject, debounceTime } from 'rxjs';
+import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 
 interface FormType {
   credentialNftUuid: string;
@@ -30,7 +31,12 @@ interface FormType {
 @Component({
   selector: 'app-trading-basic-ig-form',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    AppIgEpicInfoByTickerComponent,
+  ],
   templateUrl: './trading-basic-form.component.html',
   styleUrls: ['./trading-basic-form.component.scss'],
 })
@@ -48,7 +54,6 @@ export default class TradingBasicIGFormComponent implements OnInit {
   symbolToSearch = null;
   symbolToSearchSub = new Subject<any>();
 
-  igAssets: any[] = [];
   epic: string;
   assetInfo = null;
 
@@ -75,22 +80,6 @@ export default class TradingBasicIGFormComponent implements OnInit {
   async ngOnInit() {
     await this.getCredentials();
     this.callEvents();
-
-    this.symbolToSearchSub.pipe(debounceTime(1000)).subscribe(async (e: any) => {
-      const symbol = e?.target?.value?.trim()?.toUpperCase() || null;
-
-      if (symbol) {
-
-        this.epic = null as any;
-        this.assetInfo = null as any;
-        this.igAssets = [];
-        this.cRef.detectChanges();
-
-        this.symbolToSearch = symbol?.toUpperCase();
-        this.credentials = await this.decrypt(this.accountSelected);
-        await this.igSearchAsset();
-      }
-    });
   }
 
   async getCredentials() {
@@ -134,73 +123,6 @@ export default class TradingBasicIGFormComponent implements OnInit {
   submit = async () => {
     await this.igPlaceOrder();
   };
-
-  async igSearchAsset() {
-    try {
-
-      this.isLoading = true;
-      await this.decrypt();
-
-      if (
-        !isNullOrUndefined(this.credentials?.username) &&
-        !isNullOrUndefined(this.credentials?.password) &&
-        !isNullOrUndefined(this.credentials?.apiKey)
-      ) {
-
-        const env: 'demo' | 'prod' = this.form.environment as any;
-        const litActionCodeA = litActions.ig.checkCredentials(env);
-
-        const listActionCodeParamsA = {
-          credentials: this.credentials,
-          form: this.form,
-        };
-
-        const litActionCallA = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeA,
-          listActionCodeParams: listActionCodeParamsA,
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseA = litActionCallA?.response as any;
-
-        const auth = {
-          apiKey: this.credentials?.apiKey,
-          cst: responseA?.clientSessionToken,
-          securityToken: responseA?.activeAccountSessionToken,
-        };
-
-        const litActionCodeB = litActions.ig.getAssetsBySymbol(
-          env,
-          this.symbolToSearch as any,
-          auth,
-        );
-
-        const litActionCallB = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeB,
-          listActionCodeParams: {},
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseB = litActionCallB?.response as any;
-
-        this.igAssets = responseB || [];
-
-        console.log('igSearchAsset (response)', responseB);
-
-        this.cRef.detectChanges();
-
-      }
-
-      this.isLoading = false;
-
-    } catch (err: any) {
-      this.isLoading = false;
-    }
-  }
 
   async igPlaceOrder() {
     try {
@@ -347,10 +269,12 @@ export default class TradingBasicIGFormComponent implements OnInit {
     });
   };
 
-  selectAssetInfo = (assetInfo: any) => {
-    this.assetInfo = assetInfo;
-    this.epic = assetInfo?.epic || null;
+  getIgEpic = ({ igAssetInfo }: any) => {
+    this.assetInfo = igAssetInfo;
+    this.epic = igAssetInfo?.epic || null;
+    this.form.asset = this.epic;
     this.requiredControl();
     this.cRef.detectChanges();
   };
+
 }
