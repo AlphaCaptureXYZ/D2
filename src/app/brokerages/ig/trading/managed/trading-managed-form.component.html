@@ -37,7 +37,7 @@
         </select>
       </div>
 
-      <div class="mb-6">
+      <div class="mb-6" *ngIf="accountSelected">
         <label for="environment"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Environment</label>
         <select id="environment"
@@ -51,15 +51,7 @@
       <app-ig-epic-info-by-ticker [uuid]="form.credentialNftUuid" [accountSelected]="accountSelected"
         (changed)="getIgEpic($event)"></app-ig-epic-info-by-ticker>
 
-      <!-- <div class="mb-6">
-        <label for="asset" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Asset</label>
-        <input type="text" id="asset"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="i.e. AAPL" required [(ngModel)]="form.ticker" (ngModelChange)="requiredControl()" />
-      </div> -->
-
       <div *ngIf="epic">
-
         <div class="mb-6">
           <label for="direction" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Direction</label>
           <select id="direction" [(ngModel)]="form.direction" (ngModelChange)="requiredControl()"
