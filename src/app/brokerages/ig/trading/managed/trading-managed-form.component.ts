@@ -218,18 +218,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
-  async getAsset() {
-    // call IG and get the asset price
-
-    // set our data...
-    this.data.asset.ticker = this.form.ticker;
-    this.data.asset.price.ask = 95;
-    this.data.asset.price.bid = 90;
-    this.data.asset.minQty = 1;
-    this.data.asset.fractional = true;
-    this.data.asset.decimals = 1;
-  }
-
   callEvents = () => {
     this.eventService.listen().subscribe(async (res: any) => {
       const event = res.type as EventType;
@@ -261,14 +249,12 @@ export default class TradingManagedIGFormComponent implements OnInit {
       this.form.broker = account.provider;
       this.form.environment = account.environment;
       this.cRef.detectChanges();
+      this.getCurrentPositions();
     }
 
     if (valueChanged === 'credential') {
       this.calculatePortfolioValueInBaseCurrency();
     }
-
-    // get our asset details
-    this.getAsset();
 
     // this refreshes everything
     this.refreshFormCalculation();
@@ -524,9 +510,103 @@ export default class TradingManagedIGFormComponent implements OnInit {
     this.assetInfo = igAssetInfo;
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
+
+    console.log('this.assetInfo', this.assetInfo);
+
+    /*
+        bid: 17913
+        delayTime: 0
+        epic: "UA.D.AAPL.DAILY.IP"
+        expiry: "DFB"
+        high: 17946.9
+        instrumentName: "Apple Inc (All Sessions)"
+        instrumentType: "SHARES"
+        low: 17597
+        marketStatus: "TRADEABLE"
+        netChange: 253
+        offer: 17924
+        percentageChange: 1.43
+        scalingFactor: 1
+        streamingPricesAvailable: false
+        updateTime: "2:0:22"
+        updateTimeUTC: "2:0:22"
+    */
+
+    this.data.asset.ticker = this.form.ticker;
+    this.data.asset.price.ask = 95;
+    this.data.asset.price.bid = 90;
+    this.data.asset.minQty = 1;
+    this.data.asset.fractional = true;
+    this.data.asset.decimals = 1;
+
     this.requiredControl();
     this.cRef.detectChanges();
   };
+
+  async getCurrentPositions() {
+    try {
+
+      this.isLoading = true;
+      await this.decrypt();
+
+      if (
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
+      ) {
+
+        const env: 'demo' | 'prod' = 'demo';
+        const litActionCodeA = litActions.ig.checkCredentials(env);
+
+        const listActionCodeParamsA = {
+          credentials: this.credentials,
+          form: {},
+        };
+
+        const litActionCallA = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseA = litActionCallA?.response as any;
+
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
+
+        const litActionCodeB = litActions.ig.getPositions(
+          env,
+          auth,
+        );
+
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseB = litActionCallB?.response as any;
+
+        const positions = responseB || [];
+
+        console.log('positions', positions);
+
+        this.cRef.detectChanges();
+      }
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
+    }
+  }
 
 }
 

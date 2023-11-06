@@ -112,6 +112,51 @@ const getAssetsBySymbol = (
     return code;
 }
 
+const getPositions = (
+    env: EnvType,
+    auth: {
+        apiKey: string,
+        cst: string,
+        securityToken: string,
+    }
+) => {
+    const requestUrl = getApiUrl(env);
+
+    const code = `
+        const go = async () => {
+
+            const url = '${requestUrl}/gateway/deal/positions';
+
+            const options = {
+                method: 'GET',
+                headers: {
+                    'Version': '1',
+                    'CST': '${auth.cst}',
+                    'X-IG-API-KEY': '${auth.apiKey}',
+                    'X-SECURITY-TOKEN': '${auth.securityToken}',
+                    'User-Agent': 'PostmanRuntime/7.29.2',
+                    'Accept': 'application/json; charset=UTF-8',
+                    'Content-Type': 'application/json; charset=UTF-8',
+                },
+                redirect: 'follow',
+                mode: 'cors',
+            };
+
+            const response = await fetch(url, options);
+            const data = await response.json();
+
+            const info = data?.positions || [];
+
+            Lit.Actions.setResponse({response: JSON.stringify(info)});
+
+        };
+
+        go();
+    `;
+
+    return code;
+}
+
 const placeOrder = (
     env: EnvType,
     orderPayload: {
@@ -206,4 +251,5 @@ export {
     checkCredentials,
     getAssetsBySymbol,
     placeOrder,
+    getPositions,
 };
