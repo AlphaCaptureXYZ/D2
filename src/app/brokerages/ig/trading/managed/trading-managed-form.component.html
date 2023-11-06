@@ -19,7 +19,7 @@
     </div>
     
 
-    <div *ngIf="allAccounts.length > 0">
+    <div *ngIf="allAccounts.length > 0 || allAccounts.length === 0">
       <div class="mb-6">
         <label
           for="environment"
@@ -33,21 +33,6 @@
           <option *ngFor="let account of allAccounts" [value]="account.uuid">
             {{account.accountName}} | {{account.provider}} | {{account.environment}} </option>
         </select>
-      </div>
-
-      <div class="mb-6">
-        <label
-          for="broker"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Broker</label>
-        <input
-          type="text"
-          id="broker"
-          class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="i.e. Binance"
-          required
-          [(ngModel)]="form.broker"
-          disabled="true"
-          (ngModelChange)="requiredControl()" />
       </div>
 
       <div class="mb-6">
@@ -68,14 +53,14 @@
       <div class="mb-6">
         <label
           for="asset"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Asset/Pair</label>
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Asset</label>
         <input
           type="text"
           id="asset"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="i.e. BTCUSDT"
+          placeholder="i.e. AAPL"
           required
-          [(ngModel)]="form.asset"
+          [(ngModel)]="form.ticker"
           (ngModelChange)="requiredControl()" />
       </div>
 
@@ -99,6 +84,40 @@
       </div>
 
       <div class="mb-6">
+        Specifying a quantity or value will override the default calculation which bases the order value on a percentage of the portfolio.
+      </div>
+
+      <div class="mb-6">
+        <label
+          for="defaultOrderSize"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Order Size (%)</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="defaultOrderSize"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.defaultOrderSize"
+            (ngModelChange)="requiredControl()" />
+          <span
+            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+            <svg
+              class="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 20 20">
+              <path
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <!-- <div class="mb-6">
         <label
           for="quantity"
           class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Quantity</label>
@@ -108,7 +127,22 @@
           [(ngModel)]="form.quantity"
           (ngModelChange)="requiredControl()"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-      </div>
+      </div> -->
+
+      <!-- <div class="mb-6">
+        <label
+          for="conviction"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Order Value</label>
+        <div class="flex w-6/12">
+          <input
+            type="number"
+            id="conviction"
+            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            [(ngModel)]="form.conviction"
+            (ngModelChange)="requiredControl()" />
+        </div>
+      </div> -->
+
 
       <div class="mb-6">
         <label
@@ -140,20 +174,6 @@
         </div>
       </div>
 
-      <div class="mb-6">
-        <label
-          for="conviction"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Value</label>
-        <div class="flex w-6/12">
-          <input
-            type="number"
-            id="conviction"
-            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            [(ngModel)]="form.conviction"
-            (ngModelChange)="requiredControl()" />
-        </div>
-      </div>
-
       <div
         class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white mb-8 mt-12">
         ACCOUNT SETTINGS
@@ -169,37 +189,6 @@
           [(ngModel)]="form.maxLeverage"
           (ngModelChange)="requiredControl()"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
-      </div>
-
-      <div class="mb-6">
-        <label
-          for="defaultOrderSize"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Default Order Size
-          (%)</label>
-        <div class="flex w-6/12">
-          <input
-            type="number"
-            id="defaultOrderSize"
-            class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            [(ngModel)]="form.defaultOrderSize"
-            (ngModelChange)="requiredControl()" />
-          <span
-            class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
-            <svg
-              class="w-6 h-6 text-gray-800 dark:text-white"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 20 20">
-              <path
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
-            </svg>
-          </span>
-        </div>
       </div>
 
       <div class="mb-6">
@@ -250,53 +239,516 @@
 
       <div
         class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white mb-8 mt-12">
-        SUMMARY
+        ORDER SUMMARY
       </div>
 
-      <div class="mb-6">
-        <label
-          for="accountBalance"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account Balance</label>
-        <div class="flex w-6/12">
-          {{form.accountBalance}}
-        </div>
+      <div class="p-4 cursor-pointer" >
+        <i class='bx bx-refresh' (click)="refreshBrokerageData()"></i> <span class="ml-1 text-xs hover:underline" (click)="refreshBrokerageData()">Refresh</span>
+        |
+        <span class="ml-1 text-xs hover:underline" (click)="expandOrderSummary(true)">Expand all</span>
+        |
+        <span class="ml-1 text-xs hover:underline" (click)="expandOrderSummary(false)">Collapse all</span>
       </div>
 
-      <div class="mb-6">
-        <label
-          for="defaultOrderValue"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Default Order Value</label>
-        <div class="flex w-6/12">
-          {{form.defaultOrderValue}}
-        </div>
-      </div>
+      <div class="relative overflow-x-auto  shadow-mdsm:rounded-lg">
 
-      <div class="mb-6">
-        <label
-          for="maxPortofolioValue"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum value in
-          portfolio</label>
-        <div class="flex w-6/12">
-          {{form.maxPortofolioValue}}
-        </div>
-      </div>
+        <table class="text-sm text-left table-auto text-gray-500 dark:text-gray-400" width="100%">
+  
+          <tbody>
+            <tr (click)="expandCollapseOrderMenu(0)" class="hover: cursor-pointer">
+              <th scope="row" class="px-1 py-1 pl-5 uppercase bg-slate-200">Account Settings</th>
+              <th class="text-right bg-slate-200">
+ 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[0]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[0]"/>
+                </svg>
+                
+              </th>
+            </tr>
+          </tbody>
+        
+          <tbody *ngIf="this.orderSummaryMenu[0]">
+            <tr class="max-w-full" >
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Account balance:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.account.balance }}
+              </td>
+            </tr>
 
-      <div class="mb-6">
-        <label
-          for="remainingPositionValue"
-          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Remaining position
-          value</label>
-        <div class="flex w-6/12">
-          {{form.remainingPositionValue}}
-        </div>
-      </div>
+            <tr class="max-w-full" >
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Maximum leverage:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.leverage }}
+              </td>
+            </tr>
 
+            <tr class="max-w-full" >
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Leverage balance:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.account.leverageBalance }}
+              </td>
+            </tr>
+
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(1)" class="hover: cursor-pointer">
+
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 uppercase bg-slate-200 ">Asset</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[1]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[1]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[1]">
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Tradable ticker:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.asset.ticker }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Price:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.asset.price.bid }} / {{ data.asset.price.ask }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Fractional supported:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.asset.fractional }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Fractional decimals:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.asset.decimals }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Minimum order quantity:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.asset.minQty }}
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(2)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Order Default Settings</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[2]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[2]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[2]">
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Default order size:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.default.portfolioAllocation }}%
+              </td>
+            </tr>
+
+            
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Default order value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.default.value }}
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(3)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Order Custom Settings</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[3]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[3]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[3]">
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Conviction:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.settings.conviction }}%
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order value with conviction:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.default.valueWithConviction }}
+              </td>
+            </tr>
+
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Maximum position size in portfolio:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.settings.maxPortfolioSize }}%
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Maximum position value in portfolio:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.settings.maxPortfolioValue }}
+              </td>
+            </tr>
+          </tbody>
+            
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(4)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Existing Position</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[4]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[4]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[4]">
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Existing position allocation:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.existingPosition.currentPortfolioAllocation }}%
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Existing position value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.existingPosition.valueInBase }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Remaining position value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.existingPosition.remainingValue }}
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(5)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Validations</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[5]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[5]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[5]">
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Maximum portfolio allocation exceeded by:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.calc.maxPortfolioValueExceededBy }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Override Limits:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.order.calc.overrideLimits }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Maximum portfolio allocation exceeded:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.order.calc.maxPortfolioValueExceeded  }}
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Brokerage minimum quantity exceeded:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.order.calc.exceedsMinQty }}
+              </td>
+            </tr>
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+
+          <tbody (click)="expandCollapseOrderMenu(6)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Potential Order</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[6]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[6]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[6]">
+            <tr class="max-w-full ">
+              <td colspan="2" class="px-1 py-1 font-small text-gray-600 max-w-40 pl-5">
+                The order details before any validations are applied.
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order action:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.order.potential.direction }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.potential.value }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order quantity:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.potential.quantity }}
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Potential portfolio value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.potential.portfolio.value }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Potential portfolio allocation:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.potential.portfolio.allocation }}%
+              </td>
+            </tr>            
+          </tbody>
+
+          <tbody>
+            <tr class="max-w-full ">
+              <td colspan="2">&nbsp;</td>
+            </tr>
+          </tbody>
+          
+          <tbody (click)="expandCollapseOrderMenu(7)" class="hover: cursor-pointer">
+            <tr>
+              <th scope="row" class="px-1 py-1 pl-5 text-1xl uppercase bg-slate-200">Adjusted Final Order</th>
+              <th class="text-right bg-slate-200">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" *ngIf="orderSummaryMenu[7]"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5"  *ngIf="!orderSummaryMenu[7]"/>
+                </svg>                
+              </th>
+            </tr>
+          </tbody>
+
+          <tbody *ngIf="this.orderSummaryMenu[7]">
+            <tr class="max-w-full ">
+              <td colspan="2" class="px-1 py-1 font-small text-gray-600 max-w-40 pl-5">
+                The order details after all validations are applied.
+              </td>
+            </tr>
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order action:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20 uppercase">
+                {{ data.order.final.direction }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order value:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.account.currencySymbol}}{{ data.order.final.value }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order quantity (raw):
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.final.quantity.raw }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order quantity (rounded):
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.final.quantity.rounded }}
+              </td>
+            </tr>            
+
+            <tr class="max-w-full">
+              <td
+                class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+                Order size:
+              </td>
+              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
+                {{ data.order.final.orderSizePercentage }}%
+              </td>
+            </tr>            
+
+          </tbody>
+        </table>
+    
+
+
+      </div>
+  
+
+      <!-- 
       <button
         type="submit"
         (click)="submit()"
         class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
         Submit
-      </button>
+      </button> -->
     </div>
   </div>
 </div>
