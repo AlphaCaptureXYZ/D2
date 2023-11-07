@@ -16,6 +16,8 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 
 import * as Helpers from 'src/app/helpers/helpers';
+import { IAssetInfo } from '../../_shared/asset-info.i';
+import { IPositionInfo } from '../../_shared/position.i';
 
 interface FormType {
   credentialNftUuid: string,
@@ -52,13 +54,14 @@ export default class TradingManagedIGFormComponent implements OnInit {
   broker = 'IG';
   credentials: any;
   refreshLoading = false;
-  positions: any[];
+
+  positions: IPositionInfo[];
   portfolio: any[];
 
   accountSelected = null;
 
   epic: string;
-  assetInfo: any = null;
+  assetInfo: IAssetInfo = null as any;
 
   isLoading = false as boolean;
   isLoadingCredentials = false as boolean;
@@ -518,37 +521,19 @@ export default class TradingManagedIGFormComponent implements OnInit {
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
 
-    console.log('this.assetInfo', this.assetInfo);
-
-    /*
-        bid: 17913
-        delayTime: 0
-        epic: "UA.D.AAPL.DAILY.IP"
-        expiry: "DFB"
-        high: 17946.9
-        instrumentName: "Apple Inc (All Sessions)"
-        instrumentType: "SHARES"
-        low: 17597
-        marketStatus: "TRADEABLE"
-        netChange: 253
-        offer: 17924
-        percentageChange: 1.43
-        scalingFactor: 1
-        streamingPricesAvailable: false
-        updateTime: "2:0:22"
-        updateTimeUTC: "2:0:22"
-    */
-
     // we can use the above for these...
     this.data.asset.ticker = this.form.ticker;
-    this.data.asset.price.ask = this.assetInfo.offer || 0;
-    this.data.asset.price.bid = this.assetInfo.bid || 0;
+    this.data.asset.price.ask = this.assetInfo?.offer || 0;
+    this.data.asset.price.bid = this.assetInfo?.bid || 0;
 
     // these come from the more detailed request
-    this.data.asset.minQty = 1;
+    this.data.asset.minQty =
+      this.assetInfo?.marketInfo?.dealingRules?.minDealSize?.value || 1;
     // there is a value on the asset object that is called 'step' or something like that
     // if that has decimals, then fractional is true
-    this.data.asset.fractional = true;
+    this.data.asset.fractional =
+      this.assetInfo?.marketInfo?.dealingRules?.minDealSize?.value?.toString()?.includes('.') ? true : false;
+
     // use the number of decimals from the min qty
     this.data.asset.decimals = Helpers.countDecimals(this.data.asset.minQty);
 
@@ -608,8 +593,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
         const responseB = litActionCallB?.response as any;
 
         this.positions = responseB || [];
-
-        console.log('positions', this.positions);
 
         // check to see if there are any assets other than the base currency of the account
 

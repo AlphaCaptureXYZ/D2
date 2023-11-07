@@ -38,6 +38,18 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
   epic: string;
   assetInfo = null;
 
+  authInfo: {
+    apiKey: string,
+    cst: string,
+    securityToken: string,
+  } = {
+      apiKey: null as any,
+      cst: null as any,
+      securityToken: null as any,
+    };
+
+  env: 'demo' | 'prod' = null as any;
+
   @Output() changed = new EventEmitter<{
     igAssetInfo: any,
   }>();
@@ -80,14 +92,12 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
         !isNullOrUndefined(this.credentials?.apiKey)
       ) {
 
-        const env: 'demo' | 'prod' = 'demo';
-        const litActionCodeA = litActions.ig.checkCredentials(env);
+        this.env = this.credentials?.env || 'demo';
+        const litActionCodeA = litActions.ig.checkCredentials(this.env);
 
         const listActionCodeParamsA = {
           credentials: this.credentials,
-          form: {
-
-          }
+          form: {}
         };
 
         const litActionCallA = await litClient.runLitAction({
@@ -100,16 +110,16 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
 
         const responseA = litActionCallA?.response as any;
 
-        const auth = {
+        this.authInfo = {
           apiKey: this.credentials?.apiKey,
           cst: responseA?.clientSessionToken,
           securityToken: responseA?.activeAccountSessionToken,
         };
 
         const litActionCodeB = litActions.ig.getAssetsBySymbol(
-          env,
+          this.env,
           this.symbolToSearch as any,
-          auth,
+          this.authInfo,
         );
 
         const litActionCallB = await litClient.runLitAction({
@@ -133,6 +143,42 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
       this.isLoading = false;
     }
   }
+
+  async getMarketInfoByEpic() {
+
+    let response = null as any;
+
+    try {
+
+      this.isLoading = true;
+
+      const litActionCode = litActions.ig.getMarketInfoByEpic(
+        this.env,
+        this.epic as any,
+        this.authInfo,
+      );
+
+      const litActionCall = await litClient.runLitAction({
+        chain: await this.nftCredentialService.getChain(),
+        litActionCode: litActionCode,
+        listActionCodeParams: {},
+        nodes: 1,
+        showLogs: true,
+      });
+
+      response = litActionCall?.response as any;
+
+      this.cRef.detectChanges();
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
+    }
+
+    return response;
+  }
+
 
   async decrypt(
     credentialInfo: any = null
@@ -179,12 +225,17 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
     }
   };
 
-  selectAssetInfo = (assetInfo: any) => {
+  async selectAssetInfo(assetInfo: any) {
     this.assetInfo = assetInfo;
     this.epic = assetInfo?.epic || null;
 
+    const marketInfo = await this.getMarketInfoByEpic();
+
     this.changed.emit({
-      igAssetInfo: assetInfo,
+      igAssetInfo: {
+        ...assetInfo,
+        marketInfo,
+      },
     });
 
     this.cRef.detectChanges();
