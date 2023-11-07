@@ -58,7 +58,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   accountSelected = null;
 
   epic: string;
-  assetInfo = null;
+  assetInfo: any = null;
 
   isLoading = false as boolean;
   isLoadingCredentials = false as boolean;
@@ -542,7 +542,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     // we can use the above for these...
     this.data.asset.ticker = this.form.ticker;
     this.data.asset.price.ask = this.assetInfo.offer || 0;
-    this.data.asset.price.bid =this.assetInfo.bid || 0;
+    this.data.asset.price.bid = this.assetInfo.bid || 0;
 
     // these come from the more detailed request
     this.data.asset.minQty = 1;
@@ -615,7 +615,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         // reset our portfolio
         this.portfolio = [];
-      
+
         // loop through the positions to get the total existing exposure
         for (const p in this.positions) {
           if (p) {
@@ -635,7 +635,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
               offer: this.positions[p].market.offer,
               value: val,
             }
-            this.portfolio.push(pos);                
+            this.portfolio.push(pos);
           }
         }
 
@@ -652,8 +652,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
   getExistingPositionValue() {
 
     // loop through the portfolop and match any
-  
-  }  
+
+  }
 
 }
 
