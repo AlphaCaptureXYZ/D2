@@ -15,6 +15,8 @@ import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 
+import * as Helpers from 'src/app/helpers/helpers';
+
 interface FormType {
   credentialNftUuid: string,
   broker: string;
@@ -50,6 +52,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
   broker = 'IG';
   credentials: any;
   refreshLoading = false;
+  positions: any[];
+  portfolio: any[];
 
   accountSelected = null;
 
@@ -68,6 +72,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     false, // validations
     false, // potential order
     true, // final adjusted order
+    false, // existing portfolio
   ]
 
   data = {
@@ -166,6 +171,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
       maxSizePortofolio: 10,
     };
     this.allAccounts = [];
+    this.positions = [];
+    this.portfolio = [];
 
   }
 
@@ -532,12 +539,18 @@ export default class TradingManagedIGFormComponent implements OnInit {
         updateTimeUTC: "2:0:22"
     */
 
+    // we can use the above for these...
     this.data.asset.ticker = this.form.ticker;
-    this.data.asset.price.ask = 95;
-    this.data.asset.price.bid = 90;
+    this.data.asset.price.ask = this.assetInfo.offer || 0;
+    this.data.asset.price.bid =this.assetInfo.bid || 0;
+
+    // these come from the more detailed request
     this.data.asset.minQty = 1;
+    // there is a value on the asset object that is called 'step' or something like that
+    // if that has decimals, then fractional is true
     this.data.asset.fractional = true;
-    this.data.asset.decimals = 1;
+    // use the number of decimals from the min qty
+    this.data.asset.decimals = Helpers.countDecimals(this.data.asset.minQty);
 
     this.requiredControl();
     this.cRef.detectChanges();
@@ -594,9 +607,37 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         const responseB = litActionCallB?.response as any;
 
-        const positions = responseB || [];
+        this.positions = responseB || [];
 
-        console.log('positions', positions);
+        console.log('positions', this.positions);
+
+        // check to see if there are any assets other than the base currency of the account
+
+        // reset our portfolio
+        this.portfolio = [];
+      
+        // loop through the positions to get the total existing exposure
+        for (const p in this.positions) {
+          if (p) {
+
+            let val = 0;
+            if (this.positions[p].position.direction === 'SELL') {
+              val = this.positions[p].market.bid * this.positions[p].position.contractSize;
+            } else {
+              val = this.positions[p].market.offer * this.positions[p].position.contractSize;
+            }
+
+            const pos = {
+              ticker: this.positions[p].market.epic,
+              size: this.positions[p].position.contractSize,
+              direction: this.positions[p].position.direction,
+              bid: this.positions[p].market.bid,
+              offer: this.positions[p].market.offer,
+              value: val,
+            }
+            this.portfolio.push(pos);                
+          }
+        }
 
         this.cRef.detectChanges();
       }
@@ -608,9 +649,11 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
+  getExistingPositionValue() {
+
+    // loop through the portfolop and match any
+  
+  }  
+
 }
 
-// to do
-// select the IG asset
-// get positions
-// allow for the value of the existing portfolio
