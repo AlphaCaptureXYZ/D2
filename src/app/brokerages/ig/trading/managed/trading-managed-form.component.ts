@@ -16,8 +16,10 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 
 import * as Helpers from 'src/app/helpers/helpers';
+
 import { IAssetInfo } from '../../_shared/asset-info.i';
 import { IPositionInfo } from '../../_shared/position.i';
+import { IAccount } from '../../_shared/account.i';
 
 interface FormType {
   credentialNftUuid: string,
@@ -55,16 +57,31 @@ export default class TradingManagedIGFormComponent implements OnInit {
   credentials: any;
   refreshLoading = false;
 
-  positions: IPositionInfo[];
+
   portfolio: any[];
 
   accountSelected = null;
 
   epic: string;
+
+  account: IAccount = null as any;
   assetInfo: IAssetInfo = null as any;
+  positions: IPositionInfo[];
 
   isLoading = false as boolean;
   isLoadingCredentials = false as boolean;
+
+  currencyInfo = {
+    GBP: {
+      symbol: '£',
+    },
+    USD: {
+      symbol: '$',
+    },
+    EUR: {
+      symbol: '€',
+    },
+  }
 
   orderSummaryMenu = [
     false, // account settings
@@ -181,50 +198,174 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async ngOnInit() {
     this.getCredentials();
-    this.getAccountBalanceAndPositions();
-    this.defaultOrderCalcUsingtheAccountBalance();
     this.callEvents();
   }
 
   refreshBrokerageData() {
     this.refreshLoading = true;
-    this.getAccountBalanceAndPositions();
-    this.defaultOrderCalcUsingtheAccountBalance();
     this.callEvents();
     this.refreshLoading = false;
   }
 
   async getCredentials() {
     this.isLoadingCredentials = true;
+
     const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
       autoRedirect: true,
     });
+
     this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
-
-    console.log('this.allAccounts', this.allAccounts);
-
     this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
     this.isLoadingCredentials = false;
   }
 
   async getAccountBalanceAndPositions() {
-    // call IG if we have credentials
+    try {
 
-    const accountCurrencySymbol = '£';
-    this.data.account.currencySymbol = accountCurrencySymbol;
+      this.isLoading = true;
+      await this.decrypt();
 
+      if (
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
+      ) {
 
-    const accountBalance = 999;
+        const env: 'demo' | 'prod' = 'demo';
+        const litActionCodeA = litActions.ig.checkCredentials(env);
 
-    this.data.account.balance = accountBalance;
-    this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
+        /* credentials */
+        const listActionCodeParamsA = {
+          credentials: this.credentials,
+          form: {},
+        };
 
-    // get any existing position for the asset
-    const existingPositionValue = 40;
+        const litActionCallA = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
+          nodes: 1,
+          showLogs: true,
+        });
 
-    if (existingPositionValue) {
-      this.data.existingPosition.valueInBase = existingPositionValue;
-      this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
+        const responseA = litActionCallA?.response as any;
+
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
+
+        /* positions */
+        const litActionCodeB = litActions.ig.getPositions(
+          env,
+          auth,
+        );
+
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseB = litActionCallB?.response as any;
+
+        /* accounts */
+        const litActionCodeC = litActions.ig.getAccounts(
+          env,
+          auth,
+        );
+
+        const litActionCallC = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeC,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseC = litActionCallC?.response as any;
+
+        this.account = responseC?.find((res: any) => res.preferred);
+        this.positions = responseB || [];
+
+        const currency: any = this.account.currency;
+        const accountCurrencySymbol = (this.currencyInfo as any)[currency || 'GBP']?.symbol;
+
+        // check to see if there are any assets other than the base currency of the account
+        const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
+
+        console.log('diffAssets', diffAssets);
+
+        // good example to do, the demo account have 2 existing positions in USD and the other in GBP
+        if (diffAssets.length > 0) {
+          // pending to add the conversion and logic, etc
+        }
+
+        this.data.account.currencySymbol = accountCurrencySymbol;
+
+        // reset our portfolio
+        this.portfolio = [];
+
+        // loop through the positions to get the total existing exposure
+        for (const p in this.positions) {
+          if (p) {
+
+            let val = 0;
+            if (this.positions[p].position.direction === 'SELL') {
+              val = this.positions[p].market.bid * this.positions[p].position.contractSize;
+            } else {
+              val = this.positions[p].market.offer * this.positions[p].position.contractSize;
+            }
+
+            const pos = {
+              ticker: this.positions[p].market.epic,
+              size: this.positions[p].position.contractSize,
+              direction: this.positions[p].position.direction,
+              bid: this.positions[p].market.bid,
+              offer: this.positions[p].market.offer,
+              value: val,
+            }
+            this.portfolio.push(pos);
+          }
+        }
+
+        const accountBalance = this.account?.balance?.balance || 0;
+
+        this.data.account.balance = accountBalance;
+        this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
+
+        // get any existing position for the asset
+
+        // not sure what is the logic, is A, B or C?
+
+        // A) 
+        // const buyInfo = this.portfolio.filter(res => res.direction === 'BUY').reduce((a, b) => a + b.value, 0);
+        // const sellInfo = this.portfolio.filter(res => res.direction === 'SELL').reduce((a, b) => a + b.value, 0);
+        // const existingPositionValue = buyInfo - sellInfo;
+
+        // B)
+        // const existingPosition = this.portfolio.map(res => res.ticker === this.form.ticker)?.length;
+
+        // C)
+        // all incorrect :(
+
+        const existingPositionValue = 40;
+
+        if (existingPositionValue) {
+          this.data.existingPosition.valueInBase = existingPositionValue;
+          this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
+        }
+
+        this.cRef.detectChanges();
+      }
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
     }
   }
 
@@ -249,7 +390,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     });
   };
 
-  requiredControl = (valueChanged?: string): void => {
+  async requiredControl(valueChanged?: string) {
     // console.log('valueChanged', valueChanged);
     const credentialNftUuid = this.form.credentialNftUuid;
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
@@ -259,11 +400,12 @@ export default class TradingManagedIGFormComponent implements OnInit {
       this.form.broker = account.provider;
       this.form.environment = account.environment;
       this.cRef.detectChanges();
-      this.getCurrentPositions();
     }
 
     if (valueChanged === 'credential') {
-      this.calculatePortfolioValueInBaseCurrency();
+      await this.getAccountBalanceAndPositions();
+      await this.calculatePortfolioValueInBaseCurrency();
+      await this.defaultOrderCalcUsingtheAccountBalance();
     }
 
     // this refreshes everything
@@ -326,7 +468,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         if (!isNullOrUndefined(decryptedFile)) {
           this.credentials = JSON.parse(decryptedFile);
-          console.log('this.credentials', this.credentials);
         }
       }
     } catch (err: any) {
@@ -337,9 +478,9 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async calculatePortfolioValueInBaseCurrency() {
     try {
+      const baseCurrency = this.account.currency;
 
       this.isLoading = true;
-      // await this.decrypt();
 
       this.isLoading = false;
 
@@ -516,7 +657,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
-  getIgEpic = ({ igAssetInfo }: any) => {
+  async getIgEpic({ igAssetInfo }: any) {
     this.assetInfo = igAssetInfo;
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
@@ -537,106 +678,9 @@ export default class TradingManagedIGFormComponent implements OnInit {
     // use the number of decimals from the min qty
     this.data.asset.decimals = Helpers.countDecimals(this.data.asset.minQty);
 
-    this.requiredControl();
+    await this.requiredControl();
     this.cRef.detectChanges();
   };
-
-  async getCurrentPositions() {
-    try {
-
-      this.isLoading = true;
-      await this.decrypt();
-
-      if (
-        !isNullOrUndefined(this.credentials?.username) &&
-        !isNullOrUndefined(this.credentials?.password) &&
-        !isNullOrUndefined(this.credentials?.apiKey)
-      ) {
-
-        const env: 'demo' | 'prod' = 'demo';
-        const litActionCodeA = litActions.ig.checkCredentials(env);
-
-        const listActionCodeParamsA = {
-          credentials: this.credentials,
-          form: {},
-        };
-
-        const litActionCallA = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeA,
-          listActionCodeParams: listActionCodeParamsA,
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseA = litActionCallA?.response as any;
-
-        const auth = {
-          apiKey: this.credentials?.apiKey,
-          cst: responseA?.clientSessionToken,
-          securityToken: responseA?.activeAccountSessionToken,
-        };
-
-        const litActionCodeB = litActions.ig.getPositions(
-          env,
-          auth,
-        );
-
-        const litActionCallB = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeB,
-          listActionCodeParams: {},
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseB = litActionCallB?.response as any;
-
-        this.positions = responseB || [];
-
-        // check to see if there are any assets other than the base currency of the account
-
-        // reset our portfolio
-        this.portfolio = [];
-
-        // loop through the positions to get the total existing exposure
-        for (const p in this.positions) {
-          if (p) {
-
-            let val = 0;
-            if (this.positions[p].position.direction === 'SELL') {
-              val = this.positions[p].market.bid * this.positions[p].position.contractSize;
-            } else {
-              val = this.positions[p].market.offer * this.positions[p].position.contractSize;
-            }
-
-            const pos = {
-              ticker: this.positions[p].market.epic,
-              size: this.positions[p].position.contractSize,
-              direction: this.positions[p].position.direction,
-              bid: this.positions[p].market.bid,
-              offer: this.positions[p].market.offer,
-              value: val,
-            }
-            this.portfolio.push(pos);
-          }
-        }
-
-        this.cRef.detectChanges();
-      }
-
-      this.isLoading = false;
-
-    } catch (err: any) {
-      this.isLoading = false;
-    }
-  }
-
-  getExistingPositionValue() {
-
-    // loop through the portfolop and match any
-
-  }
 
 }
 
