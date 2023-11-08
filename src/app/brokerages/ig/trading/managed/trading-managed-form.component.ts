@@ -402,7 +402,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   };
 
   async requiredControl(valueChanged?: string) {
-    // console.log('valueChanged', valueChanged);
+
     const credentialNftUuid = this.form.credentialNftUuid;
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
 

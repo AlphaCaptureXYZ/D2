@@ -57,6 +57,8 @@ export default class TradingBasicIGFormComponent implements OnInit {
   epic: string;
   assetInfo = null;
 
+  accountId: string = null as any;
+
   constructor(
     private eventService: EventService,
     private nftCredentialService: NFTCredentialService,
@@ -92,7 +94,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
     this.isLoadingCredentials = false;
   }
 
-  requiredControl = (): void => {
+  async requiredControl(valueChanged?: string) {
 
     const credentialNftUuid = this.form.credentialNftUuid;
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
@@ -102,6 +104,11 @@ export default class TradingBasicIGFormComponent implements OnInit {
       this.form.broker = account.provider;
       this.form.environment = account.environment;
       this.cRef.detectChanges();
+    }
+
+    if (valueChanged === 'credential') {
+      await this.decrypt();
+      this.accountId = this.credentials.accountId;
     }
 
     if (!isNullOrUndefined(this.epic)) {
@@ -128,7 +135,6 @@ export default class TradingBasicIGFormComponent implements OnInit {
     try {
 
       this.isLoading = true;
-      await this.decrypt();
 
       if (
         !isNullOrUndefined(this.credentials?.username) &&
