@@ -48,6 +48,15 @@
         </select>
       </div>
 
+      <div *ngIf="accountId">
+        <div class="mb-6 mt-3">
+          <label for="accountId" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Account Number</label>
+          <input type="text" id="accountId"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            disabled [(ngModel)]="accountId" required />
+        </div>
+      </div>
+
       <app-ig-epic-info-by-ticker [uuid]="form.credentialNftUuid" [accountSelected]="accountSelected"
         (changed)="getIgEpic($event)"></app-ig-epic-info-by-ticker>
 
@@ -485,14 +494,14 @@
               <tr class="max-w-full">
                 <td class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
 
-                  <table class="text-sm text-left table-auto text-gray-500 dark:text-gray-400" width="100%">                    
+                  <table class="text-sm text-left table-auto text-gray-500 dark:text-gray-400" width="100%">
                     <tr *ngFor="let pos of portfolio">
                       <td>{{pos.ticker}}</td>
                       <td>{{pos.size}}</td>
                       <td>{{pos.direction}}</td>
                       <td>{{pos.bid}}</td>
                       <td>{{pos.offer}}</td>
-                      <td>{{pos.value}}</td>        
+                      <td>{{pos.value}}</td>
                     </tr>
                   </table>
 

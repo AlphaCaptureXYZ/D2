@@ -30,6 +30,8 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
+import { IAccount } from '../_shared/account.i';
+
 @Component({
   selector: 'app-accounts-ig',
   standalone: true,
@@ -48,11 +50,17 @@ export default class AccountsIGComponent implements OnInit {
   error: boolean = false;
   errorMsg: string = '';
 
+  accounts: Array<IAccount> = new Array<IAccount>();
+
+  accountId: string = null as any;
+
   form: FormGroup = new FormGroup({
+    name: new FormControl(),
     username: new FormControl(),
     apiKey: new FormControl(),
     password: new FormControl(),
     environment: new FormControl('demo'),
+    accountId: new FormControl(),
   });
 
   constructor(
@@ -71,6 +79,7 @@ export default class AccountsIGComponent implements OnInit {
       apiKey: [null, Validators.required],
       password: [null, Validators.required],
       environment: [null, Validators.required],
+      accountId: [null, Validators.required],
     });
   }
 
@@ -97,7 +106,6 @@ export default class AccountsIGComponent implements OnInit {
   };
 
   async verifyCredentials() {
-    // call Binance to check the credentials work, before we create via Lit
     await this.litActionToCheckCredentials();
   }
 
@@ -106,13 +114,9 @@ export default class AccountsIGComponent implements OnInit {
 
       this.isLoading = true;
 
-      console.log('credentials', this.form.value);
-      
       const check = this.form.valid;
 
       if (check) {
-
-        console.log('credentials', this.form.value);
 
         const credentials = JSON.stringify(this.form.value);
 
@@ -195,46 +199,77 @@ export default class AccountsIGComponent implements OnInit {
 
   async litActionToCheckCredentials() {
     try {
-      this.isLoading = true;
 
       const env: 'demo' | 'prod' = this.form.value.environment;
       const litActionCode = litActions.ig.checkCredentials(env);
 
-      const listActionCodeParams = {
+      const apiKey = this.form?.value?.apiKey;
+
+      const listActionCodeParamsA = {
         credentials: {
+          apiKey,
           name: this.form?.value?.name,
           username: this.form?.value?.username,
-          apiKey: this.form?.value?.apiKey,
           password: this.form?.value?.password,
           environment: this.form?.value?.environment,
         },
       };
 
-      const litActionCall = await litClient.runLitAction({
+      const litActionCallA = await litClient.runLitAction({
         chain: await this.nftCredentialService.getChain(),
         litActionCode,
-        listActionCodeParams,
+        listActionCodeParams: listActionCodeParamsA,
         nodes: 1,
         showLogs: true,
       });
 
-      const response = litActionCall?.response as any;
+      const responseA = litActionCallA?.response as any;
 
-      this.errorHandling(response);
+      this.errorHandling(responseA);
+
+      const auth = {
+        apiKey,
+        cst: responseA?.clientSessionToken,
+        securityToken: responseA?.activeAccountSessionToken,
+      };
+
+      /* accounts */
+      const litActionCodeB = litActions.ig.getAccounts(
+        env,
+        auth,
+      );
+
+      const litActionCallB = await litClient.runLitAction({
+        chain: await this.nftCredentialService.getChain(),
+        litActionCode: litActionCodeB,
+        listActionCodeParams: {},
+        nodes: 1,
+        showLogs: true,
+      });
+
+      const accounts = litActionCallB?.response as any;
+
+      this.accounts = accounts;
 
       if (
-        response?.clientSessionToken &&
-        response?.activeAccountSessionToken
+        responseA?.clientSessionToken &&
+        responseA?.activeAccountSessionToken
       ) {
-        this.verified = true;
-        await this.encrypt();
+        // this.verified = true;
+        // await this.encrypt();
       }
-
-      this.isLoading = false;
 
     } catch (err: any) {
       this.isLoading = false;
     }
+  }
+
+  fillAccountSelected() {
+    this.accountId = this?.form?.value?.accountId;
+  }
+
+  async mintCredential() {
+    await this.encrypt();
   }
 
   errorHandling = (response: any) => {

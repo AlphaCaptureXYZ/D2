@@ -71,6 +71,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
   isLoading = false as boolean;
   isLoadingCredentials = false as boolean;
 
+  accountId: string = null as any;
+
   currencyInfo = {
     GBP: {
       symbol: '£',
@@ -231,6 +233,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
         !isNullOrUndefined(this.credentials?.apiKey)
       ) {
 
+        this.accountId = this.credentials.accountId;
+
         const env: 'demo' | 'prod' = 'demo';
         const litActionCodeA = litActions.ig.checkCredentials(env);
 
@@ -288,7 +292,14 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         const responseC = litActionCallC?.response as any;
 
-        this.account = responseC?.find((res: any) => res.preferred);
+        this.account = responseC?.find((res: any) => res.accountId === this.accountId);
+
+        // just to test with old credentials without this value (accountId)
+        // pending to delete
+        if (isNullOrUndefined(this.account)) {
+          this.account = responseC?.find((res: any) => res.preferred);
+        }
+
         this.positions = responseB || [];
 
         const currency: any = this.account.currency;
