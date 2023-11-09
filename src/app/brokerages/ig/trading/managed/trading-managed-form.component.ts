@@ -21,6 +21,11 @@ import { IAssetInfo } from '../../_interfaces/asset-info.i';
 import { IPositionInfo } from '../../_interfaces/position.i';
 import { IAccount } from '../../_interfaces/account.i';
 
+import {
+  defaultOrderCalc,
+  IOrderCalc,
+} from 'src/app/brokerages/shared/order-calc';
+
 interface FormType {
   credentialNftUuid: string,
   broker: string;
@@ -96,109 +101,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     false, // portfolio summary
   ]
 
-  data = {
-    asset: {
-      ticker: '',
-      name: '',
-      price: {
-        ask: 0,
-        bid: 0,
-      },
-      minQty: 1,
-      fractional: false,
-      decimals: 1,
-    },
-    account: {
-      balance: 0,
-      leverage: 1,
-      leverageBalance: 0,
-      currencySymbol: '$',
-    },
-    existingPosition: {
-      valueInBase: 0,
-      currentPortfolioAllocation: 0,
-      remainingValue: 0,
-    },
-    portfolio: {
-      net: [
-        {
-          ticker: '',
-          size: 0,
-          direction: '',
-          bid: 0,
-          offer: 0,
-          value: 0,
-        }
-      ],
-      raw: [
-        {
-          ticker: '',
-          size: 0,
-          direction: '',
-          bid: 0,
-          offer: 0,
-          value: 0,
-        }
-      ]
-    },
-    portfolioStats: {
-      long: 0,
-      short: 0,
-      net: 0,
-      remaining: 0,
-    },
-    order: {
-      default: {
-        value: 0,
-        valueWithConviction: 0,
-        portfolioAllocation: 0,
-      },
-      settings: {
-        conviction: 0,
-        maxPortfolioSize: 1,
-        maxPortfolioValue: 0,
-      },
-      calc: {
-        maxPortfolioValueExceeded: false,
-        maxPortfolioValueExceededBy: 0,
-        overrideLimits: false,
-        exceedsMinQty: true,
-        maxPortfolioExposureExceeded: false,
-        maxPortfolioExposureExceededBy: 0,
-      },
-      potential: {
-        direction: '',
-        value: 0,
-        quantity: 0,
-        orderSizePercentage: 0,
-        portfolio: {
-          value: 0,
-          allocation: 0,
-        },
-        price: {
-          value: 0,
-          type: '',
-        }
-      },
-      final: {
-        direction: '',
-        value: 0,
-        quantity: {
-          raw: 0,
-          rounded: 0,
-        },
-        orderSizePercentage: 0,
-        portfolio: {
-          value: 0,
-          allocation: 0,
-        },
-        price: {
-          value: 0,
-          type: '',
-        }
-      }
-    }
-  }
+  data: IOrderCalc = defaultOrderCalc
 
   constructor(
     private router: Router,
