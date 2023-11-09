@@ -232,230 +232,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
     this.callEvents();
   }
 
-  refreshBrokerageData() {
-    this.refreshLoading = true;
-    this.callEvents();
-    this.refreshLoading = false;
-  }
-
-  async getCredentials() {
-    this.isLoadingCredentials = true;
-
-    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
-      autoRedirect: true,
-    });
-
-    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
-    this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
-    this.isLoadingCredentials = false;
-  }
-
-  async getAccountBalanceAndPositions() {
-    try {
-
-      this.isLoading = true;
-      await this.decrypt();
-
-      if (
-        !isNullOrUndefined(this.credentials?.username) &&
-        !isNullOrUndefined(this.credentials?.password) &&
-        !isNullOrUndefined(this.credentials?.apiKey)
-      ) {
-
-        this.accountId = this.credentials.accountId;
-
-        const env: 'demo' | 'prod' = 'demo';
-        const litActionCodeA = litActions.ig.checkCredentials(env);
-
-        /* credentials */
-        const listActionCodeParamsA = {
-          credentials: this.credentials,
-          form: {},
-        };
-
-        const litActionCallA = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeA,
-          listActionCodeParams: listActionCodeParamsA,
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseA = litActionCallA?.response as any;
-
-        const auth = {
-          apiKey: this.credentials?.apiKey,
-          cst: responseA?.clientSessionToken,
-          securityToken: responseA?.activeAccountSessionToken,
-        };
-
-        /* positions */
-        const litActionCodeB = litActions.ig.getPositions(
-          env,
-          auth,
-        );
-
-        const litActionCallB = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeB,
-          listActionCodeParams: {},
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseB = litActionCallB?.response as any;
-
-        /* accounts */
-        const litActionCodeC = litActions.ig.getAccounts(
-          env,
-          auth,
-        );
-
-        const litActionCallC = await litClient.runLitAction({
-          chain: await this.nftCredentialService.getChain(),
-          litActionCode: litActionCodeC,
-          listActionCodeParams: {},
-          nodes: 1,
-          showLogs: true,
-        });
-
-        const responseC = litActionCallC?.response as any;
-
-        this.account = responseC?.find((res: any) => res.accountId === this.accountId);
-
-        // just to test with old credentials without this value (accountId)
-        // pending to delete
-        if (isNullOrUndefined(this.account)) {
-          this.account = responseC?.find((res: any) => res.preferred);
-        }
-
-        this.positions = responseB || [];
-
-        const currency: any = this.account.currency;
-        const accountCurrencySymbol = (this.currencyInfo as any)[currency || 'GBP']?.symbol;
-
-        // check to see if there are any assets other than the base currency of the account
-        const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
-
-        // console.log('diffAssets', diffAssets);
-
-        // good example to do, the demo account have 2 existing positions in USD and the other in GBP
-        if (diffAssets.length > 0) {
-          // pending to add the conversion and logic, etc
-        }
-
-        this.data.account.currencySymbol = accountCurrencySymbol;
-
-        // reset our portfolio
-        this.data.portfolio.raw = [];
-        this.data.portfolio.net = [];
-        // and reset our portfolio stats
-        this.data.portfolioStats.long = 0;
-        this.data.portfolioStats.short = 0;
-        this.data.portfolioStats.net = 0;
-
-        // loop through the positions to get the total existing exposure
-        for (const p in this.positions) {
-          if (p) {
-
-            let val = 0;
-            let direction = 'Neutral';
-            if (this.positions[p].position.direction === 'SELL') {
-              val = this.positions[p].market.bid * this.positions[p].position.contractSize;
-              direction = 'Short';
-              this.data.portfolioStats.short = this.data.portfolioStats.short + val;
-            } else {
-              val = this.positions[p].market.offer * this.positions[p].position.contractSize;
-              direction = 'Long';
-              this.data.portfolioStats.long = this.data.portfolioStats.long + val;
-            }
-            this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
-        
-
-            // always add the raw
-            const rawPosition = {
-              ticker: this.positions[p].market.epic,
-              size: this.positions[p].position.contractSize,
-              direction,
-              bid: this.positions[p].market.bid,
-              offer: this.positions[p].market.offer,
-              value: val,
-            }
-            this.data.portfolio.raw.push(rawPosition);
-
-            // create our net 
-            const existing = this.data.portfolio.net.filter(res => res.ticker === this.positions[p].market.epic) || [];
-            if (existing.length > 0) {
-              // console.log('existing position for ', this.positions[p].market.epic);
-
-                this.data.portfolio.net.filter(res => {
-                  // console.log('check the existing position for ', this.positions[p].market.epic);
-                  if (res.ticker === this.positions[p].market.epic) {
-
-                    // console.log('update the existing position for ', this.positions[p].market.epic);
-                    if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
-                      res.size = res.size - rawPosition.size; 
-                      res.value = res.value - rawPosition.value; 
-                    } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
-                      res.size = res.size + rawPosition.size; 
-                      res.value = res.value + rawPosition.value; 
-                    }
-
-                    // set the overall direction
-                    if (res.size > 0) {
-                      res.direction = 'Long';
-                    } else if (res.size < 0) {
-                      res.direction = 'Short';
-                    } else {
-                      res.direction = 'Neutral';
-                    }
-                    // console.log('updated res', res);
-                  }                
-                  return res;
-                })                
-            } else {
-
-              // console.log('add the new existing position for ', this.positions[p].market.epic);
-              // console.log('add the new existing position for ', rawPosition);
-              this.data.portfolio.net.push(rawPosition);
-            }
-
-          }
-        }
-        // console.log('this.data.portfolio', this.data.portfolio);
-
-        const accountBalance = this.account?.balance?.balance || 0;
-
-        this.data.account.balance = accountBalance;
-        this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
-
-        // update our total remaining portfolo 'space'
-        this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
-
-        this.cRef.detectChanges();
-      }
-
-      this.isLoading = false;
-
-    } catch (err: any) {
-      this.isLoading = false;
-    }
-  }
-
-  calcExistingPosition() {
-
-    // filter out our net portfolio
-    const netPositions = this.data.portfolio.net;
-    for (const p in netPositions) {
-      if (p) {
-        if (netPositions[p].ticker === this.data.asset.ticker) {
-          this.data.existingPosition.valueInBase = netPositions[p].value;
-          this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
-        }
-      }
-    }
-  }
-
   callEvents = () => {
     this.eventService.listen().subscribe(async (res: any) => {
       const event = res.type as EventType;
@@ -477,48 +253,20 @@ export default class TradingManagedIGFormComponent implements OnInit {
     });
   }
 
-  async requiredControl(valueChanged?: string) {
 
-    const credentialNftUuid = this.form.credentialNftUuid;
-    const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
+  // Data init
 
-    if (account) {
-      this.accountSelected = account;
-      this.form.broker = account.provider;
-      this.form.environment = account.environment;
-      this.cRef.detectChanges();
-    }
+  async getCredentials() {
+    this.isLoadingCredentials = true;
 
-    if (valueChanged === 'credential') {
-      await this.getAccountBalanceAndPositions();
-      await this.calcExistingPosition();
-      await this.defaultOrderCalcUsingtheAccountBalance();
-    }
+    const { pkpWalletAddress } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+      autoRedirect: true,
+    });
 
-    // this refreshes everything
-    this.refreshFormCalculation();
-
-    // replace this with a check for the order qty
-    if (
-      this.form.broker.length > 0 &&
-      this.form.ticker.length > 0 &&
-      this.form.ticker.length > 0 &&
-      this.form.direction.length > 0
-      // && this.form.quantity > 0
-    ) {
-      this.submitEnabled = true;
-    } else {
-      this.submitEnabled = false;
-    }
+    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+    this.allAccounts = this.allAccounts.filter(res => res.provider === this.broker);
+    this.isLoadingCredentials = false;
   }
-
-  submit = async () => {
-    // console.log('form', this.form);
-
-    if (this.form.broker?.toLowerCase() === 'binance') {
-      // await this.binancePlaceOrder();
-    }
-  };
 
   async decrypt() {
     try {
@@ -563,9 +311,19 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
-  accountBalanceLeveraged() {
-    // calculated leverage balance
-    this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;
+  // Calculation
+  calcExistingPosition() {
+
+    // filter out our net portfolio
+    const netPositions = this.data.portfolio.net;
+    for (const p in netPositions) {
+      if (p) {
+        if (netPositions[p].ticker === this.data.asset.ticker) {
+          this.data.existingPosition.valueInBase = netPositions[p].value;
+          this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
+        }
+      }
+    }
   }
 
   defaultOrderCalcUsingtheAccountBalance() {
@@ -732,25 +490,214 @@ export default class TradingManagedIGFormComponent implements OnInit {
   refreshFormCalculation() {
 
     // recalc the account leveraged account balance
-    this.accountBalanceLeveraged();
+    this.calcAccountBalanceAndPositions();
     this.calcExistingPosition();
     this.defaultOrderCalcUsingtheAccountBalance();
 
   }
 
-  expandCollapseOrderMenu(section: number) {
+  calcAccountBalanceAndPositions() {
+    const currency: any = this.account.currency;
+    const accountCurrencySymbol = (this.currencyInfo as any)[currency || 'GBP']?.symbol;
 
-    if (this.orderSummaryMenu[section]) {
-      this.orderSummaryMenu[section] = false;
-    } else {
-      this.orderSummaryMenu[section] = true;
+    // check to see if there are any assets other than the base currency of the account
+    const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
+
+    // console.log('diffAssets', diffAssets);
+
+    // good example to do, the demo account have 2 existing positions in USD and the other in GBP
+    if (diffAssets.length > 0) {
+      // pending to add the conversion and logic, etc
+    }
+
+    this.data.account.currencySymbol = accountCurrencySymbol;
+    this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;
+
+    // reset our portfolio
+    this.data.portfolio.raw = [];
+    this.data.portfolio.net = [];
+    // and reset our portfolio stats
+    this.data.portfolioStats.long = 0;
+    this.data.portfolioStats.short = 0;
+    this.data.portfolioStats.net = 0;
+
+    // loop through the positions to get the total existing exposure
+    for (const p in this.positions) {
+      if (p) {
+
+        let val = 0;
+        let direction = 'Neutral';
+        if (this.positions[p].position.direction === 'SELL') {
+          val = this.positions[p].market.bid * this.positions[p].position.contractSize;
+          direction = 'Short';
+          this.data.portfolioStats.short = this.data.portfolioStats.short + val;
+        } else {
+          val = this.positions[p].market.offer * this.positions[p].position.contractSize;
+          direction = 'Long';
+          this.data.portfolioStats.long = this.data.portfolioStats.long + val;
+        }
+        this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
+    
+
+        // always add the raw
+        const rawPosition = {
+          ticker: this.positions[p].market.epic,
+          size: this.positions[p].position.contractSize,
+          direction,
+          bid: this.positions[p].market.bid,
+          offer: this.positions[p].market.offer,
+          value: val,
+        }
+        this.data.portfolio.raw.push(rawPosition);
+
+        // create our net 
+        const existing = this.data.portfolio.net.filter(res => res.ticker === this.positions[p].market.epic) || [];
+        if (existing.length > 0) {
+          // console.log('existing position for ', this.positions[p].market.epic);
+
+            this.data.portfolio.net.filter(res => {
+              // console.log('check the existing position for ', this.positions[p].market.epic);
+              if (res.ticker === this.positions[p].market.epic) {
+
+                // console.log('update the existing position for ', this.positions[p].market.epic);
+                if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
+                  res.size = res.size - rawPosition.size; 
+                  res.value = res.value - rawPosition.value; 
+                } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
+                  res.size = res.size + rawPosition.size; 
+                  res.value = res.value + rawPosition.value; 
+                }
+
+                // set the overall direction
+                if (res.size > 0) {
+                  res.direction = 'Long';
+                } else if (res.size < 0) {
+                  res.direction = 'Short';
+                } else {
+                  res.direction = 'Neutral';
+                }
+                // console.log('updated res', res);
+              }                
+              return res;
+            })                
+        } else {
+
+          // console.log('add the new existing position for ', this.positions[p].market.epic);
+          // console.log('add the new existing position for ', rawPosition);
+          this.data.portfolio.net.push(rawPosition);
+        }
+
+      }
+    }
+    // console.log('this.data.portfolio', this.data.portfolio);
+
+    const accountBalance = this.account?.balance?.balance || 0;
+
+    this.data.account.balance = accountBalance;
+    this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
+
+    // update our total remaining portfolo 'space'
+    this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
+
+    this.cRef.detectChanges();
+  }
+
+  // IG Group Calls
+
+  async getIGAccountBalanceAndPositions() {
+    try {
+
+      this.isLoading = true;
+      await this.decrypt();
+
+      if (
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
+      ) {
+
+        this.accountId = this.credentials.accountId;
+
+        const env: 'demo' | 'prod' = 'demo';
+        const litActionCodeA = litActions.ig.checkCredentials(env);
+
+        /* credentials */
+        const listActionCodeParamsA = {
+          credentials: this.credentials,
+          form: {},
+        };
+
+        const litActionCallA = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseA = litActionCallA?.response as any;
+
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
+
+        /* positions */
+        const litActionCodeB = litActions.ig.getPositions(
+          env,
+          auth,
+        );
+
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseB = litActionCallB?.response as any;
+
+        /* accounts */
+        const litActionCodeC = litActions.ig.getAccounts(
+          env,
+          auth,
+        );
+
+        const litActionCallC = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeC,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseC = litActionCallC?.response as any;
+
+        this.account = responseC?.find((res: any) => res.accountId === this.accountId);
+
+        // just to test with old credentials without this value (accountId)
+        // pending to delete
+        if (isNullOrUndefined(this.account)) {
+          this.account = responseC?.find((res: any) => res.preferred);
+        }
+
+        this.positions = responseB || [];
+
+      }
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
     }
   }
 
-  expandOrderSummary(action: boolean) {
-    for (const i in this.orderSummaryMenu) {
-      this.orderSummaryMenu[i] = action;
-    }
+  refreshBrokerageData() {
+    this.refreshLoading = true;
+    this.callEvents();
+    this.refreshLoading = false;
   }
 
   async getIgEpic({ igAssetInfo }: any) {
@@ -780,11 +727,68 @@ export default class TradingManagedIGFormComponent implements OnInit {
     this.cRef.detectChanges();
   }
 
+  submit = async () => {
+    // console.log('form', this.form);
+  };
+
+  // Form related
+
   changePortfolioView() {
     if (this.viewPortfolio === 'net') {
       this.viewPortfolio = 'raw';
     } else {
       this.viewPortfolio = 'net';
+    }
+  }
+
+  expandCollapseOrderMenu(section: number) {
+
+    if (this.orderSummaryMenu[section]) {
+      this.orderSummaryMenu[section] = false;
+    } else {
+      this.orderSummaryMenu[section] = true;
+    }
+  }
+
+  expandOrderSummary(action: boolean) {
+    for (const i in this.orderSummaryMenu) {
+      this.orderSummaryMenu[i] = action;
+    }
+  }
+
+  async requiredControl(valueChanged?: string) {
+
+    const credentialNftUuid = this.form.credentialNftUuid;
+    const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
+
+    if (account) {
+      this.accountSelected = account;
+      this.form.broker = account.provider;
+      this.form.environment = account.environment;
+      this.cRef.detectChanges();
+    }
+
+    if (valueChanged === 'credential') {
+      await this.getIGAccountBalanceAndPositions();
+      await this.calcAccountBalanceAndPositions();
+      await this.calcExistingPosition();
+      await this.defaultOrderCalcUsingtheAccountBalance();
+    }
+
+    // this refreshes everything
+    this.refreshFormCalculation();
+
+    // replace this with a check for the order qty
+    if (
+      this.form.broker.length > 0 &&
+      this.form.ticker.length > 0 &&
+      this.form.ticker.length > 0 &&
+      this.form.direction.length > 0
+      // && this.form.quantity > 0
+    ) {
+      this.submitEnabled = true;
+    } else {
+      this.submitEnabled = false;
     }
   }
 
