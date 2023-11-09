@@ -5,11 +5,11 @@ import litClient from "src/app/scripts/Lit";
 
 import { EventService } from 'src/app/services/event.service';
 
-import { publicIp } from 'public-ip';
+// import { publicIp } from 'public-ip';
 
-import { environment } from 'src/environments/environment';
+// import { environment } from 'src/environments/environment';
 
-import { copyValue } from 'src/app/helpers/helpers';
+// import { copyValue } from 'src/app/helpers/helpers';
 
 // @ts-ignore
 import { blobToBase64String } from 'lit-js-sdk';
@@ -46,9 +46,10 @@ export default class AccountsIGComponent implements OnInit {
   submitted = false;
 
   isLoading = false;
+  isVerifying = false;
 
-  error: boolean = false;
-  errorMsg: string = '';
+  error = false;
+  errorMsg = '';
 
   accounts: Array<IAccount> = new Array<IAccount>();
 
@@ -88,7 +89,9 @@ export default class AccountsIGComponent implements OnInit {
   }
 
   async verifyForm() {
+    this.isVerifying = true;
     await this.verifyCredentials();
+    this.isVerifying = false;
   }
 
   submitForm() {

@@ -1,13 +1,13 @@
 <main class="flex-1 overflow-x-hidden overflow-y-auto right-container">
   <div class="container mx-auto px-6 py-8">
     <p class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
-      IG
+      IG Group
     </p>
 
     <div class="flex flex-col mt-8">
       <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
 
-        <p>In adding your IG account, you are creating an encrypted NFT which will reside in
+        <p>In adding your IG Group account, you are creating an encrypted NFT which will reside in
           your connected wallet. </p>
 
         <p>Only you can access and decrypt the NFT.</p>
@@ -20,7 +20,7 @@
         <form [formGroup]="form" (ngSubmit)="submitForm()">
           <div class="mb-6">
             <label for="publicApi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name (*)</label>
-            <input type="text" id="name" formControlName="name" placeholder="Custom name to difference your IG accounts"
+            <input type="text" id="name" formControlName="name" placeholder="Commong name for your reference"
               [ngClass]="
                 submitted && f['name'].errors
                   ? 'bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 focus:border-red-500 block w-full p-2.5 dark:bg-red-100 dark:border-red-400'
@@ -97,10 +97,26 @@
             </div>
           </div>
 
-          <div class="mb-6 text-right" *ngIf="!isLoading && (accounts.length <= 0)">
+          <div class="mb-6" *ngIf="!isLoading && (accounts.length <= 0)">
+            <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+      
+              <p>After verifying your credentials, you will be prompted to select a trading account.</p>
+      
+            </div>
+          </div>
+      
+      
+          <div class="mb-6 text-right" *ngIf="!isLoading && !isVerifying && (accounts.length <= 0)">
             <button (click)="verifyForm()" type="button"
               class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
               VERIFY KEYS
+            </button>
+          </div>
+
+          <div class="mb-6 text-right" *ngIf="isVerifying">
+            <button type="button"
+              class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
+              VERIFYING...
             </button>
           </div>
 
@@ -119,7 +135,7 @@
           <div class="mb-6 text-right" *ngIf="!isLoading && (accounts.length > 0) && accountId">
             <button (click)="mintCredential()" type="button"
               class="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">
-              MINT
+              SUBMIT
             </button>
           </div>
 

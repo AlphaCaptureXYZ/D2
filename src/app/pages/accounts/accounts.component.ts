@@ -66,6 +66,7 @@ export default class AccountsComponent implements OnInit {
         autoRedirect: true,
       });
       this.accounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress);
+      // console.log('this.accounts', this.accounts);
     } catch (err) {
       // console.log(err.message);
     }

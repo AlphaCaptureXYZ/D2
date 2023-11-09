@@ -56,9 +56,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   broker = 'IG';
   credentials: any;
   refreshLoading = false;
-
-
-  portfolio: any[];
+  viewPortfolio = 'net';
 
   accountSelected = null;
 
@@ -95,11 +93,13 @@ export default class TradingManagedIGFormComponent implements OnInit {
     false, // potential order
     true, // final adjusted order
     false, // existing portfolio
+    false, // portfolio summary
   ]
 
   data = {
     asset: {
       ticker: '',
+      name: '',
       price: {
         ask: 0,
         bid: 0,
@@ -119,6 +119,34 @@ export default class TradingManagedIGFormComponent implements OnInit {
       currentPortfolioAllocation: 0,
       remainingValue: 0,
     },
+    portfolio: {
+      net: [
+        {
+          ticker: '',
+          size: 0,
+          direction: '',
+          bid: 0,
+          offer: 0,
+          value: 0,
+        }
+      ],
+      raw: [
+        {
+          ticker: '',
+          size: 0,
+          direction: '',
+          bid: 0,
+          offer: 0,
+          value: 0,
+        }
+      ]
+    },
+    portfolioStats: {
+      long: 0,
+      short: 0,
+      net: 0,
+      remaining: 0,
+    },
     order: {
       default: {
         value: 0,
@@ -135,6 +163,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
         maxPortfolioValueExceededBy: 0,
         overrideLimits: false,
         exceedsMinQty: true,
+        maxPortfolioExposureExceeded: false,
+        maxPortfolioExposureExceededBy: 0,
       },
       potential: {
         direction: '',
@@ -194,7 +224,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
     };
     this.allAccounts = [];
     this.positions = [];
-    this.portfolio = [];
 
   }
 
@@ -308,7 +337,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         // check to see if there are any assets other than the base currency of the account
         const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
 
-        console.log('diffAssets', diffAssets);
+        // console.log('diffAssets', diffAssets);
 
         // good example to do, the demo account have 2 existing positions in USD and the other in GBP
         if (diffAssets.length > 0) {
@@ -318,57 +347,90 @@ export default class TradingManagedIGFormComponent implements OnInit {
         this.data.account.currencySymbol = accountCurrencySymbol;
 
         // reset our portfolio
-        this.portfolio = [];
+        this.data.portfolio.raw = [];
+        this.data.portfolio.net = [];
+        // and reset our portfolio stats
+        this.data.portfolioStats.long = 0;
+        this.data.portfolioStats.short = 0;
+        this.data.portfolioStats.net = 0;
 
         // loop through the positions to get the total existing exposure
         for (const p in this.positions) {
           if (p) {
 
             let val = 0;
+            let direction = 'Neutral';
             if (this.positions[p].position.direction === 'SELL') {
               val = this.positions[p].market.bid * this.positions[p].position.contractSize;
+              direction = 'Short';
+              this.data.portfolioStats.short = this.data.portfolioStats.short + val;
             } else {
               val = this.positions[p].market.offer * this.positions[p].position.contractSize;
+              direction = 'Long';
+              this.data.portfolioStats.long = this.data.portfolioStats.long + val;
             }
+            this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
+        
 
-            const pos = {
+            // always add the raw
+            const rawPosition = {
               ticker: this.positions[p].market.epic,
               size: this.positions[p].position.contractSize,
-              direction: this.positions[p].position.direction,
+              direction,
               bid: this.positions[p].market.bid,
               offer: this.positions[p].market.offer,
               value: val,
             }
-            this.portfolio.push(pos);
+            this.data.portfolio.raw.push(rawPosition);
+
+            // create our net 
+            const existing = this.data.portfolio.net.filter(res => res.ticker === this.positions[p].market.epic) || [];
+            if (existing.length > 0) {
+              // console.log('existing position for ', this.positions[p].market.epic);
+
+                this.data.portfolio.net.filter(res => {
+                  // console.log('check the existing position for ', this.positions[p].market.epic);
+                  if (res.ticker === this.positions[p].market.epic) {
+
+                    // console.log('update the existing position for ', this.positions[p].market.epic);
+                    if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
+                      res.size = res.size - rawPosition.size; 
+                      res.value = res.value - rawPosition.value; 
+                    } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
+                      res.size = res.size + rawPosition.size; 
+                      res.value = res.value + rawPosition.value; 
+                    }
+
+                    // set the overall direction
+                    if (res.size > 0) {
+                      res.direction = 'Long';
+                    } else if (res.size < 0) {
+                      res.direction = 'Short';
+                    } else {
+                      res.direction = 'Neutral';
+                    }
+                    // console.log('updated res', res);
+                  }                
+                  return res;
+                })                
+            } else {
+
+              // console.log('add the new existing position for ', this.positions[p].market.epic);
+              // console.log('add the new existing position for ', rawPosition);
+              this.data.portfolio.net.push(rawPosition);
+            }
+
           }
         }
+        // console.log('this.data.portfolio', this.data.portfolio);
 
         const accountBalance = this.account?.balance?.balance || 0;
 
         this.data.account.balance = accountBalance;
         this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
 
-        // get any existing position for the asset
-
-        // not sure what is the logic, is A, B or C?
-
-        // A) 
-        // const buyInfo = this.portfolio.filter(res => res.direction === 'BUY').reduce((a, b) => a + b.value, 0);
-        // const sellInfo = this.portfolio.filter(res => res.direction === 'SELL').reduce((a, b) => a + b.value, 0);
-        // const existingPositionValue = buyInfo - sellInfo;
-
-        // B)
-        // const existingPosition = this.portfolio.map(res => res.ticker === this.form.ticker)?.length;
-
-        // C)
-        // all incorrect :(
-
-        const existingPositionValue = 40;
-
-        if (existingPositionValue) {
-          this.data.existingPosition.valueInBase = existingPositionValue;
-          this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
-        }
+        // update our total remaining portfolo 'space'
+        this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
 
         this.cRef.detectChanges();
       }
@@ -377,6 +439,20 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     } catch (err: any) {
       this.isLoading = false;
+    }
+  }
+
+  calcExistingPosition() {
+
+    // filter out our net portfolio
+    const netPositions = this.data.portfolio.net;
+    for (const p in netPositions) {
+      if (p) {
+        if (netPositions[p].ticker === this.data.asset.ticker) {
+          this.data.existingPosition.valueInBase = netPositions[p].value;
+          this.data.existingPosition.currentPortfolioAllocation = this.data.existingPosition.valueInBase / this.data.account.leverageBalance * 100;
+        }
+      }
     }
   }
 
@@ -399,7 +475,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
           break;
       }
     });
-  };
+  }
 
   async requiredControl(valueChanged?: string) {
 
@@ -415,7 +491,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     if (valueChanged === 'credential') {
       await this.getAccountBalanceAndPositions();
-      await this.calculatePortfolioValueInBaseCurrency();
+      await this.calcExistingPosition();
       await this.defaultOrderCalcUsingtheAccountBalance();
     }
 
@@ -434,10 +510,10 @@ export default class TradingManagedIGFormComponent implements OnInit {
     } else {
       this.submitEnabled = false;
     }
-  };
+  }
 
   submit = async () => {
-    console.log('form', this.form);
+    // console.log('form', this.form);
 
     if (this.form.broker?.toLowerCase() === 'binance') {
       // await this.binancePlaceOrder();
@@ -487,19 +563,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
     }
   }
 
-  async calculatePortfolioValueInBaseCurrency() {
-    try {
-      const baseCurrency = this.account.currency;
-
-      this.isLoading = true;
-
-      this.isLoading = false;
-
-    } catch (err: any) {
-      this.isLoading = false;
-    }
-  }
-
   accountBalanceLeveraged() {
     // calculated leverage balance
     this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;
@@ -531,9 +594,18 @@ export default class TradingManagedIGFormComponent implements OnInit {
       this.data.order.calc.maxPortfolioValueExceededBy = 0;
     }
 
-
     // our remaining position size (related to the existing portfolio position) needs to be calculated here
     this.data.existingPosition.remainingValue = this.data.order.settings.maxPortfolioValue - this.data.existingPosition.valueInBase;
+
+    // now we check to see if our maximum (total/net) portfolio exposure would be exceeded
+    // this.data.portfolio.net
+    // this.data.account.leverageBalance
+    // maxPortfolioExposureExceeded
+    // this.data.order.default.valueWithConviction
+    if (this.data.order.default.valueWithConviction > this.data.portfolioStats.remaining) {
+      this.data.order.calc.maxPortfolioExposureExceeded = true;
+      this.data.order.calc.maxPortfolioExposureExceededBy = this.data.order.default.valueWithConviction - this.data.portfolioStats.remaining;
+    }
 
     // PRE
 
@@ -593,6 +665,18 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     } else {
 
+      let howBigAPositionCanWeHave = this.data.existingPosition.remainingValue;
+
+      // if our total portfolio exposure is exceeded, then this is ou
+      if (this.data.order.calc.maxPortfolioExposureExceeded) {
+
+        // if this is greater than the limit we can have for a single positionm 
+        // then we need to reduce our position
+        if (this.data.order.calc.maxPortfolioExposureExceededBy > howBigAPositionCanWeHave) {
+          howBigAPositionCanWeHave = howBigAPositionCanWeHave - this.data.order.calc.maxPortfolioExposureExceededBy; 
+        }
+      }
+
       // if the validations don't pass, we need to restrict the order value to the remaining position
       // unless the user explcitly says to do otherwise
       if (this.data.order.calc.maxPortfolioValueExceededBy) {
@@ -601,7 +685,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         if (!this.data.order.calc.overrideLimits) {
 
           // use the remaining value
-          this.data.order.final.value = this.data.existingPosition.remainingValue;
+          this.data.order.final.value = howBigAPositionCanWeHave;
           this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
           this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
           this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
@@ -649,6 +733,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     // recalc the account leveraged account balance
     this.accountBalanceLeveraged();
+    this.calcExistingPosition();
     this.defaultOrderCalcUsingtheAccountBalance();
 
   }
@@ -670,11 +755,13 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async getIgEpic({ igAssetInfo }: any) {
     this.assetInfo = igAssetInfo;
+    // console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
 
     // we can use the above for these...
     this.data.asset.ticker = this.form.ticker;
+    this.data.asset.name = this.assetInfo.instrumentName;
     this.data.asset.price.ask = this.assetInfo?.offer || 0;
     this.data.asset.price.bid = this.assetInfo?.bid || 0;
 
@@ -691,7 +778,15 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
     await this.requiredControl();
     this.cRef.detectChanges();
-  };
+  }
+
+  changePortfolioView() {
+    if (this.viewPortfolio === 'net') {
+      this.viewPortfolio = 'raw';
+    } else {
+      this.viewPortfolio = 'net';
+    }
+  }
 
 }
 
