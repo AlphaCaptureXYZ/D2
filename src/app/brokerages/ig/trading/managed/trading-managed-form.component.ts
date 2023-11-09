@@ -431,7 +431,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         // if this is greater than the limit we can have for a single positionm 
         // then we need to reduce our position
         if (this.data.order.calc.maxPortfolioExposureExceededBy > howBigAPositionCanWeHave) {
-          howBigAPositionCanWeHave = howBigAPositionCanWeHave - this.data.order.calc.maxPortfolioExposureExceededBy; 
+          howBigAPositionCanWeHave = howBigAPositionCanWeHave - this.data.order.calc.maxPortfolioExposureExceededBy;
         }
       }
 
@@ -488,7 +488,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   refreshFormCalculation() {
-
     // recalc the account leveraged account balance
     this.calcAccountBalanceAndPositions();
     this.calcExistingPosition();
@@ -537,7 +536,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
           this.data.portfolioStats.long = this.data.portfolioStats.long + val;
         }
         this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
-    
+
 
         // always add the raw
         const rawPosition = {
@@ -555,31 +554,31 @@ export default class TradingManagedIGFormComponent implements OnInit {
         if (existing.length > 0) {
           // console.log('existing position for ', this.positions[p].market.epic);
 
-            this.data.portfolio.net.filter(res => {
-              // console.log('check the existing position for ', this.positions[p].market.epic);
-              if (res.ticker === this.positions[p].market.epic) {
+          this.data.portfolio.net.filter(res => {
+            // console.log('check the existing position for ', this.positions[p].market.epic);
+            if (res.ticker === this.positions[p].market.epic) {
 
-                // console.log('update the existing position for ', this.positions[p].market.epic);
-                if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
-                  res.size = res.size - rawPosition.size; 
-                  res.value = res.value - rawPosition.value; 
-                } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
-                  res.size = res.size + rawPosition.size; 
-                  res.value = res.value + rawPosition.value; 
-                }
+              // console.log('update the existing position for ', this.positions[p].market.epic);
+              if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
+                res.size = res.size - rawPosition.size;
+                res.value = res.value - rawPosition.value;
+              } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
+                res.size = res.size + rawPosition.size;
+                res.value = res.value + rawPosition.value;
+              }
 
-                // set the overall direction
-                if (res.size > 0) {
-                  res.direction = 'Long';
-                } else if (res.size < 0) {
-                  res.direction = 'Short';
-                } else {
-                  res.direction = 'Neutral';
-                }
-                // console.log('updated res', res);
-              }                
-              return res;
-            })                
+              // set the overall direction
+              if (res.size > 0) {
+                res.direction = 'Long';
+              } else if (res.size < 0) {
+                res.direction = 'Short';
+              } else {
+                res.direction = 'Neutral';
+              }
+              // console.log('updated res', res);
+            }
+            return res;
+          })
         } else {
 
           // console.log('add the new existing position for ', this.positions[p].market.epic);
@@ -728,8 +727,88 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   submit = async () => {
-    // console.log('form', this.form);
+    await this.igPlaceOrder();
   };
+
+  async igPlaceOrder() {
+    try {
+
+      this.isLoading = true;
+
+      if (
+        !isNullOrUndefined(this.credentials?.username) &&
+        !isNullOrUndefined(this.credentials?.password) &&
+        !isNullOrUndefined(this.credentials?.apiKey)
+      ) {
+
+        const env: 'demo' | 'prod' = this.form.environment as any;
+        const litActionCodeA = litActions.ig.checkCredentials(env);
+
+        const listActionCodeParamsA = {
+          credentials: this.credentials,
+          form: this.form,
+        };
+
+        const litActionCallA = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeA,
+          listActionCodeParams: listActionCodeParamsA,
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseA = litActionCallA?.response as any;
+
+        const auth = {
+          apiKey: this.credentials?.apiKey,
+          cst: responseA?.clientSessionToken,
+          securityToken: responseA?.activeAccountSessionToken,
+        };
+
+        const epic = this.data.asset.ticker;
+        const quantity = this.data.order.final.quantity.rounded;
+        const direction = this.data.order.final.direction?.toUpperCase();
+
+        const litActionCodeB = litActions.ig.placeOrder(
+          env,
+          {
+            direction,
+            epic,
+            quantity,
+          },
+          auth,
+        );
+
+        const litActionCallB = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeB,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseB = litActionCallB?.response as any;
+
+        const orderId = responseB?.dealId || null;
+
+        if (responseB?.errorCode) {
+          alert(responseB?.errorCode);
+        }
+
+        if (orderId) {
+          alert(`Order placed successfully. OrderID: ${orderId}`);
+        }
+
+        this.cRef.detectChanges();
+
+      }
+
+      this.isLoading = false;
+
+    } catch (err: any) {
+      this.isLoading = false;
+    }
+  }
 
   // Form related
 
