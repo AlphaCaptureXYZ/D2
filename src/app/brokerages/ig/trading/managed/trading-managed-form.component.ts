@@ -775,6 +775,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
             direction,
             epic,
             quantity,
+            currencyCode: this.account?.currency,
           },
           auth,
         );

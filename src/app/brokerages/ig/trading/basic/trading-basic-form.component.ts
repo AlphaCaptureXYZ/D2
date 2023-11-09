@@ -18,6 +18,7 @@ import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { Subject, debounceTime } from 'rxjs';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
+import { IAccount } from '../../_shared/account.i';
 
 interface FormType {
   credentialNftUuid: string;
@@ -166,13 +167,9 @@ export default class TradingBasicIGFormComponent implements OnInit {
           securityToken: responseA?.activeAccountSessionToken,
         };
 
-        const litActionCodeB = litActions.ig.placeOrder(
+        /* accounts */
+        const litActionCodeB = litActions.ig.getAccounts(
           env,
-          {
-            direction: this.form.direction,
-            epic: this.form.asset,
-            quantity: this.form.quantity,
-          },
           auth,
         );
 
@@ -186,7 +183,30 @@ export default class TradingBasicIGFormComponent implements OnInit {
 
         const responseB = litActionCallB?.response as any;
 
-        const orderId = responseB?.dealId || null;
+        const account: IAccount = responseB?.find((res: any) => res.accountId === this.accountId);
+
+        const litActionCodeC = litActions.ig.placeOrder(
+          env,
+          {
+            direction: this.form.direction,
+            epic: this.form.asset,
+            quantity: this.form.quantity,
+            currencyCode: account.currency,
+          },
+          auth,
+        );
+
+        const litActionCallC = await litClient.runLitAction({
+          chain: await this.nftCredentialService.getChain(),
+          litActionCode: litActionCodeC,
+          listActionCodeParams: {},
+          nodes: 1,
+          showLogs: true,
+        });
+
+        const responseC = litActionCallC?.response as any;
+
+        const orderId = responseC?.dealId || null;
 
         if (responseB?.errorCode) {
           alert(responseB?.errorCode);

@@ -255,6 +255,7 @@ const placeOrder = (
         direction: string,
         epic: string,
         quantity: number,
+        currencyCode: string,
     },
     auth: {
         apiKey: string,
@@ -274,7 +275,7 @@ const placeOrder = (
             const options = {
                 method: 'POST',
                 body: JSON.stringify({
-                    currencyCode: 'USD',
+                    currencyCode: '${orderPayload.currencyCode}',
                     dealReference: dealReferenceGenerator(),
                     direction: '${orderPayload.direction.toUpperCase()}',
                     epic: '${orderPayload.epic}',
