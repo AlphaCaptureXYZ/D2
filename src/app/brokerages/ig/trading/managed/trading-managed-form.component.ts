@@ -17,9 +17,9 @@ import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticke
 
 import * as Helpers from 'src/app/helpers/helpers';
 
-import { IAssetInfo } from '../../_shared/asset-info.i';
-import { IPositionInfo } from '../../_shared/position.i';
-import { IAccount } from '../../_shared/account.i';
+import { IAssetInfo } from '../../_interfaces/asset-info.i';
+import { IPositionInfo } from '../../_interfaces/position.i';
+import { IAccount } from '../../_interfaces/account.i';
 
 interface FormType {
   credentialNftUuid: string,

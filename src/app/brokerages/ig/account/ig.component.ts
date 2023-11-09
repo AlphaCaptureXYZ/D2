@@ -30,7 +30,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 
-import { IAccount } from '../_shared/account.i';
+import { IAccount } from '../_interfaces/account.i';
 
 @Component({
   selector: 'app-accounts-ig',

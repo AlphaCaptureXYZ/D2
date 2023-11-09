@@ -18,7 +18,7 @@ import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 import { Subject, debounceTime } from 'rxjs';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
-import { IAccount } from '../../_shared/account.i';
+import { IAccount } from '../../_interfaces/account.i';
 
 interface FormType {
   credentialNftUuid: string;
