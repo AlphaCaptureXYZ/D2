@@ -22,8 +22,9 @@ import { IPositionInfo } from '../../_interfaces/position.i';
 import { IAccount } from '../../_interfaces/account.i';
 
 import {
-  defaultOrderCalc,
+  DirectionType,
   IOrderCalc,
+  OrderCalc,
 } from 'src/app/brokerages/shared/order-calc';
 
 interface FormType {
@@ -101,7 +102,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     false, // portfolio summary
   ]
 
-  data: IOrderCalc = defaultOrderCalc
+  data: IOrderCalc = OrderCalc.constants.defaultOrderCalc;
 
   constructor(
     private router: Router,
@@ -230,164 +231,16 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   defaultOrderCalcUsingtheAccountBalance() {
-
-    // updatye our override setting
-    this.data.order.calc.overrideLimits = this.form.orderLimits;
-
-    // we're just calculating the default
-    this.data.order.default.portfolioAllocation = this.form.defaultOrderSize;
-    this.data.order.default.value = (this.form.defaultOrderSize / 100) * this.data.account.balance;
-    this.data.order.default.valueWithConviction = this.data.order.default.value * (this.form.conviction / 100);
-    this.data.order.settings.conviction = this.form.conviction;
-
-    //
-    this.data.order.settings.maxPortfolioSize = this.form.maxSizePortofolio;
-    this.data.order.settings.maxPortfolioValue = (this.data.order.settings.maxPortfolioSize / 100) * this.data.account.leverageBalance;
-
-    // does the calculated value exceed the max?
-    // we need the combined value of the order and the existing portfolio value
-    const aggregatePosition = this.data.existingPosition.valueInBase + this.data.order.default.valueWithConviction;
-    if (aggregatePosition > this.data.order.settings.maxPortfolioValue) {
-      this.data.order.calc.maxPortfolioValueExceeded = true;
-      this.data.order.calc.maxPortfolioValueExceededBy = this.data.order.default.valueWithConviction - this.data.order.settings.maxPortfolioValue;
-    } else {
-      this.data.order.calc.maxPortfolioValueExceeded = false;
-      this.data.order.calc.maxPortfolioValueExceededBy = 0;
-    }
-
-    // our remaining position size (related to the existing portfolio position) needs to be calculated here
-    this.data.existingPosition.remainingValue = this.data.order.settings.maxPortfolioValue - this.data.existingPosition.valueInBase;
-
-    // now we check to see if our maximum (total/net) portfolio exposure would be exceeded
-    // this.data.portfolio.net
-    // this.data.account.leverageBalance
-    // maxPortfolioExposureExceeded
-    // this.data.order.default.valueWithConviction
-    if (this.data.order.default.valueWithConviction > this.data.portfolioStats.remaining) {
-      this.data.order.calc.maxPortfolioExposureExceeded = true;
-      this.data.order.calc.maxPortfolioExposureExceededBy = this.data.order.default.valueWithConviction - this.data.portfolioStats.remaining;
-    }
-
-    // PRE
-
-    // the potential order size is that before any vaidations are appliued
-    this.data.order.potential.value = this.data.order.default.valueWithConviction;
-    this.data.order.potential.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.default.valueWithConviction;
-    this.data.order.potential.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-
-    // qty needs to be worked out based on the price
-    // if the direction 'buy' we using the bid
-    this.data.order.potential.direction = this.form.direction;
-
-    // and sell, we use the ask
-    if (this.data.order.potential.direction.toLowerCase() === 'sell') {
-      this.data.order.potential.price.type = 'sell';
-      this.data.order.potential.price.value = this.data.asset.price.bid;
-    } else {
-      this.data.order.potential.price.type = 'buy';
-      this.data.order.potential.price.value = this.data.asset.price.ask;
-    }
-
-    // now we have a price, we can work out the qty
-
-    this.data.order.potential.quantity = this.data.order.potential.value / this.data.order.potential.price.value;
-
-    // FINAL
-    // work out our final values
-
-    // qty needs to be worked out based on the price
-    // if the direction 'buy' we using the bid
-    this.data.order.final.direction = this.form.direction;
-
-    // are we above the minimum qty
-    if (this.data.order.final.quantity.raw < this.data.asset.minQty) {
-      this.data.order.calc.exceedsMinQty = true;
-    } else {
-      this.data.order.calc.exceedsMinQty = false;
-    }
-
-    // and sell, we use the ask
-    if (this.data.order.final.direction.toLowerCase() === 'sell') {
-      this.data.order.final.price.type = 'sell';
-      this.data.order.final.price.value = this.data.asset.price.bid;
-    } else {
-      this.data.order.final.price.type = 'buy';
-      this.data.order.final.price.value = this.data.asset.price.ask;
-    }
-
-    // allow for the min qty and exceeding any portfolio values (or not)
-    // if it's below the minimum, then everything goes to zero
-    if (!this.data.order.calc.exceedsMinQty) {
-
-      this.data.order.final.value = 0;
-      this.data.order.final.quantity.raw = 0;
-      this.data.order.final.quantity.rounded = 0;
-      this.data.order.final.orderSizePercentage = 0;
-
-    } else {
-
-      let howBigAPositionCanWeHave = this.data.existingPosition.remainingValue;
-
-      // if our total portfolio exposure is exceeded, then this is ou
-      if (this.data.order.calc.maxPortfolioExposureExceeded) {
-
-        // if this is greater than the limit we can have for a single positionm 
-        // then we need to reduce our position
-        if (this.data.order.calc.maxPortfolioExposureExceededBy > howBigAPositionCanWeHave) {
-          howBigAPositionCanWeHave = howBigAPositionCanWeHave - this.data.order.calc.maxPortfolioExposureExceededBy;
-        }
+    OrderCalc.functions.defaultOrderCalcUsingtheAccountBalance(
+      this.data,
+      {
+        orderLimits: this.form.orderLimits,
+        defaultOrderSize: this.form.defaultOrderSize,
+        conviction: this.form.conviction,
+        maxSizePortofolio: this.form.maxSizePortofolio,
+        direction: this.form.direction as DirectionType,
       }
-
-      // if the validations don't pass, we need to restrict the order value to the remaining position
-      // unless the user explcitly says to do otherwise
-      if (this.data.order.calc.maxPortfolioValueExceededBy) {
-
-        // if the user is overriding the settings we use the potential
-        if (!this.data.order.calc.overrideLimits) {
-
-          // use the remaining value
-          this.data.order.final.value = howBigAPositionCanWeHave;
-          this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
-          this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
-          this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-
-        } else {
-
-          // use the potential (without adjustment)
-          this.data.order.final.value = this.data.order.default.valueWithConviction;
-          this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
-          this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
-          this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-
-        }
-
-      } else {
-
-        this.data.order.final.value = this.data.order.default.valueWithConviction;
-        this.data.order.final.orderSizePercentage = this.data.order.final.value / this.data.account.leverageBalance * 100;
-        this.data.order.final.portfolio.value = this.data.existingPosition.valueInBase + this.data.order.final.value;
-        this.data.order.final.portfolio.allocation = this.data.order.potential.portfolio.value / this.data.account.leverageBalance * 100;
-
-      }
-
-      // now we have a price, we can work out the qty
-      this.data.order.final.quantity.raw = this.data.order.final.value / this.data.order.final.price.value;
-
-      // round the qty
-      if (this.data.asset.fractional) {
-        this.data.order.final.quantity.rounded = parseFloat(this.data.order.final.quantity.raw.toFixed(this.data.asset.decimals));
-      } else {
-        // if fraction isn't supported, then we need an int
-        this.data.order.final.quantity.rounded = Math.floor(this.data.order.final.quantity.raw);
-      }
-
-      // then we need to deal with custom qty and value
-      // if the validations all pass, then we can use our standard 
-
-
-    }
-
-
+    );
   }
 
   refreshFormCalculation() {
