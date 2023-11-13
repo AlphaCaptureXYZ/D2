@@ -248,7 +248,6 @@ const getAccounts = (
     return code;
 }
 
-
 const placeOrder = (
     env: EnvType,
     orderPayload: {
@@ -340,6 +339,35 @@ const placeOrder = (
     return code;
 }
 
+const closePosition = (
+    env: EnvType,
+    orderPayload: {
+        epic: string,
+        currencyCode: string,
+    },
+    auth: {
+        apiKey: string,
+        cst: string,
+        securityToken: string,
+    }
+) => {
+    const requestUrl = getApiUrl(env);
+
+    // do while loop 
+    // we do this before requesting positions as we need to make sure our positions are closed
+    // sometimes large positions can take a few tries to close
+
+    // loop
+    // get our existing positions
+    // note, that there may be multiple rows for any one position
+    // if the position row is 'buy', then we sell 
+    // and vice versa
+
+    // if there are no positons left, then we break
+    // or break after 5? retries
+
+}
+
 export {
     checkCredentials,
     getAssetsBySymbol,
@@ -347,4 +375,5 @@ export {
     getPositions,
     getAccounts,
     getMarketInfoByEpic,
+    closePosition,
 };
