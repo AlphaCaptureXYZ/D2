@@ -283,6 +283,9 @@ export default class AccountsIGComponent implements OnInit {
     if (!clientSessionToken || !activeAccountSessionToken) {
       this.error = true;
       this.errorMsg = 'Check the credentials or try again later.';
+    } else {
+      this.error = false;
+      this.errorMsg = '';
     }
 
   }
