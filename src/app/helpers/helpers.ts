@@ -202,3 +202,15 @@ export function countDecimals(value: number): number {
 	if(Math.floor(value) === value) return 0;
 	return value.toString().split(".")[1].length || 0;	
 }
+
+export function longShort(value: number): string {
+  let direction = 'long';
+
+  if (value === 0) {
+    direction = 'neutral';
+  } else if (value < 0) {
+    direction = 'short';
+  }
+
+  return direction;
+}

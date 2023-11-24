@@ -44,6 +44,7 @@
             <th scope="col" class="px-6 py-3">Account Name</th>
             <th scope="col" class="px-6 py-3">Credentials</th>
             <th scope="col" class="px-6 py-3">Orders</th>
+            <th scope="col" class="px-6 py-3">Positions</th>
             <th scope="col" class="px-6 py-3">Trade</th>
           </tr>
         </thead>
@@ -95,6 +96,9 @@
             </td>
             <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
               <span class="cursor-pointer" (click)="goToAccountOrders(account)">View</span>
+            </td>
+            <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
+              <span class="cursor-pointer" (click)="goToAccountPositions(account)">View</span>
             </td>
             <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
               <a routerLink="/trading/basic/{{ account.provider }}">Basic</a>

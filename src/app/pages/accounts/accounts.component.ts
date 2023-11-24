@@ -130,4 +130,15 @@ export default class AccountsComponent implements OnInit {
     const reference = account?.uuid;
     this.router.navigateByUrl(`accounts/${reference}/orders`);
   }
+
+  goToAccountPositions(account: any) {
+    const reference = account?.uuid || '';
+    const broker = account?.provider.toLowerCase() || '';
+
+    const rt = `accounts/${broker}/${reference}/positions`;
+    if (reference && broker) {
+      this.router.navigateByUrl(rt);
+    }
+  }
+  
 }
