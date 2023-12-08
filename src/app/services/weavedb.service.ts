@@ -19,6 +19,9 @@ import { IPaging } from '../interfaces/interfaces';
 
 const COLLECTION_NAME = 'D2-data';
 
+// new contract tx id to test
+const WEAVEDB_CONTRACT_TX_ID = '5_KIAVYCJeJj9d-fAJmCcNsPlMefjfoo4PUgk1JbLTA';
+
 type CollectionType =
     | 'setting'
     | 'trigger'
@@ -61,10 +64,8 @@ export class WeaveDBService {
     private async setupWeaveDB() {
         if (isNullOrUndefined(this.db)) {
 
-            const contractTxId = 'uItgIC0zhIGUM3uK0DPb__1TVb-2F5Q1awI2mVMICbk';
-
             this.db = new WeaveDB({
-                contractTxId,
+                contractTxId: WEAVEDB_CONTRACT_TX_ID,
                 nocache: true,
             });
 
@@ -306,6 +307,7 @@ export class WeaveDBService {
 
                         const nftStorageResult = await this.nftStorageService.retrieve({
                             cid,
+                            proxy: true,
                         });
 
                         info.data = nftStorageResult;

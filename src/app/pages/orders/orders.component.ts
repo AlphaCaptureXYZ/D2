@@ -120,21 +120,28 @@ export default class OrdersComponent implements OnInit {
 
       const provider = data?.provider;
       const additionalInfo = data?.result?.additionalInfo;
-      const response = data?.result?.response;
+
+      let response = data?.result?.response;
 
       const orderDirectionObj: any = {
         BUY: 'buy',
         SELL: 'sell',
       };
 
+      if (Array?.isArray(response)) {
+        if (response.length > 0) {
+          response = response[response.length - 1];
+        }
+      }
+
       order = {
         provider,
-        id: response?.orderId?.toString(),
+        id: response?.orderId?.toString() || response?.dealId?.toString() || null,
         ticker: response?.symbol,
-        direction: orderDirectionObj[response?.side] || null,
-        quantity: Number(response?.executedQty),
+        direction: orderDirectionObj[response?.side || response?.direction] || null,
+        quantity: Number(response?.executedQty || response?.size),
         price: Number(response?.fills?.find((res: any) => res)?.price || 0),
-        createdAt: response?.transactTime,
+        createdAt: response?.transactTime || response?.date,
         raw: data,
         environment: additionalInfo?.environment,
         nftIdLinked: additionalInfo?.nftId || null,
