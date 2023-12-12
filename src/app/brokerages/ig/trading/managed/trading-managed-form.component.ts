@@ -457,7 +457,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async getIgEpic({ igAssetInfo }: any) {
     this.assetInfo = igAssetInfo;
-    // console.log('this.assetInfo', this.assetInfo);
+    console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
 
@@ -522,6 +522,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
         };
 
         const epic = this.data.asset.ticker;
+        const expiry = '';
         const quantity = this.data.order.final.quantity.rounded;
         const direction = this.data.order.final.direction?.toUpperCase();
 
@@ -532,6 +533,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
             epic,
             quantity,
             currencyCode: this.account?.currency,
+            expiry,
           },
           auth,
         );

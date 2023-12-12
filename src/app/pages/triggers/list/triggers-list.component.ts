@@ -26,6 +26,7 @@ export default class TriggersListComponent implements OnInit {
     private weaveDBService: WeaveDBService,
     private pKPGeneratorService: PKPGeneratorService,
     private nftCredentialService: NFTCredentialService,
+    private router: Router,
   ) {
     this.triggers = [];
   }
@@ -52,6 +53,7 @@ export default class TriggersListComponent implements OnInit {
         const check = trigger?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
         return check;
       });
+      console.log('this.triggers', this.triggers);
 
     } catch (err) {
       this.isLoading = false;
@@ -73,4 +75,11 @@ export default class TriggersListComponent implements OnInit {
     this.isLoading = false;
 
   }
+
+  goTo(option: string) {
+    if (option === 'create-trigger') {
+      this.router.navigateByUrl('/triggers/create');
+    }
+  }
+
 }

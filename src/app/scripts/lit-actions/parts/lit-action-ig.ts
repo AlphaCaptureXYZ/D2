@@ -255,6 +255,7 @@ const placeOrder = (
         epic: string,
         quantity: number,
         currencyCode: string,
+        expiry: string,
     },
     auth: {
         apiKey: string,
@@ -278,7 +279,7 @@ const placeOrder = (
                     dealReference: dealReferenceGenerator(),
                     direction: '${orderPayload.direction.toUpperCase()}',
                     epic: '${orderPayload.epic}',
-                    expiry: 'DFB',
+                    expiry: '${orderPayload.expiry}',
                     orderType: 'MARKET',
                     size: '${orderPayload.quantity}',
                     guaranteedStop: false,

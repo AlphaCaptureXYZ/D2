@@ -6,9 +6,9 @@ const binanceUrlSelector = {
 };
 
 // for any reason this is not working
-// const proxyUrl = 'https://croupier.ixily.io/proxy';
+// const proxyUrl = 'https://croupier.alphacapture.xyz/proxy';
 
-const proxyUrl = 'https://ixily.io/api/proxy';
+const proxyUrl = 'https://alphacapture.xyz/api/proxy';
 
 /* <helpers> */
 const objectToQueryString = `

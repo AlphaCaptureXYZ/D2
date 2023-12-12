@@ -21,7 +21,7 @@ jobs:
   #       env:
   #         SLACK_CHANNEL: development
   #         SLACK_COLOR: 1BA9FF
-  #         SLACK_ICON: https://dii.ixily.io/assets/img/logo.png
+  #         SLACK_ICON: https://dii.alphacapture.xyz/assets/img/logo.png
   #         SLACK_MESSAGE: Deploying the DII site...
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification
@@ -62,7 +62,7 @@ jobs:
   #       env:
   #         SLACK_CHANNEL: development
   #         SLACK_COLOR: ${{ job.status }}
-  #         SLACK_ICON: https://dii.ixily.io/assets/img/logo.png
+  #         SLACK_ICON: https://dii.alphacapture.xyz/assets/img/logo.png
   #         SLACK_MESSAGE: DII site deployed, check the status from the Actions URL section.
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification
@@ -81,7 +81,7 @@ jobs:
   #       env:
   #         SLACK_CHANNEL: development
   #         SLACK_COLOR: E13F31
-  #         SLACK_ICON: https://dii.ixily.io/assets/img/logo.png
+  #         SLACK_ICON: https://d2.alphacapture.xyz/assets/img/logo.png
   #         SLACK_MESSAGE: The DII site was not deployed (¡error!), check the status from the Actions URL section to see and solve the error.
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification

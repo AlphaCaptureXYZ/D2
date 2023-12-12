@@ -56,6 +56,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
   symbolToSearchSub = new Subject<any>();
 
   epic: string;
+  expiry: string;
   assetInfo = null;
 
   accountId: string = null as any;
@@ -67,6 +68,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
     public cRef: ChangeDetectorRef
   ) {
     this.epic = null as any;
+    this.expiry = '' as any;
     this.isLoading = false;
     this.allAccounts = [];
     this.form = {
@@ -190,6 +192,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
           {
             direction: this.form.direction,
             epic: this.form.asset,
+            expiry: this.form.asset,
             quantity: this.form.quantity,
             currencyCode: account.currency,
           },
@@ -297,6 +300,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
 
   getIgEpic = ({ igAssetInfo }: any) => {
     this.assetInfo = igAssetInfo;
+    console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
     this.form.asset = this.epic;
     this.requiredControl();
