@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -16,7 +17,7 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 
 import * as litActions from 'src/app/scripts/lit-actions';
 import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
-import { Subject, debounceTime } from 'rxjs';
+import { Subject } from 'rxjs';
 import AppIgEpicInfoByTickerComponent from '../../_components/epic-info-by-ticker/epic-info-by-ticker.component';
 import { IAccount } from '../../_interfaces/account.i';
 
@@ -25,6 +26,7 @@ interface FormType {
   broker: string;
   environment: string;
   asset: string;
+  expiry: string,
   direction: string;
   quantity: number;
 }
@@ -76,6 +78,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
       broker: '',
       environment: 'prod',
       asset: '',
+      expiry: '',
       direction: 'buy',
       quantity: 1,
     };
@@ -122,13 +125,14 @@ export default class TradingBasicIGFormComponent implements OnInit {
       this.form.broker.length > 0 &&
       this.form.asset.length > 0 &&
       this.form.direction.length > 0 &&
+      this.form.expiry.length > 0 &&
       this.form.quantity > 0
     ) {
       this.submitEnabled = true;
     } else {
       this.submitEnabled = false;
     }
-  };
+  }
 
   submit = async () => {
     await this.igPlaceOrder();
@@ -192,7 +196,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
           {
             direction: this.form.direction,
             epic: this.form.asset,
-            expiry: this.form.asset,
+            expiry: this.form.expiry,
             quantity: this.form.quantity,
             currencyCode: account.currency,
           },
@@ -275,7 +279,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
       console.log('decrypt (error)', err?.message);
       alert(`You don't have access to this credential`);
     }
-  };
+  }
 
   callEvents = () => {
     this.eventService.listen().subscribe(async (res: any) => {
@@ -284,12 +288,13 @@ export default class TradingBasicIGFormComponent implements OnInit {
 
       switch (event) {
         case 'TO_BASIC':
-          //console.log('data', data)
+          console.log('data', data)
           this.form = {
             credentialNftUuid: data.uuid,
             broker: this.form.broker,
             environment: this.form.environment,
             asset: data.asset,
+            expiry: data.expiry,
             direction: 'buy',
             quantity: 1,
           }
@@ -303,6 +308,7 @@ export default class TradingBasicIGFormComponent implements OnInit {
     console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
     this.form.asset = this.epic;
+    this.form.expiry = this.epic;
     this.requiredControl();
     this.cRef.detectChanges();
   };
