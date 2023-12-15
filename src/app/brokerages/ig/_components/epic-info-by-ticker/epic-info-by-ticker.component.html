@@ -1,3 +1,5 @@
+<!-- eslint-disable @angular-eslint/template/click-events-have-key-events -->
+<!-- eslint-disable @angular-eslint/template/interactive-supports-focus -->
 <div *ngIf="uuid && accountSelected">
     <div class="mb-6">
         <label for="asset" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Search asset by symbol/ticker/epic 
@@ -21,7 +23,6 @@
             </svg>
             <span class="sr-only">Loading...</span>
         </div>
-        Loading
     </div>
 
     <div *ngIf="igAssets.length > 0">

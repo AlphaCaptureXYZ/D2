@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -94,6 +95,7 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
 
         this.env = this.credentials?.env || 'demo';
         const litActionCodeA = litActions.ig.checkCredentials(this.env);
+        console.log('litActionCodeA', litActionCodeA);
 
         const listActionCodeParamsA = {
           credentials: this.credentials,
@@ -133,6 +135,7 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
         const responseB = litActionCallB?.response as any;
 
         this.igAssets = responseB || [];
+        console.log('this.igAssets', this.igAssets);
 
         this.cRef.detectChanges();
       }
@@ -223,7 +226,7 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
       console.log('decrypt (error)', err?.message);
       alert(`You don't have access to this credential`);
     }
-  };
+  }
 
   async selectAssetInfo(assetInfo: any) {
     this.assetInfo = assetInfo;
@@ -239,5 +242,5 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
     });
 
     this.cRef.detectChanges();
-  };
+  }
 }
