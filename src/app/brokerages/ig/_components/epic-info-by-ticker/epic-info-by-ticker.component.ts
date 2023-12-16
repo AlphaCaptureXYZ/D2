@@ -92,10 +92,9 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
         !isNullOrUndefined(this.credentials?.password) &&
         !isNullOrUndefined(this.credentials?.apiKey)
       ) {
-
-        this.env = this.credentials?.env || 'demo';
+        this.env = this.credentials?.env || this?.credentials?.environment || 'demo';
         const litActionCodeA = litActions.ig.checkCredentials(this.env);
-        console.log('litActionCodeA', litActionCodeA);
+        // console.log('litActionCodeA', litActionCodeA);
 
         const listActionCodeParamsA = {
           credentials: this.credentials,
@@ -135,7 +134,7 @@ export default class AppIgEpicInfoByTickerComponent implements OnInit {
         const responseB = litActionCallB?.response as any;
 
         this.igAssets = responseB || [];
-        console.log('this.igAssets', this.igAssets);
+        // console.log('this.igAssets', this.igAssets);
 
         this.cRef.detectChanges();
       }
