@@ -113,28 +113,29 @@ export default class TradingManagedIGFormComponent implements OnInit {
     public cRef: ChangeDetectorRef,
   ) {
     this.epic = null as any;
+    this.allAccounts = [];
+    this.positions = [];
+
     this.form = {
       credentialNftUuid: '',
       broker: '',
       environment: 'prod',
       ticker: '',
       direction: 'buy',
-      // quantity: 1,
       conviction: 100,
-      // value: 0,
       orderLimits: false,
       maxLeverage: 1,
       defaultOrderSize: 2,
-      maxSizePortofolio: 10,
+      maxSizePortofolio: 5,
     };
-    this.allAccounts = [];
-    this.positions = [];
 
   }
 
   async ngOnInit() {
-    this.getCredentials();
-    this.callEvents();
+    this.localStoreSettings();
+
+    await this.getCredentials();
+    await this.callEvents();
   }
 
   callEvents = () => {
@@ -158,6 +159,42 @@ export default class TradingManagedIGFormComponent implements OnInit {
     });
   }
 
+  localStoreSettings() {
+    
+    const convictionStore = Number(localStorage.getItem('ig-conviction'));
+    if (convictionStore) {
+      this.form.conviction = convictionStore;
+      this.requiredControl('conviction');
+    }
+
+    const orderLimitStore = localStorage.getItem('ig-order-limits');
+    if (orderLimitStore !== '') {
+      // our value is a string
+      if (orderLimitStore === 'false') {
+        this.form.orderLimits = false;
+      } else {
+        this.form.orderLimits = true;
+      }
+      this.requiredControl('orderLimit');
+    }
+
+    const maxLeverageStore = Number(localStorage.getItem('ig-max-leverage'));
+    if (maxLeverageStore > 0) {
+      this.form.maxLeverage = maxLeverageStore;
+      this.requiredControl('leverage');
+    }
+
+    const orderSizeStore = Number(localStorage.getItem('ig-order-size'));
+    if (orderSizeStore > 0) {
+      this.form.defaultOrderSize = orderSizeStore;
+      this.requiredControl('orderSize');
+    }
+    const portfolioSizeStore = Number(localStorage.getItem('ig-max-portfolio-size'));
+    if (portfolioSizeStore > 0) {
+      this.form.maxSizePortofolio = portfolioSizeStore;
+      this.requiredControl('maxPositionSize');
+    }
+  }
 
   // Data init
 
@@ -221,6 +258,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   async getIGAccountBalanceAndPositions() {
     try {
 
+      // console.log('in getIGAccountBalanceAndPositions');
       this.isLoading = true;
       await this.decrypt();
 
@@ -231,8 +269,9 @@ export default class TradingManagedIGFormComponent implements OnInit {
       ) {
 
         this.accountId = this.credentials.accountId;
+        // console.log('this.credentials', this.credentials);
 
-        const env: 'demo' | 'prod' = 'demo';
+        const env = this.credentials.environment;
         const litActionCodeA = litActions.ig.checkCredentials(env);
 
         /* credentials */
@@ -262,6 +301,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
           env,
           auth,
         );
+        // console.log('litActionCodeB', litActionCodeB);
 
         const litActionCallB = await litClient.runLitAction({
           chain: await this.nftCredentialService.getChain(),
@@ -270,7 +310,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
           nodes: 1,
           showLogs: true,
         });
-
+        // console.log('litActionCallB?.response', litActionCallB);
         const responseB = litActionCallB?.response as any;
 
         /* accounts */
@@ -316,7 +356,6 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async getIgEpic({ igAssetInfo }: any) {
     this.assetInfo = igAssetInfo;
-    console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
     this.form.ticker = this.epic;
 
@@ -382,8 +421,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
         const epic = this.data.asset.ticker;
         const expiry = '';
-        const quantity = this.data.order.final.quantity.rounded;
-        const direction = this.data.order.final.direction?.toUpperCase();
+        const quantity = this.data.order.final.order.quantity.rounded;
+        const direction = this.data.order.final.order.direction?.toUpperCase();
 
         const litActionCodeB = litActions.ig.placeOrder(
           env,
@@ -454,6 +493,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   }
 
   async requiredControl(valueChanged?: string) {
+    // console.log('valueChanged in requiredControl', valueChanged);
 
     const credentialNftUuid = this.form.credentialNftUuid;
     const account = this.allAccounts?.find(res => res.uuid === credentialNftUuid);
@@ -465,12 +505,45 @@ export default class TradingManagedIGFormComponent implements OnInit {
       this.cRef.detectChanges();
     }
 
-    if (valueChanged === 'credential') {
-      await this.getIGAccountBalanceAndPositions();
-      await this.calcAccountBalanceAndPositions();
-      await this.calcExistingPosition();
-      await this.defaultOrderCalcUsingtheAccountBalance();
-    }
+    switch (valueChanged) {
+      case 'credential': {
+        await this.getIGAccountBalanceAndPositions();
+        break;
+      }
+      case 'orderSize': {
+        if (Number(this.form.defaultOrderSize) > 0) {
+          this.data.order.default.portfolioAllocation = this.form.defaultOrderSize;
+          localStorage.setItem('ig-order-size', this.form.defaultOrderSize.toString());  
+          }
+        break;
+      }
+      case 'conviction': {
+        if (Number(this.form.conviction) > 0) {
+          this.data.order.settings.conviction = this.form.conviction;
+          localStorage.setItem('ig-conviction', this.form.conviction.toString());
+          }
+        break;
+      }
+      case 'leverage': {
+        if (Number(this.form.maxLeverage) > 0) {
+          this.data.account.leverage = this.form.maxLeverage;
+          localStorage.setItem('ig-max-leverage', this.form.maxLeverage.toString());
+          }
+        break;
+      }
+      case 'maxPositionSize': {
+        if (Number(this.form.maxSizePortofolio) > 0) {
+          this.data.order.settings.maxPortfolioSize = this.form.maxSizePortofolio;
+          localStorage.setItem('ig-max-portfolio-size', this.form.maxSizePortofolio.toString());
+          }
+        break;
+      }
+      case 'orderLimit': {
+        this.data.order.calc.overrideLimits = this.form.orderLimits;
+        localStorage.setItem('ig-order-limits', this.form.orderLimits.toString());
+        break;
+      }
+    }    
 
     // this refreshes everything
     this.refreshFormCalculation();
@@ -491,117 +564,45 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
 
   // Calculation
-  refreshFormCalculation() {
+  async refreshFormCalculation() {
     // recalc the account leveraged account balance
-    this.calcAccountBalanceAndPositions();
+    await this.calcAccountBalanceAndPositions();
     this.calcExistingPosition();
     this.defaultOrderCalcUsingtheAccountBalance();
   }
 
-  calcAccountBalanceAndPositions() {
-    const currency: any = this.account.currency;
-    const accountCurrencySymbol = (this.currencyInfo as any)[currency || 'GBP']?.symbol;
+  async calcAccountBalanceAndPositions() {
+    // console.log('this.account', this.account);
+    if (this.account) {
 
-    // check to see if there are any assets other than the base currency of the account
-    const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
-
-    // console.log('diffAssets', diffAssets);
-
-    // good example to do, the demo account have 2 existing positions in USD and the other in GBP
-    if (diffAssets.length > 0) {
-      // pending to add the conversion and logic, etc
-    }
-
-    this.data.account.currencySymbol = accountCurrencySymbol;
-    this.data.account.leverageBalance = this.data.account.balance * this.data.account.leverage;
-
-    // reset our portfolio
-    this.data.portfolio.raw = [];
-    this.data.portfolio.net = [];
-    // and reset our portfolio stats
-    this.data.portfolioStats.long = 0;
-    this.data.portfolioStats.short = 0;
-    this.data.portfolioStats.net = 0;
-
-    // loop through the positions to get the total existing exposure
-    for (const p in this.positions) {
-      if (p) {
-
-        let val = 0;
-        let direction = 'Neutral';
-        if (this.positions[p].position.direction === 'SELL') {
-          val = this.positions[p].market.bid * this.positions[p].position.contractSize;
-          direction = 'Short';
-          this.data.portfolioStats.short = this.data.portfolioStats.short + val;
-        } else {
-          val = this.positions[p].market.offer * this.positions[p].position.contractSize;
-          direction = 'Long';
-          this.data.portfolioStats.long = this.data.portfolioStats.long + val;
-        }
-        this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
-
-
-        // always add the raw
-        const rawPosition = {
-          ticker: this.positions[p].market.epic,
-          size: this.positions[p].position.contractSize,
-          direction,
-          bid: this.positions[p].market.bid,
-          offer: this.positions[p].market.offer,
-          value: val,
-        }
-        this.data.portfolio.raw.push(rawPosition);
-
-        // create our net 
-        const existing = this.data.portfolio.net.filter(res => res.ticker === this.positions[p].market.epic) || [];
-        if (existing.length > 0) {
-          // console.log('existing position for ', this.positions[p].market.epic);
-
-          this.data.portfolio.net.filter(res => {
-            // console.log('check the existing position for ', this.positions[p].market.epic);
-            if (res.ticker === this.positions[p].market.epic) {
-
-              // console.log('update the existing position for ', this.positions[p].market.epic);
-              if (rawPosition.direction === 'SELL' || rawPosition.direction === 'Short') {
-                res.size = res.size - rawPosition.size;
-                res.value = res.value - rawPosition.value;
-              } else if (rawPosition.direction === 'BUY' || rawPosition.direction === 'Long') {
-                res.size = res.size + rawPosition.size;
-                res.value = res.value + rawPosition.value;
-              }
-
-              // set the overall direction
-              if (res.size > 0) {
-                res.direction = 'Long';
-              } else if (res.size < 0) {
-                res.direction = 'Short';
-              } else {
-                res.direction = 'Neutral';
-              }
-              // console.log('updated res', res);
-            }
-            return res;
-          })
-        } else {
-
-          // console.log('add the new existing position for ', this.positions[p].market.epic);
-          // console.log('add the new existing position for ', rawPosition);
-          this.data.portfolio.net.push(rawPosition);
-        }
-
+      const currency: any = this.account?.currency;
+      const accountCurrencySymbol = (this.currencyInfo as any)[currency || 'GBP']?.symbol;
+  
+      // check to see if there are any assets other than the base currency of the account
+      const diffAssets = this.positions?.filter((res) => res.position.currency !== currency) || [];
+      // console.log('diffAssets', diffAssets);
+      // good example to do, the demo account have 2 existing positions in USD and the other in GBP
+      if (diffAssets.length > 0) {
+        // pending to add the conversion and logic, etc
       }
+  
+      // this needs to be our cash balance i.e. total cash +/- the current P&L
+      // console.log('account balances', this.account.balance);
+      const accountBalance = (this.account?.balance?.balance + this.account?.balance?.profitLoss) || 0;
+
+      this.data.account.currencySymbol = accountCurrencySymbol;
+      this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
+    
+      this.data.account.balance = accountBalance;
+      this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
+  
+      // update our raw positions
+      this.formatRawPositions();
+      this.formatNetPositions();
+      this.portfolioStats();
+  
+      this.cRef.detectChanges();      
     }
-    // console.log('this.data.portfolio', this.data.portfolio);
-
-    const accountBalance = this.account?.balance?.balance || 0;
-
-    this.data.account.balance = accountBalance;
-    this.data.account.leverageBalance = accountBalance * this.data.account.leverage;
-
-    // update our total remaining portfolo 'space'
-    this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
-
-    this.cRef.detectChanges();
   }
 
   calcExistingPosition() {
@@ -631,5 +632,129 @@ export default class TradingManagedIGFormComponent implements OnInit {
     );
   }
 
-}
+  formatRawPositions() {
+    // reset our portfolio
+    this.data.portfolio.raw.length = 0;
 
+    const rawPositions = [];
+
+    // loop through the positions to get the total existing exposure
+    for (const p in this.positions) {
+      if (p) {
+
+        let val = 0;
+        let direction = 'Neutral';
+        if (this.positions[p].position.direction === 'SELL') {
+          val = this.positions[p].market.bid * this.positions[p].position.dealSize;
+          direction = 'Short';
+          this.data.portfolioStats.short = this.data.portfolioStats.short + val;
+        } else if (this.positions[p].position.direction === 'BUY') {
+          val = this.positions[p].market.offer * this.positions[p].position.dealSize;
+          direction = 'Long';
+          this.data.portfolioStats.long = this.data.portfolioStats.long + val;
+        }
+        this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
+
+        // always add the raw
+        const rawPosition = {
+          deal: this.positions[p].position.dealId,
+          ticker: this.positions[p].market.epic,
+          size: this.positions[p].position.dealSize,
+          direction,
+          bid: this.positions[p].market.bid,
+          offer: this.positions[p].market.offer,
+          value: val,
+        }
+        rawPositions.push(rawPosition);
+      }
+    }
+
+    this.data.portfolio.raw = rawPositions;
+
+    // console.log('this.data.portfolio', this.data.portfolio);
+    // console.log('in raw positions', this.data.portfolio.raw);
+
+  }
+
+  formatNetPositions() {
+    this.data.portfolio.net.length = 0;
+    const rawPositions = this.data.portfolio.raw;
+
+    for (const p in rawPositions) {
+      if (p) {
+
+        const currentTicker = rawPositions[p].ticker;
+
+        let inNet = false;
+        for (const n in this.data.portfolio.net) {
+          if (n) {
+
+            if (this.data.portfolio.net[n].ticker === currentTicker) {
+
+              inNet = true;
+
+              if (rawPositions[p].direction === 'SELL' || rawPositions[p].direction === 'Short') {
+                this.data.portfolio.net[n].size = this.data.portfolio.net[n].size - rawPositions[p].size;
+                this.data.portfolio.net[n].value = this.data.portfolio.net[n].value - rawPositions[p].value;
+              } else if (rawPositions[p].direction === 'BUY' || rawPositions[p].direction === 'Long') {
+                this.data.portfolio.net[n].size = this.data.portfolio.net[n].size + rawPositions[p].size;
+                this.data.portfolio.net[n].value = this.data.portfolio.net[n].value + rawPositions[p].value;
+              }
+
+              // set the overall direction
+              if (this.data.portfolio.net[n].size > 0) {
+                this.data.portfolio.net[n].direction = 'Long';
+              } else if (this.data.portfolio.net[n].size < 0) {
+                this.data.portfolio.net[n].direction = 'Short';
+              } else {
+                this.data.portfolio.net[n].direction = 'Neutral';
+              }
+
+            }
+          }
+        }
+
+        if (!inNet) {
+          const netPosition = {
+            ticker: rawPositions[p].ticker,
+            size: rawPositions[p].size,
+            direction: rawPositions[p].direction,
+            bid: rawPositions[p].bid,
+            offer: rawPositions[p].offer,
+            value: rawPositions[p].value,
+          }
+          this.data.portfolio.net.push(netPosition);
+        }
+    
+      }
+    }
+
+    // console.log('in net positions', this.data.portfolio.net);
+
+  }
+  
+  portfolioStats() {
+    // and reset our portfolio stats
+    this.data.portfolioStats.long = 0;
+    this.data.portfolioStats.short = 0;
+    this.data.portfolioStats.net = 0;
+
+    for (const m in this.data.portfolio.net) {
+      if (m) {
+        if (this.data.portfolio.net[m].direction === 'Long') {
+          this.data.portfolioStats.long = this.data.portfolioStats.long + this.data.portfolio.net[m].value;
+        } else if (this.data.portfolio.net[m].direction === 'Short') {
+          this.data.portfolioStats.short = this.data.portfolioStats.short + this.data.portfolio.net[m].value;
+        }
+      }
+    }
+
+    // net positions
+    this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
+
+    // update our total remaining portfolo 'space'
+    this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
+    // console.log('in portfolioStats', this.data.portfolioStats);
+  }
+
+}

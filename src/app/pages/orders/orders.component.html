@@ -114,7 +114,7 @@
                         *ngFor="let order of orders">
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
                             (click)="setRawInfo(order)">
-                            {{( order.provider | titlecase) || "-" }}
+                            {{( order.provider ) || "-" }}
                         </td>
                         <th
                             scope="row"

@@ -20,6 +20,7 @@ interface IOrder {
   createdAt: number;
   nftIdLinked: number;
   environment: 'demo' | 'prod';
+  status: string,
   raw: any;
 }
 
@@ -112,7 +113,8 @@ export default class OrdersComponent implements OnInit {
     }
 
     this.totalOrders = ordersData?.total || 0;
-    let orders = ordersData?.data;
+    const orders = ordersData?.data;
+    console.log('orders data', orders);
 
     this.orders = orders?.map((data: any) => {
 
@@ -143,6 +145,7 @@ export default class OrdersComponent implements OnInit {
         price: Number(response?.fills?.find((res: any) => res)?.price || 0),
         createdAt: response?.transactTime || response?.date,
         raw: data,
+        status: response?.dealStatus,
         environment: additionalInfo?.environment,
         nftIdLinked: additionalInfo?.nftId || null,
       }

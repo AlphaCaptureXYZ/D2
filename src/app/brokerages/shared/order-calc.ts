@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from "src/app/helpers/helpers"
+import { decimalAdjust } from 'src/app/helpers/helpers';
 
 export type DirectionType = 'buy' | 'sell';
 
@@ -69,13 +69,15 @@ export interface IOrderCalc {
       maxPortfolioExposureExceededBy: number,
     },
     potential: {
-      direction: string,
-      value: number,
-      quantity: number,
-      orderSizePercentage: number,
       portfolio: {
         value: number,
         allocation: number,
+      },
+      order: {
+        direction: string,
+        value: number,
+        quantity: number,
+        percentage: number,
       },
       price: {
         value: number,
@@ -83,13 +85,15 @@ export interface IOrderCalc {
       }
     },
     final: {
-      direction: DirectionType,
-      value: number,
-      quantity: {
-        raw: number,
-        rounded: number,
+      order: {
+        percentage: number,
+        quantity: {
+          raw: number,
+          rounded: number,
+        },
+        direction: DirectionType,
+        value: number,
       },
-      orderSizePercentage: number,
       portfolio: {
         value: number,
         allocation: number,
@@ -173,13 +177,15 @@ const defaultOrderCalc: IOrderCalc = {
       maxPortfolioExposureExceededBy: 0,
     },
     potential: {
-      direction: '',
-      value: 0,
-      quantity: 0,
-      orderSizePercentage: 0,
       portfolio: {
         value: 0,
         allocation: 0,
+      },
+      order: {
+        direction: '',
+        value: 0,
+        quantity: 0,
+        percentage: 0,
       },
       price: {
         value: 0,
@@ -187,13 +193,15 @@ const defaultOrderCalc: IOrderCalc = {
       }
     },
     final: {
-      direction: null as any,
-      value: 0,
-      quantity: {
-        raw: 0,
-        rounded: 0,
+      order: {
+        percentage: 0,
+        quantity: {
+          raw: 0,
+          rounded: 0,
+        },
+        direction: null as any,
+        value: 0,
       },
-      orderSizePercentage: 0,
       portfolio: {
         value: 0,
         allocation: 0,
@@ -217,131 +225,74 @@ const defaultOrderCalcUsingtheAccountBalance = (
   }
 ): any => {
 
-  // updatye our override setting
-  initialObject.order.calc.overrideLimits =
-    valuesToSet.orderLimits;
+  try{
 
-  // we're just calculating the default
-  initialObject.order.default.portfolioAllocation =
-    valuesToSet.defaultOrderSize;
+    // update our  setting
+    initialObject.order.calc.overrideLimits = valuesToSet.orderLimits;
 
-  initialObject.order.default.value =
-    (valuesToSet.defaultOrderSize / 100) * initialObject.account.balance;
+    // DEFAULT ORDER SIZE
+    initialObject.order.default.portfolioAllocation = valuesToSet.defaultOrderSize;
+    initialObject.order.default.value = (valuesToSet.defaultOrderSize / 100) * initialObject.account.leverageBalance;
+    initialObject.order.default.valueWithConviction = initialObject.order.default.value * (valuesToSet.conviction / 100);
+    initialObject.order.settings.conviction = valuesToSet.conviction;
+    initialObject.order.settings.maxPortfolioSize = valuesToSet.maxSizePortofolio;
+    initialObject.order.settings.maxPortfolioValue = (initialObject.order.settings.maxPortfolioSize / 100) * initialObject.account.leverageBalance;
 
-  initialObject.order.default.valueWithConviction =
-    initialObject.order.default.value * (valuesToSet.conviction / 100);
+    // EXISTING POSITION SIZE IN THE PORTFOLIO + OUR ORDER
+    const aggregatePosition = initialObject.existingPosition.valueInBase + initialObject.order.default.valueWithConviction;
 
-  initialObject.order.settings.conviction =
-    valuesToSet.conviction;
+    // our remaining position size (related to the existing portfolio position) needs to be calculated here
+    initialObject.existingPosition.remainingValue = initialObject.order.settings.maxPortfolioValue - initialObject.existingPosition.valueInBase;
+    initialObject.existingPosition.currentPortfolioAllocation = (initialObject.existingPosition.valueInBase / initialObject.account.leverageBalance) * 100 || 0;
 
-  initialObject.order.settings.maxPortfolioSize =
-    valuesToSet.maxSizePortofolio;
+    // CHECK THIS DOESN'T EXCEED OUR MAX PORTFOLIO VALUE
+    // does the calculated value exceed the max?
+    if (aggregatePosition > initialObject.order.settings.maxPortfolioValue) {
 
-  initialObject.order.settings.maxPortfolioValue =
-    (initialObject.order.settings.maxPortfolioSize / 100) * initialObject.account.leverageBalance;
+      initialObject.order.calc.maxPortfolioValueExceeded = true;
 
-  // does the calculated value exceed the max?
-  // we need the combined value of the order and the existing portfolio value
-  const aggregatePosition =
-    initialObject.existingPosition.valueInBase + initialObject.order.default.valueWithConviction;
+      initialObject.order.calc.maxPortfolioValueExceededBy =
+        initialObject.order.default.valueWithConviction -
+        initialObject.order.settings.maxPortfolioValue;
 
-  if (aggregatePosition > initialObject.order.settings.maxPortfolioValue) {
+    } else {
+      initialObject.order.calc.maxPortfolioValueExceeded = false;
+      initialObject.order.calc.maxPortfolioValueExceededBy = 0;
+    }
 
-    initialObject.order.calc.maxPortfolioValueExceeded = true;
+    // now we check to see if our maximum (total/net) portfolio exposure would be exceeded
+    if (initialObject.order.default.valueWithConviction > initialObject.portfolioStats.remaining) {
 
-    initialObject.order.calc.maxPortfolioValueExceededBy =
-      initialObject.order.default.valueWithConviction -
-      initialObject.order.settings.maxPortfolioValue;
+      initialObject.order.calc.maxPortfolioExposureExceeded = true;
 
-  } else {
-    initialObject.order.calc.maxPortfolioValueExceeded = false;
-    initialObject.order.calc.maxPortfolioValueExceededBy = 0;
-  }
+      initialObject.order.calc.maxPortfolioExposureExceededBy =
+        initialObject.order.default.valueWithConviction - initialObject.portfolioStats.remaining;
+    }
 
-  // our remaining position size (related to the existing portfolio position) needs to be calculated here
-  initialObject.existingPosition.remainingValue =
-    initialObject.order.settings.maxPortfolioValue - initialObject.existingPosition.valueInBase;
+    // POTENTIAL ORDER SIZE
+    // the potential order size is that before any vaidations are applied
+    initialObject.order.potential.order.value = initialObject.order.default.valueWithConviction;
+    initialObject.order.potential.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.default.valueWithConviction;
 
-  // now we check to see if our maximum (total/net) portfolio exposure would be exceeded
-  // initialObject.portfolio.net
-  // initialObject.account.leverageBalance
-  // maxPortfolioExposureExceeded
-  // initialObject.order.default.valueWithConviction
-  if (initialObject.order.default.valueWithConviction > initialObject.portfolioStats.remaining) {
+    initialObject.order.potential.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
 
-    initialObject.order.calc.maxPortfolioExposureExceeded = true;
+    // qty needs to be worked out based on the price
+    // if the direction 'buy' we using the bid
+    initialObject.order.potential.order.direction = valuesToSet.direction;
 
-    initialObject.order.calc.maxPortfolioExposureExceededBy =
-      initialObject.order.default.valueWithConviction - initialObject.portfolioStats.remaining;
-  }
+    // and sell, we use the ask
+    if (initialObject.order.potential.order.direction.toLowerCase() === 'sell') {
+      initialObject.order.potential.price.type = 'sell';
+      initialObject.order.potential.price.value = initialObject.asset.price.bid;
+    } else {
+      initialObject.order.potential.price.type = 'buy';
+      initialObject.order.potential.price.value = initialObject.asset.price.ask;
+    }
 
-  // PRE
-
-  // the potential order size is that before any vaidations are appliued
-  initialObject.order.potential.value =
-    initialObject.order.default.valueWithConviction;
-
-  initialObject.order.potential.portfolio.value =
-    initialObject.existingPosition.valueInBase + initialObject.order.default.valueWithConviction;
-
-  initialObject.order.potential.portfolio.allocation =
-    initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
-
-  // qty needs to be worked out based on the price
-  // if the direction 'buy' we using the bid
-  initialObject.order.potential.direction = valuesToSet.direction;
-
-  // and sell, we use the ask
-  if (initialObject.order.potential.direction.toLowerCase() === 'sell') {
-    initialObject.order.potential.price.type = 'sell';
-    initialObject.order.potential.price.value = initialObject.asset.price.bid;
-  } else {
-    initialObject.order.potential.price.type = 'buy';
-    initialObject.order.potential.price.value = initialObject.asset.price.ask;
-  }
-
-  // now we have a price, we can work out the qty
-
-  initialObject.order.potential.quantity =
-    initialObject.order.potential.value / initialObject.order.potential.price.value;
-
-  // FINAL
-  // work out our final values
-
-  // qty needs to be worked out based on the price
-  // if the direction 'buy' we using the bid
-  initialObject.order.final.direction =
-    valuesToSet.direction;
-
-  // are we above the minimum qty
-  if (initialObject.order.final.quantity.raw < initialObject.asset.minQty) {
-    initialObject.order.calc.exceedsMinQty = true;
-  } else {
-    initialObject.order.calc.exceedsMinQty = false;
-  }
-
-  // and sell, we use the ask
-  if (initialObject.order.final.direction.toLowerCase() === 'sell') {
-    initialObject.order.final.price.type = 'sell';
-    initialObject.order.final.price.value = initialObject.asset.price.bid;
-  } else {
-    initialObject.order.final.price.type = 'buy';
-    initialObject.order.final.price.value = initialObject.asset.price.ask;
-  }
-
-  // allow for the min qty and exceeding any portfolio values (or not)
-  // if it's below the minimum, then everything goes to zero
-  if (!initialObject.order.calc.exceedsMinQty) {
-
-    initialObject.order.final.value = 0;
-    initialObject.order.final.quantity.raw = 0;
-    initialObject.order.final.quantity.rounded = 0;
-    initialObject.order.final.orderSizePercentage = 0;
-
-  } else {
+    // now we have a price, we can work out the qty
+    initialObject.order.potential.order.quantity = initialObject.order.potential.order.value / initialObject.order.potential.price.value;
 
     let howBigAPositionCanWeHave = initialObject.existingPosition.remainingValue;
-
     // if our total portfolio exposure is exceeded, then this is ou
     if (initialObject.order.calc.maxPortfolioExposureExceeded) {
 
@@ -352,54 +303,87 @@ const defaultOrderCalcUsingtheAccountBalance = (
       }
     }
 
-    // if the validations don't pass, we need to restrict the order value to the remaining position
-    // unless the user explcitly says to do otherwise
-    if (initialObject.order.calc.maxPortfolioValueExceededBy) {
+    // FINAL CALC
 
-      // if the user is overriding the settings we use the potential
-      if (!initialObject.order.calc.overrideLimits) {
+    initialObject.order.final.order.direction = valuesToSet.direction;
 
-        // use the remaining value
-        initialObject.order.final.value = howBigAPositionCanWeHave;
-        initialObject.order.final.orderSizePercentage = initialObject.order.final.value / initialObject.account.leverageBalance * 100;
-        initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.value;
-        initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
+    // and sell, we use the ask
+    if (initialObject.order.final.order.direction.toLowerCase() === 'sell') {
+      initialObject.order.final.price.type = 'sell';
+      initialObject.order.final.price.value = initialObject.asset.price.bid;
+    } else {
+      initialObject.order.final.price.type = 'buy';
+      initialObject.order.final.price.value = initialObject.asset.price.ask;
+    }
 
-      } else {
+    // IF THE USER OVERRIDES, THEN NO RULES APPLY
+    if (initialObject.order.calc.overrideLimits) { 
 
-        // use the potential (without adjustment)
-        initialObject.order.final.value = initialObject.order.default.valueWithConviction;
-        initialObject.order.final.orderSizePercentage = initialObject.order.final.value / initialObject.account.leverageBalance * 100;
-        initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.value;
-        initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
-
-      }
+      initialObject.order.final.order.value = initialObject.order.default.valueWithConviction;
+      initialObject.order.final.order.percentage = initialObject.order.final.order.value / initialObject.account.leverageBalance * 100;
+      initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.order.value;
+      initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
 
     } else {
 
-      initialObject.order.final.value = initialObject.order.default.valueWithConviction;
-      initialObject.order.final.orderSizePercentage = initialObject.order.final.value / initialObject.account.leverageBalance * 100;
-      initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.value;
-      initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
+      // if the validations don't pass, we need to restrict the order value to the remaining position
+      // unless the user explcitly says to do otherwise
+      if (initialObject.order.calc.maxPortfolioValueExceededBy > 0) {
+          // use the remaining value
+          initialObject.order.final.order.value = howBigAPositionCanWeHave;
+          initialObject.order.final.order.percentage = initialObject.order.final.order.value / initialObject.account.leverageBalance * 100;
+          initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.order.value;
+          initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
+      } else {  
+          // use the potential (without adjustment)
+          initialObject.order.final.order.value = initialObject.order.default.valueWithConviction;
+          initialObject.order.final.order.percentage = initialObject.order.final.order.value / initialObject.account.leverageBalance * 100;
+          initialObject.order.final.portfolio.value = initialObject.existingPosition.valueInBase + initialObject.order.final.order.value;
+          initialObject.order.final.portfolio.allocation = initialObject.order.potential.portfolio.value / initialObject.account.leverageBalance * 100;
+      }      
 
     }
 
+    
     // now we have a price, we can work out the qty
-    initialObject.order.final.quantity.raw = initialObject.order.final.value / initialObject.order.final.price.value;
+    initialObject.order.final.order.quantity.raw = initialObject.order.final.order.value / initialObject.order.final.price.value;
 
     // round the qty
     if (initialObject.asset.fractional) {
-      initialObject.order.final.quantity.rounded = parseFloat(initialObject.order.final.quantity.raw.toFixed(initialObject.asset.decimals));
+
+      // decimals are reflected in the negative so...
+      const assetDecimalsNeg = 0 - initialObject.asset.decimals;
+
+      // initialObject.order.final.quantity.rounded = parseFloat(initialObject.order.final.quantity.raw.toFixed(initialObject.asset.decimals));
+      initialObject.order.final.order.quantity.rounded = decimalAdjust("floor", initialObject.order.final.order.quantity.raw, assetDecimalsNeg);
+
     } else {
       // if fraction isn't supported, then we need an int
-      initialObject.order.final.quantity.rounded = Math.floor(initialObject.order.final.quantity.raw);
+      initialObject.order.final.order.quantity.rounded = Math.floor(initialObject.order.final.order.quantity.raw);
     }
 
-    // then we need to deal with custom qty and value
-    // if the validations all pass, then we can use our standard 
+
+    // are we above the minimum qty
+    if (initialObject.order.final.order.quantity.rounded < initialObject.asset.minQty) {
+      initialObject.order.calc.exceedsMinQty = true;
+    } else {
+      initialObject.order.calc.exceedsMinQty = false;
+    }
+
+    // allow for the min qty and exceeding any portfolio values (or not)
+    // if it's below the minimum, then everything goes to zero
+    if (initialObject.order.calc.exceedsMinQty) {
+      initialObject.order.final.order.value = 0;
+      initialObject.order.final.order.quantity.raw = 0;
+      initialObject.order.final.order.quantity.rounded = 0;
+      initialObject.order.final.order.percentage = 0;
+    }
     return initialObject;
 
+  } catch(err) {
+    // console.log('error on order-calc', err);
   }
+
 }
 
 export const OrderCalc = {
