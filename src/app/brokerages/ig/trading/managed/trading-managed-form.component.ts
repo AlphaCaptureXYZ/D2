@@ -68,6 +68,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
   accountSelected = null;
 
   epic: string;
+  expiry: string;
 
   account: IAccount = null as any;
   assetInfo: IAssetInfo = null as any;
@@ -113,6 +114,7 @@ export default class TradingManagedIGFormComponent implements OnInit {
     public cRef: ChangeDetectorRef,
   ) {
     this.epic = null as any;
+    this.expiry = null as any;
     this.allAccounts = [];
     this.positions = [];
 
@@ -356,11 +358,14 @@ export default class TradingManagedIGFormComponent implements OnInit {
 
   async getIgEpic({ igAssetInfo }: any) {
     this.assetInfo = igAssetInfo;
+    // console.log('this.assetInfo', this.assetInfo);
     this.epic = igAssetInfo?.epic || null;
+    this.expiry = igAssetInfo?.expiry || null;
     this.form.ticker = this.epic;
 
     // we can use the above for these...
     this.data.asset.ticker = this.form.ticker;
+    // console.log('this.data', this.data);
     this.data.asset.name = this.assetInfo.instrumentName;
     this.data.asset.price.ask = this.assetInfo?.offer || 0;
     this.data.asset.price.bid = this.assetInfo?.bid || 0;
@@ -420,7 +425,8 @@ export default class TradingManagedIGFormComponent implements OnInit {
         };
 
         const epic = this.data.asset.ticker;
-        const expiry = '';
+        // expiry is very IG specific so we leave it out of the main obj
+        const expiry = this.expiry;
         const quantity = this.data.order.final.order.quantity.rounded;
         const direction = this.data.order.final.order.direction?.toUpperCase();
 
