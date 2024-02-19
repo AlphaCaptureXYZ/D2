@@ -51,6 +51,12 @@
     </div>
 
     <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+
+      <p
+      class="text-1xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-3xl mb-6">
+      Triggers / Copy Trade
+      </p>
+
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -65,10 +71,10 @@
           </tr>
         </thead>
 
-        <tbody *ngIf="!isLoading  && triggers.length > 0">
+        <tbody *ngIf="!isLoading  && triggersCopy.length > 0">
           <tr
             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-            *ngFor="let data of triggers"
+            *ngFor="let data of triggersCopy"
             routerLink="/triggers/{{ data.docId }}"
             >
             <th
@@ -95,17 +101,17 @@
           </tr>
         </tbody>
 
-          <tbody *ngIf="!isLoading && triggers.length === 0">
-            <tr
-              class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-              <th
-                scope="row"
-                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                colspan="4">
-                No triggers have been defined
-              </th>
-            </tr>
-          </tbody>
+        <tbody *ngIf="!isLoading && triggersCopy.length === 0">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              colspan="4">
+              No copy trade triggers have been defined
+            </th>
+          </tr>
+        </tbody>
 
         <tbody *ngIf="isLoading">
           <tr
@@ -120,6 +126,72 @@
         </tbody>
 
       </table>
+    </div>
+
+
+    <div class="relative overflow-x-auto shadow-md sm:rounded-lg mt-8">
+      <p
+      class="text-1xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-3xl mb-6">
+      Triggers / Telegram Notifications
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead
+          class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" class="px-6 py-3">Strategy</th>
+            <th scope="col" class="px-6 py-3">Action </th>
+            <th scope="col" class="px-6 py-3">Chat Id</th>
+            <th scope="col" class="px-6 py-3">Chat Token</th>
+            <th scope="col" class="px-6 py-3"></th>
+          </tr>
+        </thead>
+
+        <tbody *ngIf="!isLoading  && triggersTelegram.length > 0">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+            *ngFor="let data of triggersTelegram"
+            routerLink="/triggers/{{ data.docId }}"
+            >
+            <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
+            <td class="px-6 py-4">
+              Telegram Notification
+            </td>
+            <td class="px-6 py-4">{{ data.settings.chatId }}x</td>
+            <td class="px-6 py-4">{{ data.settings.chatToken }}%</td>
+            <td class="px-6 py-4">
+              <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
+            </td>
+          </tr>
+        </tbody>
+
+        <tbody *ngIf="!isLoading && triggersTelegram.length === 0">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              colspan="4">
+              No telegram notification triggers have been defined
+            </th>
+          </tr>
+        </tbody>
+
+        <tbody *ngIf="isLoading">
+          <tr
+            class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th
+              scope="row"
+              class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+              colspan="4">
+              <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
+            </th>
+          </tr>
+        </tbody>
+
+      </table>
+
+
     </div>
 
   </div>

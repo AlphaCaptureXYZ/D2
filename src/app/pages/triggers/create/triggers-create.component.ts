@@ -36,25 +36,34 @@ export default class TriggersCreateComponent implements OnInit {
   stage = 1;
   strategies = [] as CI.ITradeIdeaStrategy[];
   isLoading = false;
+  currentStrategy: any;
 
   allAccounts: any[];
 
   actions = [
+    {
+      option: 'telegram-notification',
+      label: 'Telegram Notification',
+    },
     {
       option: 'copy-trade',
       label: 'Copy Trade',
     },
   ];
 
-  defaulAction = 'copy-trade';
-
   form: FormGroup = new FormGroup({
-    action: new FormControl(this.defaulAction),
+    action: new FormControl(null),
     strategy: new FormControl(null),
+
+    // copy trade
     account: new FormControl(null),
     maximumLeverage: new FormControl(''),
     defaultOrderSize: new FormControl(''),
     maxSizePortofolio: new FormControl(''),
+
+    // telegram
+    chatId: new FormControl(''),
+    chatToken: new FormControl(''),
   });
 
   constructor(
@@ -72,12 +81,18 @@ export default class TriggersCreateComponent implements OnInit {
     await Promise.all([this.getStrategies(), this.getAccounts()]);
 
     this.form = this.formBuilder.group({
-      action: [this.defaulAction, Validators.required],
-      strategy: [this.strategies[0], Validators.required],
-      account: [this.allAccounts[0], Validators.required],
+      action: ['', Validators.required],
+      strategy: ['', Validators.required],
+
+      // copy trade
+      account: ['', Validators.required],
       maximumLeverage: ['', Validators.required],
       defaultOrderSize: ['', Validators.required],
       maxSizePortofolio: ['', Validators.required],
+
+      // telegram
+      chatId: ['', Validators.required],
+      chatToken: ['', Validators.required],
     });
   }
 
@@ -89,17 +104,32 @@ export default class TriggersCreateComponent implements OnInit {
 
   setStrategy() {
     if (this.form.get('strategy')?.valid) {
-      this.stage = 3;
+
+      this.currentStrategy = this.strategies.find(
+        (s) => s.reference === this.form.value.strategy
+      );
+      // console.log('this.currentStrategy', this.currentStrategy);
+
+      // if this is a copy trade, then we need to set the account
+      switch (this.form.value.action) {
+        case 'copy-trade':
+          this.stage = 3;
+          break;
+        case 'telegram-notification':
+          this.stage = 30;
+          break;  
+      }      
+
     }
   }
 
-  setAccount() {
+  setAccountCopyTrade() {
     if (this.form.get('account')?.valid) {
       this.stage = 4;
     }
   }
 
-  async setSettings() {
+  async setSettingsCopyTrade() {
     if (this.form.valid) {
       const userWallet = await getDefaultAccount();
 
@@ -145,9 +175,57 @@ export default class TriggersCreateComponent implements OnInit {
     }
   }
 
+  async setSettingsTelegram() {
+    console.log('test pre form valid check');
+    if (this.form.valid) {
+      const userWallet = await getDefaultAccount();
+      console.log('submit the form A', userWallet);
+
+      const strategy = this.strategies.find(
+        (s) => s.reference === this.form.value.strategy
+      );
+      console.log('submit the form B', strategy);
+    
+      if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.chatId) && !isNullOrUndefined(this.form.value.chatToken)) {
+        console.log('submit the form')
+        const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+          autoRedirect: true,
+        });
+
+        await this.weaveDBService.upsertData({
+          pkpKey: pkpPublicKey,
+          type: 'trigger',
+          userWallet,
+          jsonData: {
+            action: this.form.value.action,
+            strategy: {
+              reference: strategy?.reference,
+              name: strategy?.name,
+            },
+            settings: {
+              chatId: this.form.value.chatId,
+              chatToken: this.form.value.chatToken,
+            },
+          },
+          isCompressed: false,
+        });
+
+        this.stage = 5;
+
+        this.router.navigateByUrl('/triggers');
+      }
+    }    
+  }
+
+
+
   goBack() {
     // set our new action here
-    this.stage = this.stage - 1;
+    if (this.stage > 10) {
+      this.stage = 2;
+    } else {
+      this.stage = this.stage - 1;
+    }
   }
 
   goToSection(section: number) {
@@ -159,7 +237,7 @@ export default class TriggersCreateComponent implements OnInit {
     this.isLoading = true;
     // strategies the user has explicit access to
     this.strategies = await this.activService.listMyStrategies();
-    console.log('allStrategies', this.strategies);
+    // console.log('allStrategies', this.strategies);
     this.isLoading = false;
   }
 

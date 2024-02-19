@@ -748,18 +748,18 @@ export default class TradingManagedIGFormComponent implements OnInit {
     for (const m in this.data.portfolio.net) {
       if (m) {
         if (this.data.portfolio.net[m].direction === 'Long') {
-          this.data.portfolioStats.long = this.data.portfolioStats.long + this.data.portfolio.net[m].value;
+          this.data.portfolioStats.long = this.data.portfolioStats.long + Math.abs(this.data.portfolio.net[m].value);
         } else if (this.data.portfolio.net[m].direction === 'Short') {
-          this.data.portfolioStats.short = this.data.portfolioStats.short + this.data.portfolio.net[m].value;
+          this.data.portfolioStats.short = this.data.portfolioStats.short + Math.abs(this.data.portfolio.net[m].value);
         }
       }
     }
 
     // net positions
-    this.data.portfolioStats.net = this.data.portfolioStats.long - this.data.portfolioStats.short;
+    this.data.portfolioStats.net = this.data.portfolioStats.long - Math.abs(this.data.portfolioStats.short);
 
     // update our total remaining portfolo 'space'
-    this.data.portfolioStats.remaining = this.data.account.leverageBalance - this.data.portfolioStats.net;
+    this.data.portfolioStats.remaining = this.data.account.leverageBalance - Math.abs(this.data.portfolioStats.net);
     // console.log('in portfolioStats', this.data.portfolioStats);
   }
 

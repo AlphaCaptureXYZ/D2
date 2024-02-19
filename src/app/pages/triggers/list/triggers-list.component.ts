@@ -20,6 +20,8 @@ export default class TriggersListComponent implements OnInit {
 
   currentOption = 'triggers-view';
   triggers: any[];
+  triggersCopy: any[];
+  triggersTelegram: any[];
   isLoading = false;
 
   constructor(
@@ -29,6 +31,8 @@ export default class TriggersListComponent implements OnInit {
     private router: Router,
   ) {
     this.triggers = [];
+    this.triggersCopy = [];
+    this.triggersTelegram = [];  
   }
 
   async ngOnInit() {
@@ -53,7 +57,28 @@ export default class TriggersListComponent implements OnInit {
         const check = trigger?.pkpWalletAddress?.toLowerCase() === pkpWalletAddress?.toLowerCase();
         return check;
       });
-      console.log('this.triggers', this.triggers);
+
+      // split out the different type
+      for (const i in this.triggers) {
+        if (i) {
+          const trigger = this.triggers[i];
+          // console.log('trigger', trigger);
+
+          switch (trigger.action) {
+            case 'copy-trade':
+              this.triggersCopy.push(trigger);
+              break;
+            case 'telegram-notification':
+              this.triggersTelegram.push(trigger);
+              break;  
+          }      
+    
+        }
+      }
+
+      // console.log('this.triggers', this.triggers);
+      console.log('this.triggersCopy', this.triggersCopy);
+      console.log('this.triggersTelegram', this.triggersTelegram);
 
     } catch (err) {
       this.isLoading = false;

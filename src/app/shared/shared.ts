@@ -43,6 +43,7 @@ const getDefaultChainInfo = () => {
     ],
     blockExplorerUrls: ['https://mumbai.polygonscan.com'],
   };
+  // console.log('defaultChainInfo', defaultChainInfo);
 
   if (!environment.demoEnv) {
     defaultChainInfo = {

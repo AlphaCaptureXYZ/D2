@@ -79,7 +79,7 @@
     </ol> -->
 
     <form [formGroup]="form" (ngSubmit)="submitForm()">
-      <!-- Step One -->
+      <!-- Step One - set the action -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 1">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div>
@@ -95,17 +95,31 @@
                 </option>
               </select>
 
-              <p class="p-3">
-                A trade will be applied to your selected account or wallet
-                whenever an Investment Idea NFT is received.
-              </p>
 
-              <button
-                type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                (click)="setAction()">
-                Next
-              </button>
+              <span [ngSwitch]="form.value.action">
+                <span *ngSwitchCase="'copy-trade'" class="">  
+                  <p class="p-3">
+                    A trade will be applied to your selected account or wallet
+                    whenever an Investment Idea NFT is received.
+                  </p>
+                </span>
+                <span *ngSwitchCase="'telegram-notification'" class="">  
+                  <p class="p-3">
+                    Notifcations of idea creation (open/close/adjust) will be sent to the defined chat.
+                  </p>
+                </span>
+              </span>
+
+              <div class="mt-3">
+                <button
+                  type="submit"
+                  class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                  (click)="setAction()"
+                  [disabled]="!form.value.action"
+                  >
+                  Next
+                </button>
+              </div>
 
             </div>
 
@@ -113,9 +127,15 @@
         </div>
       </div>
 
-      <!-- Step Two -->
+      <!-- Step Two - set the strategy -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 2">
+
+        <ng-container *ngTemplateOutlet="selectedInfo"></ng-container>        
+
+
+
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
           <div>
             <div class="mb-6">
               <label
@@ -157,9 +177,18 @@
 
               <div class="text-left load" *ngIf="strategies.length > 0 && !isLoading">
 
-                <p class="p-3">
-                  All investment ideas within this strategy will be applied to your account.
-                </p>
+                <span [ngSwitch]="form.value.action">
+                  <span *ngSwitchCase="'copy-trade'" class="">  
+                    <p class="p-3">
+                      All investment ideas within this strategy will be applied to your account.
+                    </p>
+                  </span>
+                  <span *ngSwitchCase="'telegram-notification'" class="">  
+                    <p class="p-3">
+                      Notifcations of idea creation (open/close/adjust) will be sent to the defined chat.
+                    </p>
+                  </span>
+                </span>
 
                 <select
                   formControlName="strategy"
@@ -176,7 +205,9 @@
                   <button
                     type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                    (click)="setStrategy()">
+                    (click)="setStrategy()"
+                    [disabled]="!form.value.strategy"
+                    >
                     Next
                   </button>
                 </div>
@@ -191,7 +222,7 @@
         </div>
       </div>
 
-      <!-- Step Three -->
+      <!-- Step Three - copy trade - set the account -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 3">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div>
@@ -254,7 +285,7 @@
                   <button
                     type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                    (click)="setAccount()">
+                    (click)="setAccountCopyTrade()">
                     Next
                   </button>
                 </div>
@@ -269,19 +300,19 @@
         </div>
       </div>
 
-      <!-- Step Four -->
+      <!-- Step Four - copy trade - set the copy trade settings -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 4">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div>
             <div class="mb-6">
               <label
-                for="balance"
+                for="maximumLeverage"
                 class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Maximum
                 Leverage</label>
               <input
                 formControlName="maximumLeverage"
                 type="number"
-                id="balance"
+                id="maximumLeverage"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
 
@@ -352,10 +383,64 @@
               <button
                 type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                (click)="setSettings()">
+                (click)="setSettingsCopyTrade()"
+                [disabled]="!form.value.cmaxSizePortofolio || !form.value.defaultOrderSize || !form.value.maximumLeverage"                
+                >
                 Complete
               </button>
 
+            </div>
+
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Four - telegram - set the telegram settings -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 30">
+
+        <ng-container *ngTemplateOutlet="selectedInfo"></ng-container>        
+
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="chatId"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chat Id</label>
+              <input
+                formControlName="chatId"
+                type="text"
+                id="chatId"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="chatToken"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chat Token</label>
+              <input
+                  formControlName="chatToken"
+                  type="text"
+                  id="chatToken"
+                  required
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <p class="p-3">
+                Telegram chat settings come from the godfather.
+              </p>
+
+              <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                (click)="setSettingsTelegram()"
+
+                >
+                Complete
+              </button>
             </div>
 
             <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
@@ -379,3 +464,33 @@
     </form>
   </div>
 </main>
+
+
+
+<ng-template #selectedInfo>
+        <div class="-my-2 pb-8 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+
+          <label
+          for="strategy"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Action:</label>
+
+          <div class="text-left load mt-3 ml-4">
+            <span [ngSwitch]="form.value.action">
+              <span *ngSwitchCase="'copy-trade'" class="">Copy Trade</span>
+              <span *ngSwitchCase="'telegram-notification'" class="">Telegram Notification</span>
+            </span>
+          </div>
+        </div>
+
+        <div class="-my-2 pb-8 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8" *ngIf="stage > 2">
+
+          <label
+          for="strategy"
+          class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Strategy:</label>
+
+          <div class="text-left load mt-3 ml-4">
+            {{currentStrategy.name}}
+          </div>
+        </div>
+
+</ng-template>

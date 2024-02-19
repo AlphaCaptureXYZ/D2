@@ -34,8 +34,11 @@
             </th>
             <td class="w-3/4 px-6 py-4">
               <span [ngSwitch]="trigger.action">
-                <span *ngSwitchCase="'copy-trade'" class>
+                <span *ngSwitchCase="'copy-trade'" class="">
                   Copy Trade
+                </span>
+                <span *ngSwitchCase="'telegram-notification'" class="">
+                  Telegram Notification
                 </span>
               </span>
             </td>
@@ -57,13 +60,24 @@
               Account:
             </th>
             <td class="w-3/4 px-6 py-4">
-              <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
-                {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})
-              </a>
 
-              <a routerLink="/accounts" class="link hover:underline" *ngIf="!account?.accountName">
-                {{ trigger?.account?.reference }}
-              </a>
+              
+              <span [ngSwitch]="trigger.action">
+                <span *ngSwitchCase="'copy-trade'" class="">
+  
+                  <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
+                    {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})
+                  </a>
+    
+                  <a routerLink="/accounts" class="link hover:underline" *ngIf="!account?.accountName">
+                    {{ trigger?.account?.reference }}
+                  </a>
+      
+                </span>
+                <span *ngSwitchCase="'telegram-notification'" class="">
+                  N/A
+                </span>
+              </span>
 
             </td>
           </tr>

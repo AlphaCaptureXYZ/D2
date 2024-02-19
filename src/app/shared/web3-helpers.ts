@@ -17,7 +17,7 @@ export const WALLET_NETWORK_CHAIN_IDS_OPTS = {
   bnb: 56,
 };
 
-let supportedNetworkAllArrayObj = [
+const supportedNetworkAllArrayObj = [
   {
     name: 'polygon',
     testnet: false,
