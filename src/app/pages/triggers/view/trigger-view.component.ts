@@ -31,8 +31,15 @@ export default class TriggerViewComponent implements OnInit {
   maxPositionSizeIsEdit = signal(false);
   orderSizeIsEdit = signal(false);
 
+  chatIdIsEdit = signal(false);
+  chatTokenIsEdit = signal(false);
+
   isFullEdit = computed(() => {
     return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
+  });
+
+  isTelegramEdit = computed(() => {
+    return this.chatIdIsEdit() && this.chatTokenIsEdit();
   });
 
   constructor(
@@ -96,6 +103,7 @@ export default class TriggerViewComponent implements OnInit {
   }
 
   setEditable(field: string) {
+    // Copy Trade
     if (field === 'maxLeverage') {
       this.maxLeverageIsEdit.set(!this.maxLeverageIsEdit());
     }
@@ -105,6 +113,15 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'orderSize') {
       this.orderSizeIsEdit.set(!this.orderSizeIsEdit());
     }
+
+    // Telegram Notifications
+    if (field === 'chatId') {
+      this.chatIdIsEdit.set(!this.chatIdIsEdit());
+    }
+    if (field === 'chatToken') {
+      this.chatTokenIsEdit.set(!this.chatTokenIsEdit());
+    }
+
   }
 
   async updateTrigger() {
@@ -135,5 +152,9 @@ export default class TriggerViewComponent implements OnInit {
     this.maxLeverageIsEdit.set(false);
     this.maxPositionSizeIsEdit.set(false);
     this.orderSizeIsEdit.set(false);
+
+    this.chatIdIsEdit.set(false);
+    this.chatTokenIsEdit.set(false);
+
   }
 }

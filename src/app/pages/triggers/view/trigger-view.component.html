@@ -54,7 +54,7 @@
                 class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
           </tr>
 
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="trigger.action === 'copy-trade'">
             <th
               class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Account:
@@ -85,11 +85,76 @@
         </tbody>
       </table>
 
-      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2">
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'telegram-notification'">
+        Telegram Notification Settings
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'telegram-notification'">
+        <tbody>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Chat Id:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('chatId')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!chatIdIsEdit()">
+                {{trigger?.settings?.chatId}}
+              </span>
+              <span *ngIf="chatIdIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.chatId">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="chatIdIsEdit() && !isTelegramEdit()">
+                <i class="bx bx-check-circle ml-2"></i>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Chat Token:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('chatToken')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!chatTokenIsEdit()">
+                {{trigger?.settings?.chatToken}}
+              </span>
+              <span *ngIf="chatTokenIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.chatToken">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="chatTokenIsEdit() && !isTelegramEdit()">
+                <i class="bx bx-check-circle ml-2"></i>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isTelegramEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <i class="bx bx-check-circle cursor-pointer" (click)="updateTrigger()"></i>
+            </td>
+          </tr>
+
+
+        </tbody>
+      </table>
+
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'copy-trade'">
         Copy Trade Settings
       </p>
 
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'copy-trade'">
         <tbody>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
