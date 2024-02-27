@@ -143,6 +143,7 @@
             <th scope="col" class="px-6 py-3">Action </th>
             <th scope="col" class="px-6 py-3">Chat Id</th>
             <th scope="col" class="px-6 py-3">Chat Token</th>
+            <th scope="col" class="px-6 py-3">Thread Id</th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
@@ -159,6 +160,7 @@
             </td>
             <td class="px-6 py-4">{{ data.settings.chatId }}</td>
             <td class="px-6 py-4">{{ data.settings.chatToken }}</td>
+            <td class="px-6 py-4">{{ data.settings.threadId }}</td>
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
             </td>

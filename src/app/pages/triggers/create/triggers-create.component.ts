@@ -64,6 +64,7 @@ export default class TriggersCreateComponent implements OnInit {
     // telegram
     chatId: new FormControl(''),
     chatToken: new FormControl(''),
+    threadId: new FormControl(''),
   });
 
   constructor(
@@ -93,6 +94,7 @@ export default class TriggersCreateComponent implements OnInit {
       // telegram
       chatId: ['', Validators.required],
       chatToken: ['', Validators.required],
+      threadId: ['', Validators.required],
     });
   }
 
@@ -179,15 +181,15 @@ export default class TriggersCreateComponent implements OnInit {
     console.log('test pre form valid check');
     if (this.form.valid) {
       const userWallet = await getDefaultAccount();
-      console.log('submit the form A', userWallet);
+      // console.log('submit the form A', userWallet);
 
       const strategy = this.strategies.find(
         (s) => s.reference === this.form.value.strategy
       );
-      console.log('submit the form B', strategy);
+      // console.log('submit the form B', strategy);
     
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.chatId) && !isNullOrUndefined(this.form.value.chatToken)) {
-        console.log('submit the form')
+        // console.log('submit the form')
         const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
           autoRedirect: true,
         });
@@ -205,6 +207,7 @@ export default class TriggersCreateComponent implements OnInit {
             settings: {
               chatId: this.form.value.chatId,
               chatToken: this.form.value.chatToken,
+              threadId: this.form.value.threadId,
             },
           },
           isCompressed: false,

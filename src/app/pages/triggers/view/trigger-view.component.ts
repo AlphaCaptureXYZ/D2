@@ -33,13 +33,14 @@ export default class TriggerViewComponent implements OnInit {
 
   chatIdIsEdit = signal(false);
   chatTokenIsEdit = signal(false);
+  threadIdIsEdit = signal(false);
 
   isFullEdit = computed(() => {
     return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
   });
 
   isTelegramEdit = computed(() => {
-    return this.chatIdIsEdit() && this.chatTokenIsEdit();
+    return this.chatIdIsEdit() && this.chatTokenIsEdit() && this.threadIdIsEdit();
   });
 
   constructor(
@@ -121,6 +122,9 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'chatToken') {
       this.chatTokenIsEdit.set(!this.chatTokenIsEdit());
     }
+    if (field === 'threadId') {
+      this.threadIdIsEdit.set(!this.threadIdIsEdit());
+    }
 
   }
 
@@ -137,6 +141,7 @@ export default class TriggerViewComponent implements OnInit {
     const triggerInfo = {
       ...this.trigger,
     };
+    console.log('triggerInfo', triggerInfo);
 
     delete triggerInfo.docId;
 
@@ -155,6 +160,7 @@ export default class TriggerViewComponent implements OnInit {
 
     this.chatIdIsEdit.set(false);
     this.chatTokenIsEdit.set(false);
+    this.threadIdIsEdit.set(false);
 
   }
 }
