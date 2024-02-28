@@ -35,12 +35,18 @@ export default class TriggerViewComponent implements OnInit {
   chatTokenIsEdit = signal(false);
   threadIdIsEdit = signal(false);
 
+  slackWebhookIsEdit = signal(false);
+
   isFullEdit = computed(() => {
     return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
   });
 
   isTelegramEdit = computed(() => {
     return this.chatIdIsEdit() && this.chatTokenIsEdit() && this.threadIdIsEdit();
+  });
+
+  isSlackEdit = computed(() => {
+    return this.slackWebhookIsEdit();
   });
 
   constructor(
@@ -126,6 +132,11 @@ export default class TriggerViewComponent implements OnInit {
       this.threadIdIsEdit.set(!this.threadIdIsEdit());
     }
 
+    // Slack
+    if (field === 'slackWebhook') {
+      this.slackWebhookIsEdit.set(!this.slackWebhookIsEdit());
+    }
+
   }
 
   async updateTrigger() {
@@ -162,5 +173,6 @@ export default class TriggerViewComponent implements OnInit {
     this.chatTokenIsEdit.set(false);
     this.threadIdIsEdit.set(false);
 
+    this.slackWebhookIsEdit.set(false);
   }
 }

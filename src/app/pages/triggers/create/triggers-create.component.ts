@@ -42,12 +42,16 @@ export default class TriggersCreateComponent implements OnInit {
 
   actions = [
     {
+      option: 'copy-trade',
+      label: 'Copy Trade',
+    },
+    {
       option: 'telegram-notification',
       label: 'Telegram Notification',
     },
     {
-      option: 'copy-trade',
-      label: 'Copy Trade',
+      option: 'slack-webhook',
+      label: 'Slack Webhook',
     },
   ];
 
@@ -65,6 +69,10 @@ export default class TriggersCreateComponent implements OnInit {
     chatId: new FormControl(''),
     chatToken: new FormControl(''),
     threadId: new FormControl(''),
+
+    // slack
+    slackWebhook: new FormControl(''),
+
   });
 
   constructor(
@@ -92,9 +100,14 @@ export default class TriggersCreateComponent implements OnInit {
       maxSizePortofolio: ['', Validators.required],
 
       // telegram
+      // https://stackoverflow.com/questions/74773675/how-to-get-topic-id-for-telegram-group-chat
       chatId: ['', Validators.required],
       chatToken: ['', Validators.required],
       threadId: ['', Validators.required],
+
+      // slack
+      slackWebhook: ['', Validators.required],
+
     });
   }
 
@@ -120,7 +133,10 @@ export default class TriggersCreateComponent implements OnInit {
         case 'telegram-notification':
           this.stage = 30;
           break;  
-      }      
+        case 'slack-webhook':
+          this.stage = 40;
+          break;  
+        }      
 
     }
   }
@@ -178,7 +194,7 @@ export default class TriggersCreateComponent implements OnInit {
   }
 
   async setSettingsTelegram() {
-    console.log('test pre form valid check');
+    // console.log('test pre form valid check');
     if (this.form.valid) {
       const userWallet = await getDefaultAccount();
       // console.log('submit the form A', userWallet);
@@ -220,6 +236,47 @@ export default class TriggersCreateComponent implements OnInit {
     }    
   }
 
+  async setSettingsSlack() {
+    console.log('in setSettingsSlack');
+    if (this.form.valid) {
+      const userWallet = await getDefaultAccount();
+      // console.log('submit the form A', userWallet);
+
+      const strategy = this.strategies.find(
+        (s) => s.reference === this.form.value.strategy
+      );
+      console.log('submit the form B', strategy);
+      console.log('submit the form B', this.form.value.slackWebhook);
+          
+      if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.slackWebhook)) {
+        // console.log('submit the form')
+        const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+          autoRedirect: true,
+        });
+
+        await this.weaveDBService.upsertData({
+          pkpKey: pkpPublicKey,
+          type: 'trigger',
+          userWallet,
+          jsonData: {
+            action: this.form.value.action,
+            strategy: {
+              reference: strategy?.reference,
+              name: strategy?.name,
+            },
+            settings: {
+              webhook: this.form.value.slackWebhook,
+            },
+          },
+          isCompressed: false,
+        });
+
+        this.stage = 5;
+
+        this.router.navigateByUrl('/triggers');
+      }
+    }    
+  }
 
 
   goBack() {

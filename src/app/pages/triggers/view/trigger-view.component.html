@@ -40,6 +40,9 @@
                 <span *ngSwitchCase="'telegram-notification'" class="">
                   Telegram Notification
                 </span>
+                <span *ngSwitchCase="'slack-webhook'" class="">
+                  Slack Webhook Notifcation
+                </span>
               </span>
             </td>
           </tr>
@@ -85,6 +88,7 @@
         </tbody>
       </table>
 
+      <!-- Telegram -->
       <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'telegram-notification'">
         Telegram Notification Settings
       </p>
@@ -186,6 +190,7 @@
         </tbody>
       </table>
 
+      <!-- Copy Trade -->
       <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'copy-trade'">
         Copy Trade Settings
       </p>
@@ -282,6 +287,56 @@
               </button>
             </td>
           </tr>
+
+        </tbody>
+      </table>
+
+      <!-- Slack -->
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'slack-webhook'">
+        Slack Webhook Settings
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'slack-webhook'">
+        <tbody>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Webhook:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('slackWebhook')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!slackWebhookIsEdit()">
+                {{trigger?.settings?.webhook}}
+              </span>
+              <span *ngIf="slackWebhookIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.webhook">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="slackWebhookIsEdit() && !isSlackEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isSlackEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <button
+                (click)="updateTrigger()"
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+            </td>
+          </tr>
+
 
         </tbody>
       </table>

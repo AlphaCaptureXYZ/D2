@@ -22,6 +22,7 @@ export default class TriggersListComponent implements OnInit {
   triggers: any[];
   triggersCopy: any[];
   triggersTelegram: any[];
+  triggersSlack: any[];
   isLoading = false;
 
   constructor(
@@ -33,6 +34,7 @@ export default class TriggersListComponent implements OnInit {
     this.triggers = [];
     this.triggersCopy = [];
     this.triggersTelegram = [];  
+    this.triggersSlack = [];  
   }
 
   async ngOnInit() {
@@ -71,6 +73,9 @@ export default class TriggersListComponent implements OnInit {
             case 'telegram-notification':
               this.triggersTelegram.push(trigger);
               break;  
+            case 'slack-webhook':
+              this.triggersSlack.push(trigger);
+              break;  
           }      
     
         }
@@ -79,6 +84,7 @@ export default class TriggersListComponent implements OnInit {
       // console.log('this.triggers', this.triggers);
       console.log('this.triggersCopy', this.triggersCopy);
       console.log('this.triggersTelegram', this.triggersTelegram);
+      console.log('this.triggersSlack', this.triggersSlack);
 
     } catch (err) {
       this.isLoading = false;
