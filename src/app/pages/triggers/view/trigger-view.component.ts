@@ -1,6 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
 
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
@@ -30,6 +30,7 @@ export default class TriggerViewComponent implements OnInit {
   maxLeverageIsEdit = signal(false);
   maxPositionSizeIsEdit = signal(false);
   orderSizeIsEdit = signal(false);
+  portfolioSlippageIsEdit = signal(false);
 
   chatIdIsEdit = signal(false);
   chatTokenIsEdit = signal(false);
@@ -120,6 +121,9 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'orderSize') {
       this.orderSizeIsEdit.set(!this.orderSizeIsEdit());
     }
+    if (field === 'portfolioSlippage') {
+      this.portfolioSlippageIsEdit.set(!this.portfolioSlippageIsEdit());
+    }
 
     // Telegram Notifications
     if (field === 'chatId') {
@@ -152,7 +156,7 @@ export default class TriggerViewComponent implements OnInit {
     const triggerInfo = {
       ...this.trigger,
     };
-    console.log('triggerInfo', triggerInfo);
+    // console.log('triggerInfo', triggerInfo);
 
     delete triggerInfo.docId;
 
@@ -168,6 +172,7 @@ export default class TriggerViewComponent implements OnInit {
     this.maxLeverageIsEdit.set(false);
     this.maxPositionSizeIsEdit.set(false);
     this.orderSizeIsEdit.set(false);
+    this.portfolioSlippageIsEdit.set(false);
 
     this.chatIdIsEdit.set(false);
     this.chatTokenIsEdit.set(false);

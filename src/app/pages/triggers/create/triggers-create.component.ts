@@ -1,8 +1,8 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { SDK, CONTRACT } from '@ixily/activ-web';
-import v4 = SDK.v4;
+import { CONTRACT } from '@ixily/activ-web';
+// import v4 = SDK.v4;
 import CI = CONTRACT.CONTRACT_INTERFACES;
 import { ActivService } from 'src/app/services/activ.service';
 import { NFTCredentialService } from 'src/app/services/nft-credential.service';
@@ -64,6 +64,7 @@ export default class TriggersCreateComponent implements OnInit {
     maximumLeverage: new FormControl(''),
     defaultOrderSize: new FormControl(''),
     maxSizePortofolio: new FormControl(''),
+    portfolioSlippage: new  FormControl(''),
 
     // telegram
     chatId: new FormControl(''),
@@ -95,9 +96,10 @@ export default class TriggersCreateComponent implements OnInit {
 
       // copy trade
       account: ['', Validators.required],
-      maximumLeverage: ['', Validators.required],
-      defaultOrderSize: ['', Validators.required],
-      maxSizePortofolio: ['', Validators.required],
+      maximumLeverage: ['1', Validators.required],
+      defaultOrderSize: ['1', Validators.required],
+      maxSizePortofolio: ['1', Validators.required],
+      portfolioSlippage: ['2', Validators.required],
 
       // telegram
       // https://stackoverflow.com/questions/74773675/how-to-get-topic-id-for-telegram-group-chat
@@ -181,6 +183,7 @@ export default class TriggersCreateComponent implements OnInit {
               maxLeverage: this.form.value.maximumLeverage,
               orderSize: this.form.value.defaultOrderSize,
               maxPositionSize: this.form.value.maxSizePortofolio,
+              portfolioSlippage: this.form.value.portfolioSlippage,
             },
           },
           isCompressed: false,
@@ -237,16 +240,17 @@ export default class TriggersCreateComponent implements OnInit {
   }
 
   async setSettingsSlack() {
-    console.log('in setSettingsSlack');
-    if (this.form.valid) {
+      console.log('in setSettingsSlack');
+      console.log('this.form.valid', this.form.valid);
+
       const userWallet = await getDefaultAccount();
       // console.log('submit the form A', userWallet);
 
       const strategy = this.strategies.find(
         (s) => s.reference === this.form.value.strategy
       );
-      console.log('submit the form B', strategy);
-      console.log('submit the form B', this.form.value.slackWebhook);
+      // console.log('submit the form B', strategy);
+      // console.log('submit the form B', this.form.value.slackWebhook);
           
       if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.slackWebhook)) {
         // console.log('submit the form')
@@ -275,7 +279,6 @@ export default class TriggersCreateComponent implements OnInit {
 
         this.router.navigateByUrl('/triggers');
       }
-    }    
   }
 
 

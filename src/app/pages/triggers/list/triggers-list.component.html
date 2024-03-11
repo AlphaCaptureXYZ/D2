@@ -67,6 +67,7 @@
             <th scope="col" class="px-6 py-3">Leverage</th>
             <th scope="col" class="px-6 py-3">Order Size</th>
             <th scope="col" class="px-6 py-3">Portfolio Max</th>
+            <th scope="col" class="px-6 py-3">Slippage</th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
@@ -94,6 +95,7 @@
             <td class="px-6 py-4">{{ data.settings.maxLeverage }}x</td>
             <td class="px-6 py-4">{{ data.settings.orderSize }}%</td>
             <td class="px-6 py-4">{{ data.settings.maxPositionSize }}%</td>
+            <td class="px-6 py-4">{{ data.settings.portfolioSlippage }}%</td>
 
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
@@ -107,7 +109,7 @@
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              colspan="4">
+              colspan="8">
               No copy trade triggers have been defined
             </th>
           </tr>
@@ -119,7 +121,7 @@
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              colspan="4">
+              colspan="8">
               <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
             </th>
           </tr>

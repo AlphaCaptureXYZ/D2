@@ -316,6 +316,10 @@
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
 
+            <div class="mb-2">
+              <h6>Single Idea/Trade Signals</h6>
+            </div>
+            
             <div class="mb-6">
               <label
                 for="defaultOrderSize"
@@ -375,22 +379,58 @@
                   </svg>
                 </span>
               </div>
+            </div>
+
+            <div class="mb-2">
+              <h6>Portfolio Signals</h6>
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="maxSizePortofolio"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Slippage</label>
+              <div class="flex w-6/12">
+                <input
+                  formControlName="portfolioSlippage"
+                  type="number"
+                  id="portfolioSlippage"
+                  class="rounded-none rounded-l-lg bg-gray-50 border border-gray-300 text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-6/12 text-sm p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+                <span
+                  class="inline-flex items-center px-3 text-sm text-gray-900 bg-gray-200 border border-r-0 border-gray-300 rounded-r-md dark:bg-gray-600 dark:text-gray-400 dark:border-gray-600">
+                  <svg
+                    class="w-6 h-6 text-gray-800 dark:text-white"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 20 20">
+                    <path
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="m7 13 6-6m-5-.5h.01m2.98 7H11m1.007-11.313a2.75 2.75 0 0 0 2.1.87 2.745 2.745 0 0 1 2.837 2.837 2.749 2.749 0 0 0 .87 2.1 2.747 2.747 0 0 1 0 4.014 2.748 2.748 0 0 0-.87 2.1 2.746 2.746 0 0 1-2.837 2.837 2.75 2.75 0 0 0-2.1.87 2.748 2.748 0 0 1-4.014 0 2.75 2.75 0 0 0-2.1-.87 2.744 2.744 0 0 1-2.837-2.837 2.749 2.749 0 0 0-.87-2.1 2.747 2.747 0 0 1 0-4.014 2.75 2.75 0 0 0 .87-2.1 2.745 2.745 0 0 1 2.838-2.837 2.749 2.749 0 0 0 2.1-.87 2.748 2.748 0 0 1 4.013 0Z" />
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-6">
 
               <p class="p-3">
-                The settings determine the size (value) of the trade to be placed.
+                The settings determine the size (value) of the trade(s) to be placed.
               </p>
 
               <button
                 type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
                 (click)="setSettingsCopyTrade()"
-                [disabled]="!form.value.cmaxSizePortofolio || !form.value.defaultOrderSize || !form.value.maximumLeverage"                
+                [disabled]="!form.value.cmaxSizePortofolio || !form.value.defaultOrderSize || !form.value.maximumLeverage || !form.value.portfolioSlippage"   
                 >
                 Complete
               </button>
 
-            </div>
-
+            </div>              
+            
             <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
 
           </div>

@@ -82,9 +82,9 @@ export default class TriggersListComponent implements OnInit {
       }
 
       // console.log('this.triggers', this.triggers);
-      console.log('this.triggersCopy', this.triggersCopy);
-      console.log('this.triggersTelegram', this.triggersTelegram);
-      console.log('this.triggersSlack', this.triggersSlack);
+      // console.log('this.triggersCopy', this.triggersCopy);
+      // console.log('this.triggersTelegram', this.triggersTelegram);
+      // console.log('this.triggersSlack', this.triggersSlack);
 
     } catch (err) {
       this.isLoading = false;
