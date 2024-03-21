@@ -31,6 +31,14 @@ export const routes: Routes = [
     loadComponent: () => import('./brokerages/ig/positions/postions.component'),
   },
   {
+    path: 'accounts/globalblock',
+    loadComponent: () => import('./brokerages/globalblock/account/globalblock.component'),
+  },
+  // {
+  //   path: 'accounts/ig/:accountReference/positions',
+  //   loadComponent: () => import('./brokerages/ig/positions/postions.component'),
+  // },
+  {
     path: 'orders',
     loadComponent: () => import('./pages/orders/orders.component'),
   },

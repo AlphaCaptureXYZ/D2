@@ -194,13 +194,15 @@ class Lit {
         });
 
         await litNodeClient.connect();
+        console.log('Post lit connect');
 
         if (!isNullOrUndefined(listActionCodeParams)) {
             if (!isNullOrUndefined(pkpKey)) {
                 listActionCodeParams.publicKey = pkpKey;
             }
             listActionCodeParams.authSig = authSig;
-        };
+        }
+        console.log('listActionCodeParams.authSig', listActionCodeParams.authSig);
 
         const litActionResult = await litNodeClient.executeJs({
             code: litActionCode,
@@ -208,6 +210,7 @@ class Lit {
             jsParams: listActionCodeParams,
             targetNodeRange: nodes,
         });
+        console.log('litActionResult', litActionResult);
 
         if (showLogs) {
             console.log('======= <LIT ACTION LOGS> =======');
