@@ -128,9 +128,9 @@ export default class TriggersCreateComponent implements OnInit {
       appSecret: ['', Validators.required],
       // TWITTER_ACCESS_TOKEN,
       accessToken: ['', Validators.required],
-      // // TWITTER_ACCESS_TOKEN_SECRET,
+      // TWITTER_ACCESS_TOKEN_SECRET,
       accessSecret: ['', Validators.required],
-
+      
     });
   }
 
