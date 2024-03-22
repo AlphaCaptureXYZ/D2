@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import IXilyACTIV from '@ixily/activ-web';
+import AlphaACTIV from '@ixily/activ-web';
 
 import { Router } from '@angular/router';
 
@@ -20,7 +20,7 @@ declare let Jimp: any;
 })
 export class ActivService {
   private ethereum: any;
-  private activ: IXilyACTIV;
+  private activ: AlphaACTIV;
 
   private userWalletIsConnected: boolean;
 
@@ -94,7 +94,7 @@ export class ActivService {
       }
 
       if (isNullOrUndefined(this.activ)) {
-        this.activ = new IXilyACTIV({
+        this.activ = new AlphaACTIV({
           webProvider: (window as any)?.ethereum,
           public: isPublic,
         });

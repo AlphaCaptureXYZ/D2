@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 import { ActivService } from 'src/app/services/activ.service';
 
-import IXilyACTIV from '@ixily/activ-web';
+import AlphaACTIV from '@ixily/activ-web';
 
 @Component({
   selector: 'app-left-menu',
@@ -34,7 +34,7 @@ export default class LeftMenuComponent implements OnInit {
   }
 
   async getSdkVersion() {
-    const activ = new IXilyACTIV({
+    const activ = new AlphaACTIV({
       webProvider: (window as any)?.ethereum,
     });
 

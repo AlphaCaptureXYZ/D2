@@ -25,7 +25,7 @@ jobs:
   #         SLACK_MESSAGE: Deploying the DII site...
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification
-  #         SLACK_FOOTER: Powered by IXily Team
+  #         SLACK_FOOTER: Powered by AlphaCapture Team
   #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   deploy:
     name: SSH Connection
@@ -66,7 +66,7 @@ jobs:
   #         SLACK_MESSAGE: DII site deployed, check the status from the Actions URL section.
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification
-  #         SLACK_FOOTER: Powered by IXily Team
+  #         SLACK_FOOTER: Powered by AlphaCapture Team
   #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
   # slack-notification-error:
   #   name: Slack Notification (Error)
@@ -85,5 +85,5 @@ jobs:
   #         SLACK_MESSAGE: The DII site was not deployed (¡error!), check the status from the Actions URL section to see and solve the error.
   #         SLACK_TITLE: Deploy Notification
   #         SLACK_USERNAME: Deploy Notification
-  #         SLACK_FOOTER: Powered by IXily Team
+  #         SLACK_FOOTER: Powered by AlphaCapture Team
   #         SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
