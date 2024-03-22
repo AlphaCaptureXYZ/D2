@@ -21,6 +21,7 @@ export default class AccountsComponent implements OnInit {
 
   isLoading = false;
   currentOption: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   accounts: any[];
 
   broker: string;
@@ -34,6 +35,7 @@ export default class AccountsComponent implements OnInit {
   encryptedValueResultCompleted: boolean;
   decryptedValueResultCompleted: boolean;
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   credentialCode = null as any;
 
   constructor(
@@ -45,11 +47,16 @@ export default class AccountsComponent implements OnInit {
     this.broker = 'Binance';
     this.currentOption = 'accounts';
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.apiKey = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.apiSecret = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.valueToEncryptOrDecrypt = null as any;
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.encryptedValueResult = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.decryptedValueResult = null as any;
     this.encryptedValueResultCompleted = false;
     this.decryptedValueResultCompleted = false;
@@ -110,6 +117,7 @@ export default class AccountsComponent implements OnInit {
           this.credentialCode = JSON.stringify(JSON.parse(decryptedFile), null, 2);
         }
       }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       console.log('decrypt (error)', err?.message);
       alert(`You don't have access to this credential`);
@@ -117,20 +125,27 @@ export default class AccountsComponent implements OnInit {
   }
 
   async clearAll() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.valueToEncryptOrDecrypt = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.encryptedValueResult = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.decryptedValueResult = null as any;
     this.encryptedValueResultCompleted = false;
     this.decryptedValueResultCompleted = false;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.apiKey = null as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.apiSecret = null as any;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   goToAccountOrders(account: any) {
     const reference = account?.uuid;
     this.router.navigateByUrl(`accounts/${reference}/orders`);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   goToAccountPositions(account: any) {
     const reference = account?.uuid || '';
     const broker = account?.provider.toLowerCase() || '';

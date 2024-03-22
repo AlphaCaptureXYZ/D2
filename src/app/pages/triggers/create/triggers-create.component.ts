@@ -46,12 +46,16 @@ export default class TriggersCreateComponent implements OnInit {
       label: 'Copy Trade',
     },
     {
+      option: 'slack-webhook',
+      label: 'Slack Webhook',
+    },
+    {
       option: 'telegram-notification',
       label: 'Telegram Notification',
     },
     {
-      option: 'slack-webhook',
-      label: 'Slack Webhook',
+      option: 'twitter-post',
+      label: 'Twitter Post',
     },
   ];
 
@@ -74,6 +78,12 @@ export default class TriggersCreateComponent implements OnInit {
     // slack
     slackWebhook: new FormControl(''),
 
+    // twitter
+    handle:  new FormControl(''),
+    appKey:  new FormControl(''),
+    appSecret: new FormControl(''),
+    accessToken: new FormControl(''),
+    accessSecret: new FormControl(''),
   });
 
   constructor(
@@ -110,6 +120,17 @@ export default class TriggersCreateComponent implements OnInit {
       // slack
       slackWebhook: ['', Validators.required],
 
+      // twitter
+      handle: ['', Validators.required],
+      // TWITTER_CONSUMER_KEY
+      appKey: ['', Validators.required],
+      // TWITTER_CONSUMER_SECRET
+      appSecret: ['', Validators.required],
+      // TWITTER_ACCESS_TOKEN,
+      accessToken: ['', Validators.required],
+      // // TWITTER_ACCESS_TOKEN_SECRET,
+      accessSecret: ['', Validators.required],
+
     });
   }
 
@@ -138,8 +159,11 @@ export default class TriggersCreateComponent implements OnInit {
         case 'slack-webhook':
           this.stage = 40;
           break;  
+        case 'twitter-post':
+          this.stage = 50;
+          break;  
         }      
-
+        console.log('this.stage', this.stage);
     }
   }
 
@@ -240,8 +264,6 @@ export default class TriggersCreateComponent implements OnInit {
   }
 
   async setSettingsSlack() {
-      console.log('in setSettingsSlack');
-      console.log('this.form.valid', this.form.valid);
 
       const userWallet = await getDefaultAccount();
       // console.log('submit the form A', userWallet);
@@ -281,6 +303,50 @@ export default class TriggersCreateComponent implements OnInit {
       }
   }
 
+  async setSettingsTwitter() {
+
+    const userWallet = await getDefaultAccount();
+    // console.log('submit the form A', userWallet);
+
+    const strategy = this.strategies.find(
+      (s) => s.reference === this.form.value.strategy
+    );
+    // console.log('submit the form B', strategy);
+    // console.log('submit the form B', this.form.value.slackWebhook);
+        
+    if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.slackWebhook)) {
+      // console.log('submit the form')
+      const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
+
+      await this.weaveDBService.upsertData({
+        pkpKey: pkpPublicKey,
+        type: 'trigger',
+        userWallet,
+        jsonData: {
+          action: this.form.value.action,
+          strategy: {
+            reference: strategy?.reference,
+            name: strategy?.name,
+          },
+          settings: {
+            handle: this.form.value.handle,
+            appKey: this.form.value.appKey,
+            appSecret: this.form.value.appSecret,
+            accessToken: this.form.value.accessToken,
+            accessSecret: this.form.value.accessSecret,
+          },
+        },
+        isCompressed: false,
+      });
+
+      this.stage = 5;
+
+      this.router.navigateByUrl('/triggers');
+    }
+}
+
 
   goBack() {
     // set our new action here
@@ -299,7 +365,7 @@ export default class TriggersCreateComponent implements OnInit {
   async getStrategies() {
     this.isLoading = true;
     // strategies the user has explicit access to
-    this.strategies = await this.activService.listMyStrategies();
+    this.strategies = await this.activService.listMyStrategies() || [];
     // console.log('allStrategies', this.strategies);
     this.isLoading = false;
   }
@@ -310,10 +376,8 @@ export default class TriggersCreateComponent implements OnInit {
       await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
         autoRedirect: true,
       });
-    this.allAccounts = await this.nftCredentialService.getMyCredentials(
-      pkpWalletAddress
-    );
-    console.log('allAccounts', this.allAccounts);
+    this.allAccounts = await this.nftCredentialService.getMyCredentials(pkpWalletAddress) || [];
+    // console.log('allAccounts', this.allAccounts);
     this.isLoading = false;
   }
 

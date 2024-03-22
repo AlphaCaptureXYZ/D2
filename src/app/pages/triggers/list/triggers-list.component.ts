@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { WeaveDBService } from 'src/app/services/weavedb.service';
@@ -19,10 +19,16 @@ import { NFTCredentialService } from 'src/app/services/nft-credential.service';
 export default class TriggersListComponent implements OnInit {
 
   currentOption = 'triggers-view';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggers: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggersCopy: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggersTelegram: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggersSlack: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  triggersTwitter: any[];
   isLoading = false;
 
   constructor(
@@ -35,6 +41,7 @@ export default class TriggersListComponent implements OnInit {
     this.triggersCopy = [];
     this.triggersTelegram = [];  
     this.triggersSlack = [];  
+    this.triggersTwitter = [];  
   }
 
   async ngOnInit() {
@@ -45,7 +52,8 @@ export default class TriggersListComponent implements OnInit {
     this.isLoading = true;
 
     try {
-      const triggersData = await this.weaveDBService.getAllData<any>({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const triggersData = await this.weaveDBService.getAllData<any>({
         type: 'trigger',
       });
 
@@ -76,6 +84,9 @@ export default class TriggersListComponent implements OnInit {
             case 'slack-webhook':
               this.triggersSlack.push(trigger);
               break;  
+            case 'twitter-post':
+              this.triggersTwitter.push(trigger);
+              break;  
           }      
     
         }
@@ -93,6 +104,7 @@ export default class TriggersListComponent implements OnInit {
     this.isLoading = false;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async deleteTrigger(data: any) {
     const docId = data.docId;
 

@@ -22,8 +22,10 @@ import { getDefaultAccount } from 'src/app/shared/shared';
 export default class TriggerViewComponent implements OnInit {
 
   currentOption = 'trigger-view';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trigger: any;
   isLoading = false;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   account: any;
   triggerId: string;
 
@@ -38,6 +40,12 @@ export default class TriggerViewComponent implements OnInit {
 
   slackWebhookIsEdit = signal(false);
 
+  handleIsEdit = signal(false);
+  appKeyIsEdit = signal(false);
+  appSecretIsEdit = signal(false);
+  accessTokenIsEdit = signal(false);
+  accessSecretIsEdit = signal(false);
+
   isFullEdit = computed(() => {
     return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
   });
@@ -50,6 +58,10 @@ export default class TriggerViewComponent implements OnInit {
     return this.slackWebhookIsEdit();
   });
 
+  isTwitterEdit = computed(() => {
+    return this.handleIsEdit() && this.appKeyIsEdit() && this.appSecretIsEdit() && this.accessTokenIsEdit() && this.accessSecretIsEdit();
+  });
+
   constructor(
     private route: ActivatedRoute,
     private weaveDBService: WeaveDBService,
@@ -58,6 +70,7 @@ export default class TriggerViewComponent implements OnInit {
   ) {
     this.trigger = {};
     this.account = {};
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.triggerId = null as any;
   }
 
@@ -72,6 +85,7 @@ export default class TriggerViewComponent implements OnInit {
 
     try {
       if (this.triggerId.length > 0) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.trigger = await this.weaveDBService.getDataByDocID<any>(this.triggerId);
 
         // supplement with the account details 
@@ -141,6 +155,22 @@ export default class TriggerViewComponent implements OnInit {
       this.slackWebhookIsEdit.set(!this.slackWebhookIsEdit());
     }
 
+    // Twitter
+    if (field === 'handle') {
+      this.handleIsEdit.set(!this.handleIsEdit());
+    }
+    if (field === 'appKey') {
+      this.appKeyIsEdit.set(!this.appKeyIsEdit());
+    }
+    if (field === 'appSecret') {
+      this.appSecretIsEdit.set(!this.appSecretIsEdit());
+    }
+    if (field === 'accessToken') {
+      this.accessTokenIsEdit.set(!this.accessTokenIsEdit());
+    }
+    if (field === 'accessSecret') {
+      this.accessSecretIsEdit.set(!this.accessSecretIsEdit());
+    }
   }
 
   async updateTrigger() {
@@ -179,5 +209,12 @@ export default class TriggerViewComponent implements OnInit {
     this.threadIdIsEdit.set(false);
 
     this.slackWebhookIsEdit.set(false);
+
+    this.handleIsEdit.set(false);
+    this.appKeyIsEdit.set(false);
+    this.appSecretIsEdit.set(false);
+    this.accessTokenIsEdit.set(false);
+    this.accessSecretIsEdit.set(false);
+
   }
 }

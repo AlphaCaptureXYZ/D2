@@ -394,6 +394,165 @@
         </tbody>
       </table>
 
+      <!-- Twitter, yes, ok...  X -->
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'slack-webhook'">
+        Twitter Settings
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'slack-webhook'">
+        <tbody>
+
+          <!-- Handle -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Handle:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('handle')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!handleIsEdit()">
+                {{trigger?.settings?.handle}}
+              </span>
+              <span *ngIf="handleIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.handle">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="handleIsEdit() && !isTwitterEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- appKey -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Consumer Key:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('appKey')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!appKeyIsEdit()">
+                {{trigger?.settings?.appKey}}
+              </span>
+              <span *ngIf="appKeyIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.appKey">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="appKeyIsEdit() && !isTwitterEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- appSecret -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Consumer Secret:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('appSecret')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!appSecretIsEdit()">
+                {{trigger?.settings?.appSecret}}
+              </span>
+              <span *ngIf="appSecretIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.appSecret">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="appSecretIsEdit() && !isTwitterEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- accessToken -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Access Token:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('accessToken')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!accessTokenIsEdit()">
+                {{trigger?.settings?.accessToken}}
+              </span>
+              <span *ngIf="accessTokenIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.accessToken">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="accessTokenIsEdit() && !isTwitterEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- accessSecret -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Access Secret:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('accessSecret')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!accessSecretIsEdit()">
+                {{trigger?.settings?.accessSecret}}
+              </span>
+              <span *ngIf="accessSecretIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.accessSecret">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="accessSecretIsEdit() && !isTwitterEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+          
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isTwitterEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <button
+                (click)="updateTrigger()"
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+            </td>
+          </tr>
+
+
+        </tbody>
+      </table>
+
     </div>
 
   </div>

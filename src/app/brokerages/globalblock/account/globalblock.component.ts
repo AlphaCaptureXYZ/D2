@@ -224,11 +224,13 @@ export default class AccountsGlobalBlockComponent implements OnInit {
       });
       // console.log('litActionCallA', litActionCallA);
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const responseA = litActionCallA?.response as any;
       // console.log('responseA', responseA);
 
       this.errorHandling(responseA);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
       this.isLoading = false;
     }
@@ -239,6 +241,7 @@ export default class AccountsGlobalBlockComponent implements OnInit {
     await this.encrypt();
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errorHandling = (response: any) => {
 
     // there's either an array or an error message

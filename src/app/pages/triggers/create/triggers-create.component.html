@@ -105,7 +105,17 @@
                 </span>
                 <span *ngSwitchCase="'telegram-notification'" class="">  
                   <p class="p-3">
-                    Notifcations of idea creation (open/close/adjust) will be sent to the defined chat.
+                    Notifications of idea creation (open/close/adjust) will be sent to the defined chat.
+                  </p>
+                </span>
+                <span *ngSwitchCase="'slack-webhook'" class="">  
+                  <p class="p-3">
+                    Notifications of idea creation (open/close/adjust) will be sent to a Slack channel.
+                  </p>
+                </span>
+                <span *ngSwitchCase="'twitter-post'" class="">  
+                  <p class="p-3">
+                    Notifications of idea closure will be posted to your Twitter account.
                   </p>
                 </span>
               </span>
@@ -161,7 +171,7 @@
                 </div>
               </div>
 
-              <div *ngIf="strategies.length === 0 && !isLoading" class="flex p-3">
+              <div *ngIf="strategies?.length === 0 && !isLoading" class="flex p-3">
 
                 <svg class="w-4 h-4 text-gray-800 dark:text-white" aria-hidden="true"
                   xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -188,6 +198,17 @@
                       Notifcations of idea creation (open/close/adjust) will be sent to the defined chat.
                     </p>
                   </span>
+                  <span *ngSwitchCase="'slack-webhook'" class="">  
+                    <p class="p-3">
+                      Notifications of idea creation (open/close/adjust) will be sent to a Slack channel.
+                    </p>
+                  </span>
+                  <span *ngSwitchCase="'twitter-post'" class="">  
+                    <p class="p-3">
+                      Notifications of idea closure will be posted to your Twitter account.
+                    </p>
+                  </span>
+  
                 </span>
 
                 <select
@@ -537,6 +558,90 @@
         </div>
       </div>
 
+      <!-- Step Five - Twitter - set the twitter api settings -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 50">
+
+        <ng-container *ngTemplateOutlet="selectedInfo"></ng-container>        
+
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="handle"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Handle (username):</label>
+              <input
+                formControlName="handle"
+                type="text"
+                id="handle"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="appKey"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consumer Key:</label>
+              <input
+                formControlName="appKey"
+                type="text"
+                id="appKey"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="appSecret"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Consumer Secret:</label>
+              <input
+                formControlName="appSecret"
+                type="text"
+                id="appSecret"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="accessToken"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Access Token:</label>
+              <input
+                formControlName="accessToken"
+                type="text"
+                id="accessToken"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+            <div class="mb-6">
+              <label
+                for="accessSecret"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Access Secret:</label>
+              <input
+                formControlName="accessToken"
+                type="text"
+                id="accessSecret"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+
+
+            <div class="mb-6">
+              <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                (click)="setSettingsTwitter()"
+                >
+                Complete
+              </button>
+            </div>
+
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+
+          </div>
+        </div>
+      </div>
+
       <!-- Finish -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 5">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -567,6 +672,7 @@
               <span *ngSwitchCase="'copy-trade'" class="">Copy Trade</span>
               <span *ngSwitchCase="'telegram-notification'" class="">Telegram Notification</span>
               <span *ngSwitchCase="'slack-webhook'" class="">Slack Webhook</span>
+              <span *ngSwitchCase="'twitter-post'" class="">Twitter Post</span>
             </span>
           </div>
         </div>
