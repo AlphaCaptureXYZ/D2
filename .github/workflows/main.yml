@@ -44,7 +44,7 @@ jobs:
 
             sudo rm -rf D2
 
-            sudo git clone https://${{ secrets.REPO_TOKEN  }}@github.com/IXily/D2.git
+            sudo git clone https://${{ secrets.REPO_TOKEN  }}@github.com/AlphaCaptureXYZ/D2.git
 
             cd D2
 
