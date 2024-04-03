@@ -29,6 +29,9 @@ export default class TriggersListComponent implements OnInit {
   triggersSlack: any[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   triggersTwitter: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  triggersQwil: any[];
+
   isLoading = false;
 
   constructor(
@@ -42,6 +45,7 @@ export default class TriggersListComponent implements OnInit {
     this.triggersTelegram = [];  
     this.triggersSlack = [];  
     this.triggersTwitter = [];  
+    this.triggersQwil = [];  
   }
 
   async ngOnInit() {
@@ -87,7 +91,11 @@ export default class TriggersListComponent implements OnInit {
             case 'twitter-post':
               this.triggersTwitter.push(trigger);
               break;  
-          }      
+            case 'qwil-notification':
+              console.log('qwil trigger', trigger);
+              this.triggersQwil.push(trigger);
+              break;  
+            }      
     
         }
       }

@@ -46,6 +46,11 @@ export default class TriggerViewComponent implements OnInit {
   accessTokenIsEdit = signal(false);
   accessSecretIsEdit = signal(false);
 
+  qwilMasterApiKeyIsEdit = signal(false);
+  qwilMasterSecretKeyIsEdit = signal(false);
+  qwilSenderIdIsEdit = signal(false);
+  qwilChatIdIsEdit = signal(false);
+
   isFullEdit = computed(() => {
     return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
   });
@@ -60,6 +65,10 @@ export default class TriggerViewComponent implements OnInit {
 
   isTwitterEdit = computed(() => {
     return this.handleIsEdit() && this.appKeyIsEdit() && this.appSecretIsEdit() && this.accessTokenIsEdit() && this.accessSecretIsEdit();
+  });
+
+  isQwilEdit = computed(() => {
+    return this.qwilMasterApiKeyIsEdit() && this.qwilMasterSecretKeyIsEdit() && this.qwilSenderIdIsEdit() && this.qwilChatIdIsEdit();
   });
 
   constructor(
@@ -171,6 +180,37 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'accessSecret') {
       this.accessSecretIsEdit.set(!this.accessSecretIsEdit());
     }
+
+    // Twitter
+    if (field === 'handle') {
+      this.handleIsEdit.set(!this.handleIsEdit());
+    }
+    if (field === 'appKey') {
+      this.appKeyIsEdit.set(!this.appKeyIsEdit());
+    }
+    if (field === 'appSecret') {
+      this.appSecretIsEdit.set(!this.appSecretIsEdit());
+    }
+    if (field === 'accessToken') {
+      this.accessTokenIsEdit.set(!this.accessTokenIsEdit());
+    }
+    if (field === 'accessSecret') {
+      this.accessSecretIsEdit.set(!this.accessSecretIsEdit());
+    }
+
+    // Qwil
+    if (field === 'qwilMasterApiKey') {
+      this.qwilMasterApiKeyIsEdit.set(!this.qwilMasterApiKeyIsEdit());
+    }
+    if (field === 'qwilMasterSecretKey') {
+      this.qwilMasterSecretKeyIsEdit.set(!this.qwilMasterSecretKeyIsEdit());
+    }
+    if (field === 'qwilSenderId') {
+      this.qwilSenderIdIsEdit.set(!this.qwilSenderIdIsEdit());
+    }
+    if (field === 'qwilChatId') {
+      this.qwilChatIdIsEdit.set(!this.qwilChatIdIsEdit());
+    }
   }
 
   async updateTrigger() {
@@ -216,5 +256,10 @@ export default class TriggerViewComponent implements OnInit {
     this.accessTokenIsEdit.set(false);
     this.accessSecretIsEdit.set(false);
 
+    this.qwilMasterApiKeyIsEdit.set(false);
+    this.qwilMasterSecretKeyIsEdit.set(false);
+    this.qwilSenderIdIsEdit.set(false);
+    this.qwilChatIdIsEdit.set(false);
+  
   }
 }

@@ -118,6 +118,11 @@
                     Notifications of idea closure will be posted to your Twitter account.
                   </p>
                 </span>
+                <span *ngSwitchCase="'qwil-notification'" class="">  
+                  <p class="p-3">
+                    Notifications of idea creation (open/close/adjust) will be sent to the defined chat.
+                  </p>
+                </span>
               </span>
 
               <div class="mt-3">
@@ -476,7 +481,7 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="chatToken"
@@ -488,7 +493,7 @@
                   required
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="threadId"
@@ -500,24 +505,24 @@
                   required
                   class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <p class="p-3">
                 Telegram chat settings come from the godfather.
               </p>
-
+      
               <button
                 type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
                 (click)="setSettingsTelegram()"
-
+      
                 >
                 Complete
               </button>
             </div>
-
+      
             <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
-
+      
           </div>
         </div>
       </div>
@@ -540,20 +545,20 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <button
                 type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
                 (click)="setSettingsSlack()"
-
+      
                 >
                 Complete
               </button>
             </div>
-
+      
             <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
-
+      
           </div>
         </div>
       </div>
@@ -576,7 +581,7 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="appKey"
@@ -588,7 +593,7 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="appSecret"
@@ -600,7 +605,7 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="accessToken"
@@ -612,7 +617,7 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
+      
             <div class="mb-6">
               <label
                 for="accessSecret"
@@ -624,8 +629,8 @@
                 required
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
             </div>
-
-
+      
+      
             <div class="mb-6">
               <button
                 type="submit"
@@ -635,9 +640,81 @@
                 Complete
               </button>
             </div>
-
+      
             <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+      
+          </div>
+        </div>
+      
+      </div>
 
+      <!-- Step Six - Qwil - set the qwil api settings -->
+      <div class="flex flex-col mt-8 w50" *ngIf="stage === 60">
+
+        <ng-container *ngTemplateOutlet="selectedInfo"></ng-container>        
+
+        <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+          <div>
+            <div class="mb-6">
+              <label
+                for="qwilMasterApiKey"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Master API Key:</label>
+              <input
+                formControlName="qwilMasterApiKey"
+                type="text"
+                id="qwilMasterApiKey"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+      
+            <div class="mb-6">
+              <label
+                for="qwilMasterSecretKey"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Master Secret Key:</label>
+              <input
+                formControlName="qwilMasterSecretKey"
+                type="text"
+                id="qwilMasterSecretKey"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+      
+            <div class="mb-6">
+              <label
+                for="qwilSenderId"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sender Id:</label>
+              <input
+                formControlName="qwilSenderId"
+                type="text"
+                id="qwilSenderId"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+      
+            <div class="mb-6">
+              <label
+                for="qwilChatId"
+                class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Chat Id:</label>
+              <input
+                formControlName="qwilChatId"
+                type="text"
+                id="qwilChatId"
+                required
+                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
+            </div>
+      
+            <div class="mb-6">
+              <button
+                type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
+                (click)="setSettingsQwil()"
+                >
+                Complete
+              </button>
+            </div>
+      
+            <p class="p-4 hover:underline cursor-pointer" (click)="goBack()">Back</p>
+      
           </div>
         </div>
       </div>
@@ -673,6 +750,7 @@
               <span *ngSwitchCase="'telegram-notification'" class="">Telegram Notification</span>
               <span *ngSwitchCase="'slack-webhook'" class="">Slack Webhook</span>
               <span *ngSwitchCase="'twitter-post'" class="">Twitter Post</span>
+              <span *ngSwitchCase="'qwil-notification'" class="">Qwil Notification</span>
             </span>
           </div>
         </div>

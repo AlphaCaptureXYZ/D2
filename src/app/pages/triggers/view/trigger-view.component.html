@@ -46,6 +46,9 @@
                 <span *ngSwitchCase="'twitter-post'" class="">
                   Twitter Post
                 </span>
+                <span *ngSwitchCase="'qwil-notification'" class="">
+                  Qwil Notification
+                </span>
               </span>
             </td>
           </tr>
@@ -541,6 +544,138 @@
           </tr>
           
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isTwitterEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <button
+                (click)="updateTrigger()"
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+            </td>
+          </tr>
+
+
+        </tbody>
+      </table>
+
+      <!-- Qwil -->
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'qwil-notification'">
+        Qwil Settings
+      </p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'qwil-notification'">
+        <tbody>
+
+          <!-- Master API Key-->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Master API Key:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('qwilMasterApiKey')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!qwilMasterApiKeyIsEdit()">
+                {{trigger?.settings?.qwilMasterApiKey}}
+              </span>
+              <span *ngIf="qwilMasterApiKeyIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.qwilMasterApiKey">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="qwilMasterApiKeyIsEdit() && !isQwilEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- Master Secret Key -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Master Secret Key:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('qwilMasterSecretKey')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!qwilMasterSecretKeyIsEdit()">
+                {{trigger?.settings?.qwilMasterSecretKey}}
+              </span>
+              <span *ngIf="qwilMasterSecretKeyIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.qwilMasterSecretKey">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="qwilMasterSecretKeyIsEdit() && !isQwilEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- Sender Id -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Sender Id:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('qwilSenderId')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!qwilSenderIdIsEdit()">
+                {{trigger?.settings?.qwilSenderId}}
+              </span>
+              <span *ngIf="qwilSenderIdIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.qwilSenderId">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="qwilSenderIdIsEdit() && !isQwilEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <!-- Chat Id -->
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Chat Id:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('qwilChatId')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!qwilChatIdIsEdit()">
+                {{trigger?.settings?.qwilChatId}}
+              </span>
+              <span *ngIf="qwilChatIdIsEdit()">
+                <input class="telegram-setting-input" type="text"
+                  [(ngModel)]="trigger.settings.qwilChatId">
+              </span>
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="qwilChatIdIsEdit() && !isQwilEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+          
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isQwilEdit()">
             <th
               class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
             <td class="px-6 py-4">

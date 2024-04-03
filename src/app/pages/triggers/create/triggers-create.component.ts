@@ -57,6 +57,14 @@ export default class TriggersCreateComponent implements OnInit {
       option: 'twitter-post',
       label: 'Twitter Post',
     },
+    {
+      option: 'qwil-notification',
+      label: 'Qwil Notfication',
+    },
+    // {
+    //   option: 'email',
+    //   label: 'Send Email',
+    // },
   ];
 
   form: FormGroup = new FormGroup({
@@ -84,6 +92,12 @@ export default class TriggersCreateComponent implements OnInit {
     appSecret: new FormControl(''),
     accessToken: new FormControl(''),
     accessSecret: new FormControl(''),
+
+    // qwil
+    qwilMasterApiKey: new FormControl(''),
+    qwilMasterSecretKey: new FormControl(''),
+    qwilSenderId: new FormControl(''),
+    qwilChatId: new FormControl(''),    
   });
 
   constructor(
@@ -131,6 +145,12 @@ export default class TriggersCreateComponent implements OnInit {
       // TWITTER_ACCESS_TOKEN_SECRET,
       accessSecret: ['', Validators.required],
       
+      // Qwil
+      qwilMasterApiKey: ['', Validators.required],
+      qwilMasterSecretKey: ['', Validators.required],
+      qwilSenderId: ['', Validators.required],
+      qwilChatId: ['', Validators.required],
+  
     });
   }
 
@@ -161,6 +181,9 @@ export default class TriggersCreateComponent implements OnInit {
           break;  
         case 'twitter-post':
           this.stage = 50;
+          break;  
+        case 'qwil-notification':
+          this.stage = 60;
           break;  
         }      
         console.log('this.stage', this.stage);
@@ -345,7 +368,55 @@ export default class TriggersCreateComponent implements OnInit {
 
       this.router.navigateByUrl('/triggers');
     }
-}
+  }
+
+  async setSettingsQwil() {
+
+    const userWallet = await getDefaultAccount();
+    // console.log('submit the form A', userWallet);
+
+    const strategy = this.strategies.find(
+      (s) => s.reference === this.form.value.strategy
+    );
+    // console.log('submit the form B', strategy);
+    // console.log('submit the form B', this.form.value.slackWebhook);
+        
+    if (!isNullOrUndefined(strategy) && !isNullOrUndefined(this.form.value.slackWebhook)) {
+      // console.log('submit the form')
+      const { pkpPublicKey } = await this.pkpGeneratorService.getOrGenerateAutoPKPInfo({
+        autoRedirect: true,
+      });
+
+      // console.log('qwilMasterApiKey:', this.form.value.qwilMasterApiKey);
+      // console.log('qwilMasterSecretKey', this.form.value.qwilMasterSecretKey);
+      // console.log('qwilSenderId', this.form.value.qwilSenderId);
+      // console.log('qwilChatId', this.form.value.qwilChatId);
+
+      await this.weaveDBService.upsertData({
+        pkpKey: pkpPublicKey,
+        type: 'trigger',
+        userWallet,
+        jsonData: {
+          action: this.form.value.action,
+          strategy: {
+            reference: strategy?.reference,
+            name: strategy?.name,
+          },
+          settings: {
+            qwilMasterApiKey: this.form.value.qwilMasterApiKey,
+            qwilMasterSecretKey: this.form.value.qwilMasterSecretKey,
+            qwilSenderId: this.form.value.qwilSenderId,
+            qwilChatId: this.form.value.qwilChatId,
+          },
+        },
+        isCompressed: false,
+      });
+
+      this.stage = 5;
+
+      this.router.navigateByUrl('/triggers');
+    }
+  }
 
 
   goBack() {
@@ -382,7 +453,7 @@ export default class TriggersCreateComponent implements OnInit {
   }
 
   submitForm() {
-    if (this.form.invalid) {
-    }
+    // if (this.form.invalid) {
+    // }
   }
 }
