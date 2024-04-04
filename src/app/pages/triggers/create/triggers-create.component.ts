@@ -186,7 +186,7 @@ export default class TriggersCreateComponent implements OnInit {
           this.stage = 60;
           break;  
         }      
-        console.log('this.stage', this.stage);
+        // console.log('this.stage', this.stage);
     }
   }
 
@@ -221,6 +221,7 @@ export default class TriggersCreateComponent implements OnInit {
             action: this.form.value.action,
             strategy: {
               reference: strategy?.reference,
+              uniqueKey: strategy?.uniqueKey,
               name: strategy?.name,
             },
             account: {
@@ -268,6 +269,7 @@ export default class TriggersCreateComponent implements OnInit {
             action: this.form.value.action,
             strategy: {
               reference: strategy?.reference,
+              uniqueKey: strategy?.uniqueKey,
               name: strategy?.name,
             },
             settings: {
@@ -311,6 +313,7 @@ export default class TriggersCreateComponent implements OnInit {
             action: this.form.value.action,
             strategy: {
               reference: strategy?.reference,
+              uniqueKey: strategy?.uniqueKey,
               name: strategy?.name,
             },
             settings: {
@@ -351,6 +354,7 @@ export default class TriggersCreateComponent implements OnInit {
           action: this.form.value.action,
           strategy: {
             reference: strategy?.reference,
+            uniqueKey: strategy?.uniqueKey,
             name: strategy?.name,
           },
           settings: {
@@ -400,6 +404,7 @@ export default class TriggersCreateComponent implements OnInit {
           action: this.form.value.action,
           strategy: {
             reference: strategy?.reference,
+            uniqueKey: strategy?.uniqueKey,
             name: strategy?.name,
           },
           settings: {

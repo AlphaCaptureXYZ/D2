@@ -211,6 +211,7 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'qwilChatId') {
       this.qwilChatIdIsEdit.set(!this.qwilChatIdIsEdit());
     }
+    
   }
 
   async updateTrigger() {
