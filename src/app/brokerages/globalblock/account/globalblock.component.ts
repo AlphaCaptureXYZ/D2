@@ -51,7 +51,6 @@ export default class AccountsGlobalBlockComponent implements OnInit {
 
   form: FormGroup = new FormGroup({
     name: new FormControl(),
-    username: new FormControl(),
     publicKey: new FormControl(),
     secretKey: new FormControl(),
     environment: new FormControl('production'),
@@ -69,8 +68,8 @@ export default class AccountsGlobalBlockComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.formBuilder.group({
       name: ['Trade account', Validators.required],
-      publicKey: ['yu_ijwHrcAd5swgEOm5lx76~+hAMsMO8zHhs', Validators.required],
-      secretKey: ['MOkpW-m4eSxSp~7RhIxahd.puTfPGhGvea6HcKvVStlzJ4v7Uv', Validators.required],
+      publicKey: ['PE0Z2.SB2sNeUw28O+6/vC~6hUR0DnSr_AHQ', Validators.required],
+      secretKey: ['TcvI/VdDmGfsU8C1uovDs6rg~zGe1~mM2Ph9oQ8gWLnbsQvmt6', Validators.required],
       environment: ['prod', Validators.required],
     });
   }
@@ -110,12 +109,14 @@ export default class AccountsGlobalBlockComponent implements OnInit {
     try {
 
       this.isLoading = true;
-
       const check = this.form.valid;
 
       if (check) {
 
-        const credentials = JSON.stringify(this.form.value);
+        const credentials = JSON.stringify({
+          publicKey: this.form.value.publicKey,
+          secretKey: this.form.value.secretKey,
+        });
 
         const chain = await this.nftCredentialService.getChain();
 
@@ -132,6 +133,8 @@ export default class AccountsGlobalBlockComponent implements OnInit {
             chain,
           },
         ];
+
+        console.log('[encrypt] (initialAccessControlConditionsNFT)', initialAccessControlConditionsNFT);
 
         const {
           encryptedFile,
@@ -157,7 +160,7 @@ export default class AccountsGlobalBlockComponent implements OnInit {
         const {
           tokenId,
         } = await this.nftCredentialService.mintCredential(
-          'IG',
+          'GlobalBlock',
           this.form.value.name,
           this.form.value.environment,
           credentialEncrypted,

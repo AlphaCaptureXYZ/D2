@@ -14,7 +14,7 @@ import { PKPGeneratorService } from 'src/app/services/pkp-generator.service';
 type EnvType = 'demo' | 'prod';
 
 @Component({
-  selector: 'app-account-positions',
+  selector: 'app-account-ig-positions',
   standalone: true,
   imports: [
     CommonModule,

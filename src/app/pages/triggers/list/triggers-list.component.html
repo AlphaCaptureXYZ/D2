@@ -13,7 +13,7 @@
         </p>
 
         <p class="p-3">
-          The primary purpose of an Event Trigger is to copy an Investment Idea into your own
+          The primary purpose of an Event Trigger is to apply an Investment Idea into your own
           trading account, according to your own requirements and risk settings.
         </p>
 
@@ -23,16 +23,11 @@
         </p>
 
         <p class="p-3">
-          Please note that copy trading is at your discretion and the
+          Please note that trade execution is at your discretion and the
           idea creator will not be informed or have any awareness that you have placed a trade based
           on their Investment Idea, nor is any information about your account, data or usage ever
           communicated to anyone.
         </p>
-
-        <p class="p-3">
-          Additional triggers will be added in time such as notifications (Slack, email etc)
-        </p>
-
 
         <span class="pl-5">
           <button
@@ -54,7 +49,7 @@
 
       <p
       class="text font-bold tracking-tight text-slate-800 dark:text-white sm:text-2xl mb-6">
-      Copy Trade
+      Trade Execution
       </p>
 
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
@@ -87,7 +82,7 @@
             <td class="px-6 py-4">
               <span [ngSwitch]="data.action">
                 <span *ngSwitchCase="'copy-trade'" class="">
-                  Copy Trade
+                  Trade Execution
                 </span>
               </span>
             </td>
@@ -110,7 +105,7 @@
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               colspan="8">
-              No copy trade triggers have been defined
+              No trade execution triggers have been defined
             </th>
           </tr>
         </tbody>

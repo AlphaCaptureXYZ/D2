@@ -134,7 +134,7 @@ export default class TriggerViewComponent implements OnInit {
   }
 
   setEditable(field: string) {
-    // Copy Trade
+    // Trade Execution
     if (field === 'maxLeverage') {
       this.maxLeverageIsEdit.set(!this.maxLeverageIsEdit());
     }

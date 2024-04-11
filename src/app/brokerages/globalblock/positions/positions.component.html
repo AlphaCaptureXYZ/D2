@@ -3,13 +3,13 @@
       <p
         class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
         
-          Positions / {{accountName}}
+        GlobalBlock / {{accountName}} / Positions
       </p>
   
       <div class="flex flex-col mt-8">
         <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <p class="p-3">
-            The following positions are currently listed on the account. (<span class="cursor-pointer" (click)="igGetPositions()">Refresh</span>)
+            The following positions are currently listed on the account (Trade Category). (<span class="cursor-pointer" (click)="getPositions()">Refresh</span>)
         </div>
       </div>
   
@@ -18,12 +18,8 @@
           <thead
             class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th scope="col" class="px-1 py-1 pl-5">Name</th>
-              <th scope="col" class="px-6 py-3">Epic</th>
-              <th scope="col" class="px-6 py-3">Expiry</th>
-              <th scope="col" class="px-6 py-3">Size (Net)</th>
-              <th scope="col" class="px-6 py-3">Direction</th>
-              <th scope="col" class="px-6 py-3">Action</th>
+              <th scope="col" class="px-1 py-1 pl-5">Token</th>
+              <th scope="col" class="px-6 py-3">Quantity</th>
               <th scope="col" class="px-6 py-3"></th>
             </tr>
           </thead>
@@ -40,7 +36,7 @@
             </tr>
           </tbody>
       
-          <tbody *ngIf="!isLoading && aggregatePositions.length === 0">
+          <tbody *ngIf="!isLoading && positions.length === 0">
             <tr
               class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
               <th
@@ -52,32 +48,23 @@
             </tr>
           </tbody>
 
-          <tbody *ngIf="!isLoading && aggregatePositions.length > 0">
+          <tbody *ngIf="!isLoading && positions.length > 0">
             <tr
               class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full"
-              *ngFor="let pos of aggregatePositions">
+              *ngFor="let pos of positions">
               <th
                 scope="row"
                 class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
-                {{( pos.name) || "-" }}
+                {{( pos.currency) || "-" }}
               </th>
               <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
-                {{ pos.epic || "-" }}
-              </td>
-              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
-                {{ pos.expiry || "-" }}
-              </td>
-              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
-                {{ pos.size }}
-              </td>
-              <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22">
-                {{ (pos.direction | titlecase) }}
+                {{ pos.available || "-" }}
               </td>
               <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
-                <span class="cursor-pointer" (click)="actionClosePositionPre(pos)">Close</span>
+                <!-- <span class="cursor-pointer" (click)="actionClosePositionPre(pos)">Close</span> -->
               </td>
               <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
-                <span class="" *ngIf="showClosureConfirmation && pos.epic === closeEpic && pos.expiry === closeExpiry && !isClosingPosition">
+                <!-- <span class="" *ngIf="showClosureConfirmation && pos.epic === closeEpic && pos.expiry === closeExpiry && !isClosingPosition">
                   <span class="cursor-pointer" (click)="actionClosePositionCancel()">Cancel</span> 
                   |
                   <span class="cursor-pointer" (click)="actionClosePosition(pos)">Close</span> 
@@ -85,7 +72,7 @@
 
                 <span *ngIf="isClosingPosition && pos.epic === closeEpic && pos.expiry === closeExpiry">
                   <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Closing position</span>
-                </span>
+                </span> -->
               </td>
 
             </tr>

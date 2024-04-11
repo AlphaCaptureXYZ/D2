@@ -248,7 +248,7 @@
         </div>
       </div>
 
-      <!-- Step Three - copy trade - set the account -->
+      <!-- Step Three - Trade Execution - set the account -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 3">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div>
@@ -326,7 +326,7 @@
         </div>
       </div>
 
-      <!-- Step Four - copy trade - set the copy trade settings -->
+      <!-- Step Four - Trade Execution - set the Trade Execution settings -->
       <div class="flex flex-col mt-8 w50" *ngIf="stage === 4">
         <div class="-my-2 pb-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
           <div>
@@ -746,7 +746,7 @@
 
           <div class="text-left load mt-3 ml-4">
             <span [ngSwitch]="form.value.action">
-              <span *ngSwitchCase="'copy-trade'" class="">Copy Trade</span>
+              <span *ngSwitchCase="'copy-trade'" class="">Trade Execution</span>
               <span *ngSwitchCase="'telegram-notification'" class="">Telegram Notification</span>
               <span *ngSwitchCase="'slack-webhook'" class="">Slack Webhook</span>
               <span *ngSwitchCase="'twitter-post'" class="">Twitter Post</span>

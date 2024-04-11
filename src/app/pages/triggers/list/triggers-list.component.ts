@@ -80,6 +80,7 @@ export default class TriggersListComponent implements OnInit {
 
           switch (trigger.action) {
             case 'copy-trade':
+              console.log('copy trade', trigger);
               this.triggersCopy.push(trigger);
               break;
             case 'telegram-notification':
@@ -92,7 +93,6 @@ export default class TriggersListComponent implements OnInit {
               this.triggersTwitter.push(trigger);
               break;  
             case 'qwil-notification':
-              console.log('qwil trigger', trigger);
               this.triggersQwil.push(trigger);
               break;  
             }      

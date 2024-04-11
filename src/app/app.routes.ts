@@ -18,10 +18,14 @@ export const routes: Routes = [
     path: 'accounts/:accountReference/orders',
     loadComponent: () => import('./pages/orders/orders.component'),
   },
+
+  // binance specific
   {
     path: 'accounts/binance',
     loadComponent: () => import('./brokerages/binance/account/binance.component'),
   },
+
+  // IG Group specific
   {
     path: 'accounts/ig',
     loadComponent: () => import('./brokerages/ig/account/ig.component'),
@@ -30,14 +34,16 @@ export const routes: Routes = [
     path: 'accounts/ig/:accountReference/positions',
     loadComponent: () => import('./brokerages/ig/positions/postions.component'),
   },
+
+  // GlobalBlock specific
   {
     path: 'accounts/globalblock',
     loadComponent: () => import('./brokerages/globalblock/account/globalblock.component'),
   },
-  // {
-  //   path: 'accounts/ig/:accountReference/positions',
-  //   loadComponent: () => import('./brokerages/ig/positions/postions.component'),
-  // },
+  {
+    path: 'accounts/globalblock/:accountReference/positions',
+    loadComponent: () => import('./brokerages/globalblock/positions/postions.component'),
+  },
   {
     path: 'orders',
     loadComponent: () => import('./pages/orders/orders.component'),
