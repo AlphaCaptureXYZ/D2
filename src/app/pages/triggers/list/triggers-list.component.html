@@ -58,11 +58,11 @@
           <tr>
             <th scope="col" class="px-6 py-3">Account Reference</th>
             <th scope="col" class="px-6 py-3">Strategy</th>
-            <th scope="col" class="px-6 py-3">Action </th>
             <th scope="col" class="px-6 py-3">Leverage</th>
             <th scope="col" class="px-6 py-3">Order Size</th>
             <th scope="col" class="px-6 py-3">Portfolio Max</th>
             <th scope="col" class="px-6 py-3">Slippage</th>
+            <th scope="col" class="px-6 py-3">Status</th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
         </thead>
@@ -79,18 +79,18 @@
               {{ data.account.reference }}
             </th>
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">
-              <span [ngSwitch]="data.action">
-                <span *ngSwitchCase="'copy-trade'" class="">
-                  Trade Execution
-                </span>
-              </span>
-            </td>
-
             <td class="px-6 py-4">{{ data.settings.maxLeverage }}x</td>
             <td class="px-6 py-4">{{ data.settings.orderSize }}%</td>
             <td class="px-6 py-4">{{ data.settings.maxPositionSize }}%</td>
             <td class="px-6 py-4">{{ data.settings.portfolioSlippage }}%</td>
+            <td class="px-6 py-4">
+              <span *ngIf='!data.settings.executionStatus'>
+                Disabled
+              </span>
+              <span *ngIf='data.settings.executionStatus'>
+                Enabled
+              </span>
+            </td>
 
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
@@ -137,7 +137,6 @@
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-3">Strategy</th>
-            <th scope="col" class="px-6 py-3">Action </th>
             <th scope="col" class="px-6 py-3">Chat Id</th>
             <th scope="col" class="px-6 py-3">Chat Token</th>
             <th scope="col" class="px-6 py-3">Thread Id</th>
@@ -152,9 +151,6 @@
             routerLink="/triggers/{{ data.docId }}"
             >
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">
-              Telegram Notification
-            </td>
             <td class="px-6 py-4">{{ data.settings.chatId }}</td>
             <td class="px-6 py-4">{{ data.settings.chatToken }}</td>
             <td class="px-6 py-4">{{ data.settings.threadId }}</td>
@@ -204,7 +200,6 @@
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-3">Strategy</th>
-            <th scope="col" class="px-6 py-3">Action </th>
             <th scope="col" class="px-6 py-3">Webhook</th>
             <th scope="col" class="px-6 py-3"></th>
           </tr>
@@ -217,9 +212,6 @@
             routerLink="/triggers/{{ data.docId }}"
             >
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">
-              Slack Webhook
-            </td>
             <td class="px-6 py-4">{{ data.settings.webhook }}</td>
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
@@ -267,7 +259,6 @@
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-3">Strategy</th>
-            <th scope="col" class="px-6 py-3">Action</th>
             <th scope="col" class="px-6 py-3">Handle</th>
             <th scope="col" class="px-6 py-3">App Key</th>
             <th scope="col" class="px-6 py-3"></th>
@@ -281,10 +272,8 @@
             routerLink="/triggers/{{ data.docId }}"
             >
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">
-              Twitter Post
-            </td>
             <td class="px-6 py-4">{{ data.settings.handle }}</td>
+            <td class="px-6 py-4">{{ data.settings.appKey }}</td>
             <td class="px-6 py-4">
               <span class="cursor-pointer" (click)="deleteTrigger(data)"><i class='bx bxs-trash'></i></span>
             </td>
@@ -329,7 +318,6 @@
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" class="px-6 py-3">Strategy</th>
-            <th scope="col" class="px-6 py-3">Action</th>
             <th scope="col" class="px-6 py-3">Sender Id</th>
             <th scope="col" class="px-6 py-3">Chat Id</th>
             <th scope="col" class="px-6 py-3"></th>
@@ -343,9 +331,6 @@
             routerLink="/triggers/{{ data.docId }}"
             >
             <td class="px-6 py-4">{{ data.strategy.name || 'none' }}</td>
-            <td class="px-6 py-4">
-              Qwil Notification
-            </td>
             <td class="px-6 py-4">{{ data.settings.qwilSenderId }}</td>
             <td class="px-6 py-4">{{ data.settings.qwilChatId }}</td>
             <td class="px-6 py-4">

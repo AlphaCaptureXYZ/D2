@@ -80,7 +80,8 @@ export default class TriggersListComponent implements OnInit {
 
           switch (trigger.action) {
             case 'copy-trade':
-              console.log('copy trade', trigger);
+            case 'trade-execution':
+              // console.log('copy trade', trigger);
               this.triggersCopy.push(trigger);
               break;
             case 'telegram-notification':

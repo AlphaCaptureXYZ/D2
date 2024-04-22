@@ -2,8 +2,17 @@
     color: #007bff;
 }
 
-.copy-trade-setting-input {
+.trade-execution-setting-input {
     width: 40px;
+    font-size: 13.5px;
+    padding: 0px;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid #000;
+}
+
+.trade-execution-setting-input-b {
+    width: 800px;
     font-size: 13.5px;
     padding: 0px;
     outline: none;

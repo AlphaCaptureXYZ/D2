@@ -42,7 +42,7 @@ export default class TriggersCreateComponent implements OnInit {
 
   actions = [
     {
-      option: 'copy-trade',
+      option: 'trade-execution',
       label: 'Trade Execution',
     },
     {
@@ -171,7 +171,7 @@ export default class TriggersCreateComponent implements OnInit {
 
       // if this is trade execution, then we need to set the account
       switch (this.form.value.action) {
-        case 'copy-trade':
+        case 'trade-execution':
           this.stage = 3;
           break;
         case 'telegram-notification':
@@ -191,13 +191,13 @@ export default class TriggersCreateComponent implements OnInit {
     }
   }
 
-  setAccountCopyTrade() {
+  setAccountTradeExecution() {
     if (this.form.get('account')?.valid) {
       this.stage = 4;
     }
   }
 
-  async setSettingsCopyTrade() {
+  async setSettingsTradeExecution() {
     if (this.form.valid) {
       const userWallet = await getDefaultAccount();
 
@@ -214,53 +214,36 @@ export default class TriggersCreateComponent implements OnInit {
           autoRedirect: true,
         });
 
-        // await this.weaveDBService.upsertData({
-        //   pkpKey: pkpPublicKey,
-        //   type: 'trigger',
-        //   userWallet,
-        //   jsonData: {
-        //     action: this.form.value.action,
-        //     strategy: {
-        //       reference: strategy?.reference,
-        //       uniqueKey: strategy?.uniqueKey,
-        //       name: strategy?.name,
-        //     },
-        //     account: {
-        //       reference: account.uuid,
-        //     },
-        //     settings: {
-        //       maxLeverage: this.form.value.maximumLeverage,
-        //       orderSize: this.form.value.defaultOrderSize,
-        //       maxPositionSize: this.form.value.maxSizePortofolio,
-        //       portfolioSlippage: this.form.value.portfolioSlippage,
-        //     },
-        //   },
-        //   isCompressed: false,
-        // });
+        // default for now
+        const executionStatus = true;
 
         await this.weaveDBService.upsertData({
           pkpKey: pkpPublicKey,
           type: 'trigger',
           userWallet,
           jsonData: {
-            action: 'copy-trade',
+            action: this.form.value.action,
             strategy: {
-              reference: 'ce23cd4cf56ce46c0eef2c',
-              uniqueKey: '4XntpKicGy6Ziv2TZVF9a114TrjWee9zZBZWErcYRuFg227JbhtVa4JgJ4bEfax6KbWzgwHacJUZByUt48TF8kGtECsbjnhTgd28W7yWhkwpVJCTCTJDc2CJoJ5uFFeHrPrAARkjsaiXRJUtAVbpEABHqLh6Jn6tQqY',
-              name: 'Crypto Momentum',
+              reference: strategy?.reference,
+              uniqueKey: strategy?.uniqueKey,
+              name: strategy?.name,
             },
             account: {
-              reference: '0xc93abb7261d76a2b0d0fed72a9ee42c5',
+              reference: account.uuid,
             },
             settings: {
-              maxLeverage: 1,
-              orderSize: 1,
-              maxPositionSize: 100,
-              portfolioSlippage: 2,
+              maxLeverage: this.form.value.maximumLeverage,
+              orderSize: this.form.value.defaultOrderSize,
+              maxPositionSize: this.form.value.maxSizePortofolio,
+              portfolioSlippage: this.form.value.portfolioSlippage,
+              executionStatus,
+              assetsInclude: '',
+              assetsExclude: '',
             },
           },
           isCompressed: false,
         });
+
 
         this.stage = 5;
 

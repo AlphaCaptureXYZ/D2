@@ -37,6 +37,9 @@
                 <span *ngSwitchCase="'copy-trade'" class="">
                   Trade Execution
                 </span>
+                <span *ngSwitchCase="'trade-execution'" class="">
+                  Trade Execution
+                </span>
                 <span *ngSwitchCase="'telegram-notification'" class="">
                   Telegram Notification
                 </span>
@@ -63,7 +66,7 @@
                 class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
           </tr>
 
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="trigger.action === 'copy-trade'">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
             <th
               class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
               Account:
@@ -72,16 +75,21 @@
 
               
               <span [ngSwitch]="trigger.action">
-                <span *ngSwitchCase="'copy-trade'" class="">
-  
+                <span *ngSwitchCase="'trade-execution'" class="">
                   <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
                     {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})
                   </a>
-    
                   <a routerLink="/accounts" class="link hover:underline" *ngIf="!account?.accountName">
                     {{ trigger?.account?.reference }}
+                  </a>      
+                </span>
+                <span *ngSwitchCase="'copy-trade'" class="">
+                  <a routerLink="/accounts" class="link hover:underline" *ngIf="account?.accountName">
+                    {{ account?.accountName }} ({{ account?.provider }} / {{ account?.environment }})
                   </a>
-      
+                  <a routerLink="/accounts" class="link hover:underline" *ngIf="!account?.accountName">
+                    {{ trigger?.account?.reference }}
+                  </a>      
                 </span>
                 <span *ngSwitchCase="'telegram-notification'" class="">
                   N/A
@@ -197,16 +205,61 @@
       </table>
 
       <!-- Trade Execution -->
-      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'copy-trade'">
+      <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         Trade Execution Settings
       </p>
 
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
+        <tbody>
 
-      <p class="text-base font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'copy-trade'">
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Status:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('executionStatus')" *ngIf="!executionStatusIsEdit()">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!executionStatusIsEdit()">
+                <span *ngIf="trigger?.settings?.executionStatus">Trade execution enabled</span>
+                <span *ngIf="!trigger?.settings?.executionStatus">Trade execution disabled</span>
+              </span>
+              <span *ngIf="executionStatusIsEdit()">
+                <select
+                  id="executionStatus"
+                  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-6/12 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  [(ngModel)]="trigger.settings.executionStatus"
+                  (ngModelChange)="updateTrigger()">
+                  <option value="true">Enabled</option>
+                  <option value="false">Disabled</option>
+                </select>
+
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <button
+                (click)="updateTrigger()"
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+      
+
+      <p class="text-base font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         Single Idea/Trade Signals
       </p>
 
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'copy-trade'">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         <tbody>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -222,7 +275,7 @@
                 {{trigger?.settings?.maxLeverage}}x
               </span>
               <span *ngIf="maxLeverageIsEdit()">
-                <input class="copy-trade-setting-input" type="number"
+                <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.maxLeverage">x
               </span>
               <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
@@ -248,7 +301,7 @@
                 {{trigger?.settings?.maxPositionSize}}%
               </span>
               <span *ngIf="maxPositionSizeIsEdit()">
-                <input class="copy-trade-setting-input" type="number"
+                <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.maxPositionSize">%
               </span>
               <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
@@ -274,7 +327,7 @@
                 {{trigger?.settings?.orderSize}}%
               </span>
               <span *ngIf="orderSizeIsEdit()">
-                <input class="copy-trade-setting-input" type="number"
+                <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.orderSize">%
               </span>
               <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
@@ -302,11 +355,11 @@
         </tbody>
       </table>
 
-      <p class="text-base font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'copy-trade'">
+      <p class="text-base font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         Portfolio Signals
       </p>
 
-      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'copy-trade'">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         <tbody>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -322,7 +375,7 @@
                 {{trigger?.settings?.portfolioSlippage}}%
               </span>
               <span *ngIf="portfolioSlippageIsEdit()">
-                <input class="copy-trade-setting-input" type="number"
+                <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.portfolioSlippage">%
               </span>
               <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
@@ -349,6 +402,86 @@
 
         </tbody>
       </table>
+
+      <p class="text-base font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
+        Tradable Assets
+      </p>
+
+      <p class="p-3">If assets are specified, only those assets will be traded. If none are specified, then all will be traded. For equities, please detail the ticker used at the exchange (this may be different to the ticker your brokerage uses).</p>
+
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
+        <tbody>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Only trade:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('assetsInclude')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!assetsIncludeIsEdit()">
+                  {{trigger?.settings?.assetsInclude}}
+              </span>
+              <span *ngIf="assetsIncludeIsEdit()">
+                <input class="trade-execution-setting-input-b" type="text"
+                  [(ngModel)]="trigger.settings.assetsInclude">
+              </span>
+
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="assetsIncludeIsEdit() && !isFullEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <th
+              class="w-1/4 px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap">
+              Do not trade:
+            </th>
+            <td class="w-3/4 px-6 py-4">
+              <span class="mr-2 cursor-pointer" (click)="setEditable('assetsExclude')">
+                <i class="bx bx-edit"></i>
+              </span>
+              <span *ngIf="!assetsExcludeIsEdit()">
+                  {{trigger?.settings?.assetsExclude}}
+              </span>
+              <span *ngIf="assetsExcludeIsEdit()">
+                <input class="trade-execution-setting-input-b" type="text"
+                  [(ngModel)]="trigger.settings.assetsExclude">
+              </span>
+
+              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
+                *ngIf="assetsExcludeIsEdit() && !isFullEdit()">
+                <button
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+              </span>
+            </td>
+          </tr>
+
+          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+            <th
+              class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
+            <td class="px-6 py-4">
+              <button
+                (click)="updateTrigger()"
+                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
+                Update
+              </button>
+            </td>
+          </tr>
+
+        </tbody>
+      </table>
+
+
 
       <!-- Slack -->
       <p class="text-2xl font-medium tracking-tight text-slate-800 dark:text-white my-6 ml-2" *ngIf="trigger.action === 'slack-webhook'">

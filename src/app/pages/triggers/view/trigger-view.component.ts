@@ -29,10 +29,13 @@ export default class TriggerViewComponent implements OnInit {
   account: any;
   triggerId: string;
 
+  executionStatusIsEdit = signal(false);
   maxLeverageIsEdit = signal(false);
   maxPositionSizeIsEdit = signal(false);
   orderSizeIsEdit = signal(false);
   portfolioSlippageIsEdit = signal(false);
+  assetsIncludeIsEdit = signal(false);
+  assetsExcludeIsEdit = signal(false);
 
   chatIdIsEdit = signal(false);
   chatTokenIsEdit = signal(false);
@@ -135,6 +138,9 @@ export default class TriggerViewComponent implements OnInit {
 
   setEditable(field: string) {
     // Trade Execution
+    if (field === 'executionStatus') {
+      this.executionStatusIsEdit.set(!this.executionStatusIsEdit());
+    }
     if (field === 'maxLeverage') {
       this.maxLeverageIsEdit.set(!this.maxLeverageIsEdit());
     }
@@ -147,7 +153,13 @@ export default class TriggerViewComponent implements OnInit {
     if (field === 'portfolioSlippage') {
       this.portfolioSlippageIsEdit.set(!this.portfolioSlippageIsEdit());
     }
-
+    if (field === 'assetsInclude') {
+      this.assetsIncludeIsEdit.set(!this.assetsIncludeIsEdit());
+    }
+    if (field === 'assetsExclude') {
+      this.assetsExcludeIsEdit.set(!this.assetsExcludeIsEdit());
+    }
+    
     // Telegram Notifications
     if (field === 'chatId') {
       this.chatIdIsEdit.set(!this.chatIdIsEdit());
@@ -216,34 +228,37 @@ export default class TriggerViewComponent implements OnInit {
 
   async updateTrigger() {
 
-    const userWallet = await getDefaultAccount();
+    // const userWallet = await getDefaultAccount();
 
-    const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
-      autoRedirect: true,
-    });
+    // const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+    //   autoRedirect: true,
+    // });
 
-    const docId = this.trigger.docId;
+    // const docId = this.trigger.docId;
 
     const triggerInfo = {
       ...this.trigger,
     };
-    // console.log('triggerInfo', triggerInfo);
+    console.log('triggerInfo', triggerInfo);
 
-    delete triggerInfo.docId;
+    // delete triggerInfo.docId;
 
-    await this.weaveDBService.upsertData({
-      pkpKey: pkpPublicKey,
-      type: 'trigger',
-      userWallet,
-      jsonData: triggerInfo,
-      isCompressed: false,
-      docId,
-    });
+    // await this.weaveDBService.upsertData({
+    //   pkpKey: pkpPublicKey,
+    //   type: 'trigger',
+    //   userWallet,
+    //   jsonData: triggerInfo,
+    //   isCompressed: false,
+    //   docId,
+    // });
 
+    this.executionStatusIsEdit.set(false);
     this.maxLeverageIsEdit.set(false);
     this.maxPositionSizeIsEdit.set(false);
     this.orderSizeIsEdit.set(false);
     this.portfolioSlippageIsEdit.set(false);
+    this.assetsIncludeIsEdit.set(false);
+    this.assetsExcludeIsEdit.set(false);
 
     this.chatIdIsEdit.set(false);
     this.chatTokenIsEdit.set(false);

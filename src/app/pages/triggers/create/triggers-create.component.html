@@ -97,7 +97,7 @@
 
 
               <span [ngSwitch]="form.value.action">
-                <span *ngSwitchCase="'copy-trade'" class="">  
+                <span *ngSwitchCase="'trade-execution'" class="">  
                   <p class="p-3">
                     A trade will be applied to your selected account or wallet
                     whenever an Investment Idea NFT is received.
@@ -193,7 +193,7 @@
               <div class="text-left load" *ngIf="strategies.length > 0 && !isLoading">
 
                 <span [ngSwitch]="form.value.action">
-                  <span *ngSwitchCase="'copy-trade'" class="">  
+                  <span *ngSwitchCase="'trade-execution'" class="">  
                     <p class="p-3">
                       All investment ideas within this strategy will be applied to your account.
                     </p>
@@ -311,7 +311,7 @@
                   <button
                     type="submit"
                     class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                    (click)="setAccountCopyTrade()">
+                    (click)="setAccountTradeExecution()">
                     Next
                   </button>
                 </div>
@@ -449,7 +449,7 @@
               <button
                 type="submit"
                 class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit"
-                (click)="setSettingsCopyTrade()"
+                (click)="setSettingsTradeExecution()"
                 [disabled]="!form.value.cmaxSizePortofolio || !form.value.defaultOrderSize || !form.value.maximumLeverage || !form.value.portfolioSlippage"   
                 >
                 Complete
@@ -746,7 +746,7 @@
 
           <div class="text-left load mt-3 ml-4">
             <span [ngSwitch]="form.value.action">
-              <span *ngSwitchCase="'copy-trade'" class="">Trade Execution</span>
+              <span *ngSwitchCase="'trade-execution'" class="">Trade Execution</span>
               <span *ngSwitchCase="'telegram-notification'" class="">Telegram Notification</span>
               <span *ngSwitchCase="'slack-webhook'" class="">Slack Webhook</span>
               <span *ngSwitchCase="'twitter-post'" class="">Twitter Post</span>
