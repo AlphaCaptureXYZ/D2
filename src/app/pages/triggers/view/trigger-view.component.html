@@ -422,7 +422,10 @@
                 <i class="bx bx-edit"></i>
               </span>
               <span *ngIf="!assetsIncludeIsEdit()">
-                  {{trigger?.settings?.assetsInclude}}
+
+                  <span *ngIf="trigger?.settings?.assetsInclude === ''">None specified</span>
+                  <span *ngIf="trigger?.settings?.assetsInclude !== ''">{{trigger?.settings?.assetsInclude}}</span>
+  
               </span>
               <span *ngIf="assetsIncludeIsEdit()">
                 <input class="trade-execution-setting-input-b" type="text"
@@ -449,7 +452,10 @@
                 <i class="bx bx-edit"></i>
               </span>
               <span *ngIf="!assetsExcludeIsEdit()">
-                  {{trigger?.settings?.assetsExclude}}
+
+                <span *ngIf="trigger?.settings?.assetsExclude === ''">None specified</span>
+                <span *ngIf="trigger?.settings?.assetsExclude !== ''">{{trigger?.settings?.assetsExclude}}</span>
+                  
               </span>
               <span *ngIf="assetsExcludeIsEdit()">
                 <input class="trade-execution-setting-input-b" type="text"

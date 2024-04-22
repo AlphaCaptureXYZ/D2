@@ -228,29 +228,29 @@ export default class TriggerViewComponent implements OnInit {
 
   async updateTrigger() {
 
-    // const userWallet = await getDefaultAccount();
+    const userWallet = await getDefaultAccount();
 
-    // const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
-    //   autoRedirect: true,
-    // });
+    const { pkpPublicKey } = await this.pKPGeneratorService.getOrGenerateAutoPKPInfo({
+      autoRedirect: true,
+    });
 
-    // const docId = this.trigger.docId;
+    const docId = this.trigger.docId;
 
     const triggerInfo = {
       ...this.trigger,
     };
-    console.log('triggerInfo', triggerInfo);
+    // console.log('triggerInfo', triggerInfo);
 
-    // delete triggerInfo.docId;
+    delete triggerInfo.docId;
 
-    // await this.weaveDBService.upsertData({
-    //   pkpKey: pkpPublicKey,
-    //   type: 'trigger',
-    //   userWallet,
-    //   jsonData: triggerInfo,
-    //   isCompressed: false,
-    //   docId,
-    // });
+    await this.weaveDBService.upsertData({
+      pkpKey: pkpPublicKey,
+      type: 'trigger',
+      userWallet,
+      jsonData: triggerInfo,
+      isCompressed: false,
+      docId,
+    });
 
     this.executionStatusIsEdit.set(false);
     this.maxLeverageIsEdit.set(false);
