@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: d2-site-service # Name of Service
+  annotations:
+    cloud.google.com/neg: '{"ingress": true}' # Creates a NEG after an Ingress is created
+    cloud.google.com/backend-config: '{"ports": {"4010":"maximum-timeout-for-sse-backendconfig"}, "timeoutSec": 50}'
+spec: # Service's specification
+  type: NodePort
+  selector:
+    app: d2-site # Selects Pods labelled run: d2-site-service
+  ports:
+    - name: http-d2-site-port
+      protocol: TCP
+      port: 4010
+      targetPort: 80
