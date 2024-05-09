@@ -43,11 +43,11 @@ export default class TriggerViewComponent implements OnInit {
 
   slackWebhookIsEdit = signal(false);
 
-  handleIsEdit = signal(false);
-  appKeyIsEdit = signal(false);
-  appSecretIsEdit = signal(false);
-  accessTokenIsEdit = signal(false);
-  accessSecretIsEdit = signal(false);
+  twitterHandleIsEdit = signal(false);
+  twitterAppKeyIsEdit = signal(false);
+  twitterAppSecretIsEdit = signal(false);
+  twitterAccessTokenIsEdit = signal(false);
+  twitterAccessSecretIsEdit = signal(false);
 
   qwilMasterApiKeyIsEdit = signal(false);
   qwilMasterSecretKeyIsEdit = signal(false);
@@ -55,11 +55,29 @@ export default class TriggerViewComponent implements OnInit {
   qwilChatIdIsEdit = signal(false);
 
   isFullEdit = computed(() => {
-    return this.maxLeverageIsEdit() && this.maxPositionSizeIsEdit() && this.orderSizeIsEdit();
+    return this.maxLeverageIsEdit()
+      ||
+      this.maxPositionSizeIsEdit()
+      ||
+      this.orderSizeIsEdit()
+      ||
+      this.executionStatusIsEdit()
+      ||
+      this.maxLeverageIsEdit()
+      ||
+      this.maxPositionSizeIsEdit()
+      ||
+      this.orderSizeIsEdit()
+      ||
+      this.portfolioSlippageIsEdit()
+      ||
+      this.assetsIncludeIsEdit()
+      ||
+      this.assetsExcludeIsEdit();
   });
 
   isTelegramEdit = computed(() => {
-    return this.chatIdIsEdit() && this.chatTokenIsEdit() && this.threadIdIsEdit();
+    return this.chatIdIsEdit() || this.chatTokenIsEdit() || this.threadIdIsEdit();
   });
 
   isSlackEdit = computed(() => {
@@ -67,11 +85,11 @@ export default class TriggerViewComponent implements OnInit {
   });
 
   isTwitterEdit = computed(() => {
-    return this.handleIsEdit() && this.appKeyIsEdit() && this.appSecretIsEdit() && this.accessTokenIsEdit() && this.accessSecretIsEdit();
+    return this.twitterHandleIsEdit() || this.twitterAppKeyIsEdit() || this.twitterAppSecretIsEdit() || this.twitterAccessTokenIsEdit() || this.twitterAccessSecretIsEdit();
   });
 
   isQwilEdit = computed(() => {
-    return this.qwilMasterApiKeyIsEdit() && this.qwilMasterSecretKeyIsEdit() && this.qwilSenderIdIsEdit() && this.qwilChatIdIsEdit();
+    return this.qwilMasterApiKeyIsEdit() || this.qwilMasterSecretKeyIsEdit() || this.qwilSenderIdIsEdit() || this.qwilChatIdIsEdit();
   });
 
   constructor(
@@ -99,6 +117,7 @@ export default class TriggerViewComponent implements OnInit {
       if (this.triggerId.length > 0) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.trigger = await this.weaveDBService.getDataByDocID<any>(this.triggerId);
+        // console.log('this.trigger', this.trigger);
 
         // supplement with the account details 
         if (this.trigger.account?.reference) {
@@ -151,7 +170,7 @@ export default class TriggerViewComponent implements OnInit {
       this.orderSizeIsEdit.set(!this.orderSizeIsEdit());
     }
     if (field === 'portfolioSlippage') {
-      this.portfolioSlippageIsEdit.set(!this.portfolioSlippageIsEdit());
+      this.portfolioSlippageIsEdit.set(this.portfolioSlippageIsEdit());
     }
     if (field === 'assetsInclude') {
       this.assetsIncludeIsEdit.set(!this.assetsIncludeIsEdit());
@@ -178,41 +197,24 @@ export default class TriggerViewComponent implements OnInit {
 
     // Twitter
     if (field === 'handle') {
-      this.handleIsEdit.set(!this.handleIsEdit());
+      this.twitterHandleIsEdit.set(!this.twitterHandleIsEdit());
     }
     if (field === 'appKey') {
-      this.appKeyIsEdit.set(!this.appKeyIsEdit());
+      this.twitterAppKeyIsEdit.set(!this.twitterAppKeyIsEdit());
     }
     if (field === 'appSecret') {
-      this.appSecretIsEdit.set(!this.appSecretIsEdit());
+      this.twitterAppSecretIsEdit.set(!this.twitterAppSecretIsEdit());
     }
     if (field === 'accessToken') {
-      this.accessTokenIsEdit.set(!this.accessTokenIsEdit());
+      this.twitterAccessTokenIsEdit.set(!this.twitterAccessTokenIsEdit());
     }
     if (field === 'accessSecret') {
-      this.accessSecretIsEdit.set(!this.accessSecretIsEdit());
-    }
-
-    // Twitter
-    if (field === 'handle') {
-      this.handleIsEdit.set(!this.handleIsEdit());
-    }
-    if (field === 'appKey') {
-      this.appKeyIsEdit.set(!this.appKeyIsEdit());
-    }
-    if (field === 'appSecret') {
-      this.appSecretIsEdit.set(!this.appSecretIsEdit());
-    }
-    if (field === 'accessToken') {
-      this.accessTokenIsEdit.set(!this.accessTokenIsEdit());
-    }
-    if (field === 'accessSecret') {
-      this.accessSecretIsEdit.set(!this.accessSecretIsEdit());
+      this.twitterAccessSecretIsEdit.set(!this.twitterAccessSecretIsEdit());
     }
 
     // Qwil
     if (field === 'qwilMasterApiKey') {
-      this.qwilMasterApiKeyIsEdit.set(!this.qwilMasterApiKeyIsEdit());
+      this.qwilMasterApiKeyIsEdit.set(this.qwilMasterApiKeyIsEdit());
     }
     if (field === 'qwilMasterSecretKey') {
       this.qwilMasterSecretKeyIsEdit.set(!this.qwilMasterSecretKeyIsEdit());
@@ -240,6 +242,7 @@ export default class TriggerViewComponent implements OnInit {
       ...this.trigger,
     };
     // console.log('triggerInfo', triggerInfo);
+    
 
     delete triggerInfo.docId;
 
@@ -266,11 +269,11 @@ export default class TriggerViewComponent implements OnInit {
 
     this.slackWebhookIsEdit.set(false);
 
-    this.handleIsEdit.set(false);
-    this.appKeyIsEdit.set(false);
-    this.appSecretIsEdit.set(false);
-    this.accessTokenIsEdit.set(false);
-    this.accessSecretIsEdit.set(false);
+    this.twitterHandleIsEdit.set(false);
+    this.twitterAppKeyIsEdit.set(false);
+    this.twitterAppSecretIsEdit.set(false);
+    this.twitterAccessTokenIsEdit.set(false);
+    this.twitterAccessSecretIsEdit.set(false);
 
     this.qwilMasterApiKeyIsEdit.set(false);
     this.qwilMasterSecretKeyIsEdit.set(false);

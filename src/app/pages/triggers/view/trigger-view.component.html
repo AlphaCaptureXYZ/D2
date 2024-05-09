@@ -63,7 +63,7 @@
             </th>
             <td class="w-3/4 px-6 py-4"><a
                 routerLink="/nfts/strategies/{{trigger.strategy?.reference}}"
-                class="link hover:underline">{{ trigger?.strategy?.name }}</a></td>
+                class="link hover:underline">{{ trigger?.strategy?.name }}</a> ({{trigger?.strategy?.reference}} / {{trigger?.strategy?.uniqueKey}})</td>
           </tr>
 
           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
@@ -239,7 +239,7 @@
             </td>
           </tr>
 
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+          <!-- <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
             <th
               class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
             <td class="px-6 py-4">
@@ -249,7 +249,7 @@
                 Update
               </button>
             </td>
-          </tr>
+          </tr> -->
 
         </tbody>
       </table>
@@ -278,13 +278,6 @@
                 <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.maxLeverage">x
               </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="maxLeverageIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
@@ -303,13 +296,6 @@
               <span *ngIf="maxPositionSizeIsEdit()">
                 <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.maxPositionSize">%
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="maxPositionSizeIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -330,17 +316,10 @@
                 <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.orderSize">%
               </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="orderSizeIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+          <!-- <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
             <th
               class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
             <td class="px-6 py-4">
@@ -350,7 +329,7 @@
                 Update
               </button>
             </td>
-          </tr>
+          </tr> -->
 
         </tbody>
       </table>
@@ -378,17 +357,10 @@
                 <input class="trade-execution-setting-input" type="number"
                   [(ngModel)]="trigger.settings.portfolioSlippage">%
               </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="portfolioSlippageIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
-          <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
+          <!-- <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" *ngIf="isFullEdit()">
             <th
               class="px-6 py-4 text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 whitespace-nowrap"></th>
             <td class="px-6 py-4">
@@ -398,7 +370,7 @@
                 Update
               </button>
             </td>
-          </tr>
+          </tr> -->
 
         </tbody>
       </table>
@@ -407,7 +379,7 @@
         Tradable Assets
       </p>
 
-      <p class="p-3">If assets are specified, only those assets will be traded. If none are specified, then all will be traded. For equities, please detail the ticker used at the exchange (this may be different to the ticker your brokerage uses).</p>
+      <p class="p-3">If assets are specified, only those assets will be traded. If none are specified, then all will be traded. For equities, please detail the ticker used at the exchange (this may be different to the ticker your brokerage uses). Please use a comma delimited list for multiple assets.</p>
 
       <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400  table-fixed" *ngIf="trigger.action === 'trade-execution' || trigger.action === 'copy-trade'">
         <tbody>
@@ -432,13 +404,6 @@
                   [(ngModel)]="trigger.settings.assetsInclude">
               </span>
 
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="assetsIncludeIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
@@ -462,13 +427,6 @@
                   [(ngModel)]="trigger.settings.assetsExclude">
               </span>
 
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="assetsExcludeIsEdit() && !isFullEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
@@ -557,19 +515,14 @@
               <span class="mr-2 cursor-pointer" (click)="setEditable('handle')">
                 <i class="bx bx-edit"></i>
               </span>
-              <span *ngIf="!handleIsEdit()">
+              {{twitterHandleIsEdit}} /
+
+              <span *ngIf="!twitterHandleIsEdit()">
                 {{trigger?.settings?.handle}}
               </span>
-              <span *ngIf="handleIsEdit()">
+              <span *ngIf="twitterHandleIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.handle">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="handleIsEdit() && !isTwitterEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -584,19 +537,12 @@
               <span class="mr-2 cursor-pointer" (click)="setEditable('appKey')">
                 <i class="bx bx-edit"></i>
               </span>
-              <span *ngIf="!appKeyIsEdit()">
+              <span *ngIf="!twitterAppKeyIsEdit()">
                 {{trigger?.settings?.appKey}}
               </span>
-              <span *ngIf="appKeyIsEdit()">
+              <span *ngIf="twitterAppKeyIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.appKey">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="appKeyIsEdit() && !isTwitterEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -611,19 +557,12 @@
               <span class="mr-2 cursor-pointer" (click)="setEditable('appSecret')">
                 <i class="bx bx-edit"></i>
               </span>
-              <span *ngIf="!appSecretIsEdit()">
+              <span *ngIf="!twitterAppSecretIsEdit()">
                 {{trigger?.settings?.appSecret}}
               </span>
-              <span *ngIf="appSecretIsEdit()">
+              <span *ngIf="twitterAppSecretIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.appSecret">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="appSecretIsEdit() && !isTwitterEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -638,19 +577,12 @@
               <span class="mr-2 cursor-pointer" (click)="setEditable('accessToken')">
                 <i class="bx bx-edit"></i>
               </span>
-              <span *ngIf="!accessTokenIsEdit()">
+              <span *ngIf="!twitterAccessTokenIsEdit()">
                 {{trigger?.settings?.accessToken}}
               </span>
-              <span *ngIf="accessTokenIsEdit()">
+              <span *ngIf="twitterAccessTokenIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.accessToken">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="accessTokenIsEdit() && !isTwitterEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -665,19 +597,12 @@
               <span class="mr-2 cursor-pointer" (click)="setEditable('accessSecret')">
                 <i class="bx bx-edit"></i>
               </span>
-              <span *ngIf="!accessSecretIsEdit()">
+              <span *ngIf="!twitterAccessSecretIsEdit()">
                 {{trigger?.settings?.accessSecret}}
               </span>
-              <span *ngIf="accessSecretIsEdit()">
+              <span *ngIf="twitterAccessSecretIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.accessSecret">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="accessSecretIsEdit() && !isTwitterEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -723,13 +648,6 @@
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.qwilMasterApiKey">
               </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="qwilMasterApiKeyIsEdit() && !isQwilEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
@@ -749,13 +667,6 @@
               <span *ngIf="qwilMasterSecretKeyIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.qwilMasterSecretKey">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="qwilMasterSecretKeyIsEdit() && !isQwilEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
@@ -777,13 +688,6 @@
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.qwilSenderId">
               </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="qwilSenderIdIsEdit() && !isQwilEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
-              </span>
             </td>
           </tr>
 
@@ -803,13 +707,6 @@
               <span *ngIf="qwilChatIdIsEdit()">
                 <input class="telegram-setting-input" type="text"
                   [(ngModel)]="trigger.settings.qwilChatId">
-              </span>
-              <span class="mr-2 cursor-pointer" (click)="updateTrigger()"
-                *ngIf="qwilChatIdIsEdit() && !isQwilEdit()">
-                <button
-                class="ml-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg w-full sm:w-auto text-xs px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 button-submit">
-                Update
-              </button>
               </span>
             </td>
           </tr>
