@@ -11,7 +11,8 @@
     "test": "ng test",
     "nm:rm": "rimraf node_modules",
     "lint": "ng lint",
-    "deploy": "git push origin main:deploy-production",
+    "deploy": "git push origin main:deploy-k8s",
+    "deploy-old": "git push origin main:deploy-production",
     "activ-update": "rimraf node_modules/@ixily/activ-web && npm i @ixily/activ-web@latest --force"
   },
   "private": true,
