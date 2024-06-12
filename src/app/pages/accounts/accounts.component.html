@@ -2,13 +2,13 @@
   <div class="container mx-auto px-6 py-8">
     <p
       class="text-3xl font-bold tracking-tight text-slate-800 dark:text-white sm:text-4xl">
-      Brokerage Accounts
+      CEX/DEX Brokerage Accounts
     </p>
 
     <div class="flex flex-col mt-8">
       <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
         <p class="p-3">
-          The following brokerage accounts are encrypted NFTS that reside in your connected wallet.
+          The following brokerage accounts are setup via encrypted NFTS that reside in your connected wallet.
           Only you can access and decrypt these NFTs. Note that the process of encrypting data and
           creating an NFT leverages the Lit Protocol (<a href="https://litprotocol.com/"
             class="link hover:underline">https://litprotocol.com/</a>).
@@ -19,6 +19,13 @@
         </p>
 
         <ul class="indent-8 list-inside list-disc mb-8">
+          <li class="mt-4">
+            Uniswap (Available soon)
+          </li>
+          <li class="mt-4">
+            dYdX (Available soon)
+          </li>
+
           <li class="mt-4">
               Binance
               <a routerLink="/accounts/binance" class="text-xs hover:underline">(Create new)</a>
@@ -42,7 +49,7 @@
         <thead
           class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" class="px-1 py-1 pl-5">UUID</th>
+            <th scope="col" class="px-6 py-3">UUID</th>
             <th scope="col" class="px-6 py-3">Broker</th>
             <th scope="col" class="px-6 py-3">Environment</th>
             <th scope="col" class="px-6 py-3">Account Name</th>
@@ -59,7 +66,7 @@
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              colspan="7">
+              colspan="8">
               <i class="bx bx-loader bx-spin text-1xl"></i> <span class="ml-2">Loading</span>
             </th>
           </tr>
@@ -71,7 +78,7 @@
             <th
               scope="row"
               class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-              colspan="7">
+              colspan="8">
               No accounts have been configured yet
             </th>
           </tr>
@@ -81,11 +88,10 @@
           <tr
             class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 max-w-full"
             *ngFor="let account of accounts">
-            <th
-              scope="row"
-              class="px-1 py-1 font-medium text-gray-900 whitespace-nowrap dark:text-white max-w-40 pl-5">
+            <td
+              class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
               {{( account.uuid) || "-" }}
-            </th>
+            </td>
             <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20">
               {{ account.provider || "-" }}
             </td>

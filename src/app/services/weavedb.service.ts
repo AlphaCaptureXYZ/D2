@@ -22,6 +22,7 @@ const COLLECTION_NAME = 'D2-data';
 // new contract tx id to test
 const WEAVEDB_CONTRACT_TX_ID = '5_KIAVYCJeJj9d-fAJmCcNsPlMefjfoo4PUgk1JbLTA';
 
+let count = 0;
 type CollectionType =
     | 'setting'
     | 'trigger'
@@ -33,7 +34,7 @@ type CollectionType =
 })
 export class WeaveDBService {
 
-    private static firstLoad: boolean = true;
+    private static firstLoad = true;
 
     private db: any;
 
@@ -66,11 +67,36 @@ export class WeaveDBService {
 
             this.db = new WeaveDB({
                 contractTxId: WEAVEDB_CONTRACT_TX_ID,
+                remoteStateSyncEnabled: true,
+                remoteStateSyncSource: "https://dre-3.warp.cc/contract",
                 nocache: true,
             });
 
             await this.db.init();
         }
+
+        // const docId = '02c076a88810958a83429111005da12c';
+        if (count < 1) {
+            // const delArray = [];
+            // delArray.push('');
+            // delArray.push('27992b1291ea837264c5007a45b4cfa5');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+            // delArray.push('');
+
+            // for (const m in delArray) {
+            //     const result = await this.db.delete(COLLECTION_NAME, delArray[m]);
+            //     console.log('result', result);
+            // }
+        }
+        count++;
+        console.log('Loading a new instance of WeaveDB');
+
     }
 
     private async accessControlConditions(
@@ -140,8 +166,11 @@ export class WeaveDBService {
             await this.setupWeaveDB();
 
             let {
-                jsonData,
                 userWallet,
+            } = payload;
+
+            const {
+                jsonData,
                 type,
                 pkpKey,
             } = payload;
@@ -274,7 +303,7 @@ export class WeaveDBService {
                     });
                     return result;
                 });
-            };
+            }
 
             docs = docs?.sort((a, b) => {
                 return b?.data?.createdAt - a?.data?.createdAt;
@@ -326,7 +355,7 @@ export class WeaveDBService {
                     if (dataIsCompressed) {
                         doc = await Compressor.decompressData(info?.data);
                         info.data = doc;
-                    };
+                    }
 
                     doc = JSON.parse(atob(info?.data));
 
@@ -406,7 +435,7 @@ export class WeaveDBService {
         if (dataIsCompressed) {
             doc = await Compressor.decompressData(info?.data);
             info.data = doc;
-        };
+        }
 
         doc = JSON.parse(atob(info?.data));
 
@@ -429,14 +458,15 @@ export class WeaveDBService {
 
         return decryptedString as T;
 
-    };
+    }
 
     async deleteData(
         docId: string,
     ) {
-        await this.setupWeaveDB();
+        // await this.setupWeaveDB();
         const result = await this.db.delete(COLLECTION_NAME, docId);
+        console.log('result', result);
         return result;
-    };
+    }
 
 }

@@ -44,6 +44,7 @@
                         <th scope="col" class="px-6 py-3">Env</th>
                         <th scope="col" class="px-1 py-1 pl-5">Idea Linked</th>
                         <th scope="col" class="px-1 py-1 pl-5"></th>
+                        <th scope="col" class="px-1 py-1 pl-5"></th>
                     </tr>
                 </thead>
 
@@ -93,6 +94,11 @@
                         <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
                             <i class="bx bx-loader bx-spin text-1xl loader-icon"></i>
                         </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-22 text-center">
+                            <i class="bx bx-loader bx-spin text-1xl loader-icon"></i>
+                        </td>
+
                     </tr>
                 </tbody>
 
@@ -102,7 +108,7 @@
                         <th
                             scope="row"
                             class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            colspan="4">
+                            colspan="11">
                             No orders have been placed
                         </th>
                     </tr>
@@ -165,6 +171,13 @@
                                     *ngIf="order?.raw?.result?.response && !order?.raw?.result?.response?.error"></i>
                                 <i class='bx bxs-error-circle text-2xl error'
                                     *ngIf="!order?.raw?.result?.response || order?.raw?.result?.response?.error"></i>
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4 overflow-ellipsis overflow-hidden max-w-20"
+                            (click)="deleteOrderInfo(order)">
+                            <span>
+                                <i class='bx bx-trash-alt text-2xl'></i>
                             </span>
                         </td>
 

@@ -114,7 +114,7 @@ export default class OrdersComponent implements OnInit {
 
     this.totalOrders = ordersData?.total || 0;
     const orders = ordersData?.data;
-    console.log('orders data', orders);
+    // console.log('orders data', orders);
 
     this.orders = orders?.map((data: any) => {
 
@@ -157,6 +157,18 @@ export default class OrdersComponent implements OnInit {
     });
 
     this.isLoading = false;
+  }
+
+  async deleteOrderInfo(order: IOrder) {
+    // console.log('delete this order', order);
+
+    // delete the doc
+    if (order.raw.docId) {
+      await this.weaveDBService.deleteData(order.raw.docId);
+      // refresh the docs
+      // it takes a few seconds for this data to refresh
+      await this.getOrders();
+    }
   }
 
   setRawInfo(order: IOrder) {
